@@ -1,0 +1,131 @@
+/* Neno Banana Pro - Global Styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --banana-gold: #FFD700;
+  --banana-neon: #FAEF5D;
+  --banana-pop: #FFF500;
+  --obsidian: #121212;
+  --charcoal: #1E1E1E;
+  --text-dark: #2C3E50;
+  --text-light: #F5F7FA;
+  
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  
+  --shimmer-bg: linear-gradient(90deg, transparent, rgba(255, 255, 0, 0.4), transparent);
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: radial-gradient(circle at top left, #fdfbfb 0%, #ebedee 100%);
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(250, 239, 93, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(250, 239, 93, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(250, 239, 93, 0); }
+}
+
+@keyframes shimmerMove {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Component Classes */
+
+/* 1. Neno Cards (Glassmorphism + Rounded) */
+.neno-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: var(--glass-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.neno-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
+}
+
+/* 2. Neno Buttons (Neon + Bubbly) */
+.neno-button-primary {
+  background: linear-gradient(135deg, var(--banana-gold) 0%, var(--banana-pop) 100%);
+  color: var(--charcoal);
+  border: none;
+  border-radius: 50px;
+  padding: 10px 24px;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 235, 59, 0.4);
+}
+
+.neno-button-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(255, 235, 59, 0.6);
+}
+
+/* Shimmer Effect on Item */
+.shimmer-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--shimmer-bg);
+  transform: skewX(-20deg) translateX(-150%);
+  transition: transform 0.5s;
+}
+.shimmer-wrapper:hover::after {
+  animation: shimmerMove 1s;
+}
+
+/* Page Transitions */
+.page-enter {
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Header Specifics */
+.neno-app-bar {
+  background: rgba(30, 30, 30, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+.neno-logo-text {
+  background: linear-gradient(to right, #FFF, var(--banana-pop));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 0px 20px rgba(255, 235, 59, 0.5);
+}
