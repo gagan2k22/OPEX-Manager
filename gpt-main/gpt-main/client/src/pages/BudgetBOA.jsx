@@ -13,7 +13,6 @@ import {
     CircularProgress,
     Alert,
     TextField,
-    ButtonGroup,
     Tabs,
     Tab
 } from '@mui/material';
@@ -98,34 +97,38 @@ const BudgetBOA = () => {
             borderRight: '1px solid #e0e0e0',
             borderBottom: '1px solid #e0e0e0',
             padding: '2px 8px',
-            height: '15px',
             fontSize: '11px',
-            fontFamily: 'Calibri, Arial, sans-serif',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
+            height: '28px',
+            minWidth: '60px',
         },
         stickyCell: {
+            position: 'sticky',
+            left: 0,
+            backgroundColor: '#fff',
             borderRight: '2px solid #1565c0',
             borderBottom: '1px solid #e0e0e0',
             padding: '2px 8px',
-            height: '15px',
             fontSize: '11px',
-            fontFamily: 'Calibri, Arial, sans-serif',
-            position: 'sticky',
-            left: 0,
-            backgroundColor: '#f8f9fa',
             fontWeight: 500,
+            height: '28px',
             zIndex: 1,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
         },
-        editableCell: {
-            backgroundColor: isEditMode ? '#fff' : '#fafafa',
-            cursor: isEditMode ? 'text' : 'default',
-        },
+        input: {
+            width: '100%',
+            fontSize: '11px',
+            padding: '2px 4px',
+            border: '1px solid #ccc',
+            borderRadius: '2px',
+            '&:focus': {
+                outline: '2px solid #1976d2',
+                borderColor: '#1976d2',
+            }
+        }
     };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const fetchData = async () => {
         setLoading(true);
@@ -149,13 +152,88 @@ const BudgetBOA = () => {
 
             const result = await response.json();
             setData(result);
-            setEditedData(result);
+            setEditedData(JSON.parse(JSON.stringify(result)));
         } catch (err) {
             console.error('Error fetching Budget BOA data:', err);
             setError(err.message || 'Failed to fetch data. Please try again.');
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleEdit = () => {
+        setIsEditMode(true);
+        setEditedData(JSON.parse(JSON.stringify(data)));
+    };
+
+    const handleCancel = () => {
+        setIsEditMode(false);
+        setEditedData(JSON.parse(JSON.stringify(data)));
+        setError(null);
+    };
+
+    const handleSave = async () => {
+        try {
+            setError(null);
+            const updates = editedData.map(row => ({
+                id: row.id,
+                ...row
+            }));
+
+            for (const update of updates) {
+                const response = await fetch(`/api/budget-boa/${update.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(update)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to update row ${update.id}`);
+                }
+            }
+
+            setSuccess('Data saved successfully!');
+            setData(editedData);
+            setIsEditMode(false);
+            setTimeout(() => setSuccess(null), 3000);
+        } catch (err) {
+            setError(err.message || 'Failed to save data');
+        }
+    };
+
+    const handleCellChange = (rowIndex, columnId, value) => {
+        const newData = [...editedData];
+        newData[rowIndex][columnId] = value;
+        setEditedData(newData);
+    };
+
+    const handlePaste = (e, rowIndex, columnId) => {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text');
+        const rows = pastedData.split('\n').filter(row => row.trim());
+
+        const newData = [...editedData];
+        const startColIndex = columns.findIndex(col => col.id === columnId);
+
+        rows.forEach((row, rIdx) => {
+            const cells = row.split('\t');
+            const targetRowIndex = rowIndex + rIdx;
+
+            if (targetRowIndex < newData.length) {
+                cells.forEach((cell, cIdx) => {
+                    const targetColIndex = startColIndex + cIdx;
+                    if (targetColIndex < columns.length && columns[targetColIndex].editable) {
+                        const colId = columns[targetColIndex].id;
+                        newData[targetRowIndex][colId] = cell.trim();
+                    }
+                });
+            }
+        });
+
+        setEditedData(newData);
     };
 
     const handleSeed = async () => {
@@ -173,108 +251,19 @@ const BudgetBOA = () => {
         }
     };
 
-    const handleEditMode = () => {
-        setIsEditMode(true);
-        setEditedData(JSON.parse(JSON.stringify(data)));
-    };
-
-    const handleSaveAll = async () => {
-        try {
-            const updatePromises = editedData.map(row =>
-                fetch(`/api/budget-boa/${row.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(row)
-                })
-            );
-
-            await Promise.all(updatePromises);
-            setSuccess('All changes saved successfully');
-            setTimeout(() => setSuccess(null), 3000);
-            setIsEditMode(false);
-            fetchData();
-        } catch (err) {
-            setError('Failed to save changes: ' + err.message);
-        }
-    };
-
-    const handleCancel = () => {
-        setIsEditMode(false);
-        setEditedData(JSON.parse(JSON.stringify(data)));
-    };
-
-    const handleCellChange = (rowIndex, field, value) => {
-        const newData = [...editedData];
-        newData[rowIndex][field] = value === '' ? null : (field === 'basis_of_allocation' ? value : parseFloat(value) || 0);
-        setEditedData(newData);
-    };
-
-    const handlePaste = (e, rowIndex, colIndex) => {
-        e.preventDefault();
-        const pastedData = e.clipboardData.getData('text');
-        const rows = pastedData.split('\n').map(row => row.split('\t'));
-
-        const newData = [...editedData];
-        rows.forEach((row, rIdx) => {
-            const targetRowIndex = rowIndex + rIdx;
-            if (targetRowIndex < newData.length) {
-                row.forEach((cell, cIdx) => {
-                    const targetColIndex = colIndex + cIdx;
-                    if (targetColIndex < columns.length && columns[targetColIndex].editable) {
-                        const field = columns[targetColIndex].id;
-                        const value = cell.trim();
-                        newData[targetRowIndex][field] = value === '' ? null : (field === 'basis_of_allocation' ? value : parseFloat(value) || 0);
-                    }
-                });
-            }
-        });
-
-        setEditedData(newData);
-        setSuccess('Data pasted successfully');
-        setTimeout(() => setSuccess(null), 2000);
-    };
-
     const calculatePercentage = (value, total) => {
-        if (!total || total === 0) return '0.00';
+        if (!total || total === 0) return 0;
         return ((value / total) * 100).toFixed(2);
     };
 
-    const calculateColumnTotals = (data) => {
-        const totals = {};
-        columns.forEach(column => {
-            if (column.id !== 'vendor_service' && column.id !== 'basis_of_allocation' && column.id !== 'total_count') {
-                let sum = 0;
-                data.forEach(row => {
-                    const value = row[column.id] || 0;
-                    const total = row.total_count || 0;
-                    if (total > 0) {
-                        sum += (value / total) * 100;
-                    }
-                });
-                totals[column.id] = sum.toFixed(2);
-            }
-        });
-        return totals;
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, []);
+    if (loading) return <Box display="flex" justifyContent="center" m={4}><CircularProgress /></Box>;
 
     const displayData = isEditMode ? editedData : data;
-    const percentageTotals = calculateColumnTotals(displayData);
-
-    if (loading) return <Box display="flex" justifyContent="center" m={4}><CircularProgress /></Box>;
 
     return (
         <Box sx={{ ...pageContainerStyles, ...pageTransitionStyles }}>
             <Box sx={pageHeaderStyles}>
-                <Typography sx={pageTitleStyles}>
-                    Budget BOA
-                </Typography>
+                <Typography sx={pageTitleStyles}>Budget BOA</Typography>
                 <Box display="flex" gap={2}>
                     {data.length === 0 && (
                         <Button variant="contained" color="primary" onClick={handleSeed}>
@@ -282,24 +271,18 @@ const BudgetBOA = () => {
                         </Button>
                     )}
                     {!isEditMode ? (
-                        <Button
-                            variant="contained"
-                            color="success"
-                            startIcon={<EditIcon />}
-                            onClick={handleEditMode}
-                            disabled={data.length === 0}
-                        >
-                            Edit Table
+                        <Button variant="contained" startIcon={<EditIcon />} onClick={handleEdit}>
+                            Edit Mode
                         </Button>
                     ) : (
-                        <ButtonGroup variant="contained">
-                            <Button color="success" startIcon={<SaveIcon />} onClick={handleSaveAll}>
-                                Save All
-                            </Button>
-                            <Button color="error" startIcon={<CancelIcon />} onClick={handleCancel}>
+                        <>
+                            <Button variant="outlined" startIcon={<CancelIcon />} onClick={handleCancel}>
                                 Cancel
                             </Button>
-                        </ButtonGroup>
+                            <Button variant="contained" color="success" startIcon={<SaveIcon />} onClick={handleSave}>
+                                Save Changes
+                            </Button>
+                        </>
                     )}
                 </Box>
             </Box>
@@ -307,187 +290,64 @@ const BudgetBOA = () => {
             {error && <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>{error}</Alert>}
             {success && <Alert severity="success" onClose={() => setSuccess(null)} sx={{ mb: 2 }}>{success}</Alert>}
 
-            {isEditMode && (
-                <Alert severity="info" sx={{ mb: 2 }}>
-                    <strong>Edit Mode Active:</strong> You can paste data from Excel by selecting cells and using Ctrl+V. Changes will be saved when you click "Save All".
-                </Alert>
-            )}
-
-            {/* Tabs for switching between Values and Percentages */}
             <Paper elevation={2} sx={{ mb: 2 }}>
-                <Tabs value={activeTab} onChange={(e, newValue) => setActiveTab(newValue)} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <Tab label="Budget BOA Values" />
-                    <Tab label="Budget BOA Percentage Allocation" />
+                <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)} sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Tab label="Values" />
+                    <Tab label="Percentage Allocation" />
                 </Tabs>
             </Paper>
 
-            {/* Values Table */}
-            {activeTab === 0 && (
-                <Paper sx={{ width: '100%', mb: 2, boxShadow: 3 }}>
-                    <TableContainer sx={{ maxHeight: 'calc(100vh - 280px)', border: '1px solid #1565c0' }}>
-                        <Table
-                            stickyHeader
-                            size="small"
-                            sx={{
-                                borderCollapse: 'separate',
-                                '& .MuiTableRow-root': { height: '15px' },
-                                '& .MuiTableCell-root': { padding: '2px 8px', height: '15px', lineHeight: '15px' },
-                                '& .MuiTableCell-head': { height: '30px', lineHeight: '30px' }
-                            }}
-                        >
-                            <TableHead>
-                                <TableRow>
-                                    {columns.map((column) => (
-                                        <TableCell
-                                            key={column.id}
-                                            style={column.sticky ? excelStyles.stickyHeaderCell : excelStyles.headerCell}
-                                        >
-                                            {column.label}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {displayData.map((row, rowIndex) => (
-                                    <TableRow hover key={row.id}>
-                                        {columns.map((column, colIndex) => {
-                                            const value = row[column.id];
-                                            const isEditable = isEditMode && column.editable;
-
-                                            return (
-                                                <TableCell
-                                                    key={column.id}
-                                                    style={{
-                                                        ...(column.sticky ? excelStyles.stickyCell : excelStyles.cell),
-                                                        ...(isEditable ? excelStyles.editableCell : {})
-                                                    }}
-                                                >
-                                                    {isEditable ? (
-                                                        <TextField
-                                                            size="small"
-                                                            type={column.id === 'basis_of_allocation' ? 'text' : 'number'}
-                                                            value={value || ''}
-                                                            onChange={(e) => handleCellChange(rowIndex, column.id, e.target.value)}
-                                                            onPaste={(e) => handlePaste(e, rowIndex, colIndex)}
-                                                            fullWidth
-                                                            variant="standard"
-                                                            inputProps={{
-                                                                step: column.id === 'basis_of_allocation' ? undefined : '0.01',
-                                                                style: { fontSize: '11px', padding: '0px 4px', height: '15px', lineHeight: '15px' }
-                                                            }}
-                                                            InputProps={{ disableUnderline: true }}
-                                                            sx={{ '& .MuiInputBase-input': { padding: '0px 4px', height: '15px', lineHeight: '15px' } }}
-                                                        />
-                                                    ) : (
-                                                        value || '-'
-                                                    )}
-                                                </TableCell>
-                                            );
-                                        })}
-                                    </TableRow>
+            <TableContainer component={Paper} sx={{ maxHeight: 600, border: '1px solid #d0d0d0' }}>
+                <Table stickyHeader size="small" sx={{ minWidth: 2000 }}>
+                    <TableHead>
+                        <TableRow>
+                            {columns.map((col) => (
+                                <TableCell
+                                    key={col.id}
+                                    sx={col.sticky ? excelStyles.stickyHeaderCell : excelStyles.headerCell}
+                                    style={{ width: col.width, minWidth: col.width }}
+                                >
+                                    {col.label}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {displayData.map((row, rowIndex) => (
+                            <TableRow key={row.id} hover>
+                                {columns.map((col) => (
+                                    <TableCell
+                                        key={`${row.id}-${col.id}`}
+                                        sx={col.sticky ? excelStyles.stickyCell : excelStyles.cell}
+                                        style={{ width: col.width, minWidth: col.width }}
+                                    >
+                                        {isEditMode && col.editable ? (
+                                            <TextField
+                                                size="small"
+                                                value={row[col.id] || ''}
+                                                onChange={(e) => handleCellChange(rowIndex, col.id, e.target.value)}
+                                                onPaste={(e) => handlePaste(e, rowIndex, col.id)}
+                                                sx={excelStyles.input}
+                                                variant="outlined"
+                                            />
+                                        ) : activeTab === 1 && col.editable ? (
+                                            `${calculatePercentage(row[col.id], row.total_count)}%`
+                                        ) : (
+                                            row[col.id] || '-'
+                                        )}
+                                    </TableCell>
                                 ))}
-                                {displayData.length === 0 && (
-                                    <TableRow>
-                                        <TableCell colSpan={columns.length} align="center">No data available.</TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Paper>
-            )}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
 
-            {/* Percentage Allocation Table */}
-            {activeTab === 1 && (
-                <Paper sx={{ width: '100%', mb: 2, boxShadow: 3 }}>
-                    <TableContainer sx={{ maxHeight: 'calc(100vh - 280px)', border: '1px solid #0d47a1' }}>
-                        <Table
-                            stickyHeader
-                            size="small"
-                            sx={{
-                                borderCollapse: 'separate',
-                                '& .MuiTableRow-root': { height: '15px' },
-                                '& .MuiTableCell-root': { padding: '2px 8px', height: '15px', lineHeight: '15px' },
-                                '& .MuiTableCell-head': { height: '30px', lineHeight: '30px' }
-                            }}
-                        >
-                            <TableHead>
-                                <TableRow>
-                                    {columns.map((column) => (
-                                        <TableCell
-                                            key={column.id}
-                                            style={{
-                                                ...(column.sticky ? excelStyles.stickyHeaderCell : excelStyles.headerCell),
-                                                backgroundColor: '#0d47a1',
-                                                borderBottom: '2px solid #0d47a1',
-                                                borderRight: column.sticky ? '2px solid #0d47a1' : '1px solid #d0d0d0'
-                                            }}
-                                        >
-                                            {column.label}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {displayData.map((row) => (
-                                    <TableRow hover key={row.id}>
-                                        {columns.map((column) => {
-                                            let displayValue;
-                                            if (column.id === 'vendor_service' || column.id === 'basis_of_allocation') {
-                                                displayValue = row[column.id] || '-';
-                                            } else if (column.id === 'total_count') {
-                                                displayValue = row[column.id] || '0';
-                                            } else {
-                                                const value = row[column.id] || 0;
-                                                const total = row.total_count || 0;
-                                                displayValue = calculatePercentage(value, total) + '%';
-                                            }
-                                            return (
-                                                <TableCell
-                                                    key={column.id}
-                                                    style={column.sticky ? excelStyles.stickyCell : excelStyles.cell}
-                                                >
-                                                    {displayValue}
-                                                </TableCell>
-                                            );
-                                        })}
-                                    </TableRow>
-                                ))}
-                                {/* Totals Row */}
-                                <TableRow sx={{ backgroundColor: '#e3f2fd', fontWeight: 'bold' }}>
-                                    {columns.map((column) => {
-                                        let displayValue;
-                                        if (column.id === 'vendor_service') {
-                                            displayValue = 'Total %';
-                                        } else if (column.id === 'basis_of_allocation' || column.id === 'total_count') {
-                                            displayValue = '-';
-                                        } else {
-                                            displayValue = percentageTotals[column.id] + '%';
-                                        }
-                                        return (
-                                            <TableCell
-                                                key={column.id}
-                                                style={{
-                                                    ...(column.sticky ? excelStyles.stickyCell : excelStyles.cell),
-                                                    backgroundColor: '#e3f2fd',
-                                                    fontWeight: 'bold',
-                                                    borderTop: '2px solid #0d47a1',
-                                                }}
-                                            >
-                                                {displayValue}
-                                            </TableCell>
-                                        );
-                                    })}
-                                </TableRow>
-                                {displayData.length === 0 && (
-                                    <TableRow>
-                                        <TableCell colSpan={columns.length} align="center">No data available.</TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Paper>
+            {isEditMode && (
+                <Alert severity="info" sx={{ mt: 2 }}>
+                    <strong>Excel Paste Supported:</strong> You can copy data from Excel and paste it directly into the cells.
+                    Use Tab or Ctrl+V to paste multiple cells at once.
+                </Alert>
             )}
         </Box>
     );

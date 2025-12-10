@@ -94,7 +94,12 @@ const getBudgetTracker = async (req, res) => {
                 allocationBasis: { select: { name: true } },
                 serviceType: { select: { name: true } },
                 months: { select: { month: true, amount: true } },
-                actuals: { select: { amount: true } }
+                actuals: { select: { amount: true } },
+                renewalDate: true,
+                initiativeType: true,
+                priority: true,
+                costOptimizationLever: true,
+                allocationType: true
             }
         });
 
@@ -153,7 +158,12 @@ const getBudgetTracker = async (req, res) => {
                 service_description: item.description,
                 service_start_date: item.serviceStartDate,
                 service_end_date: item.serviceEndDate,
-                is_renewal: false, // You might need logic for this
+                renewal_date: item.renewalDate,
+                initiative_type: item.initiativeType || '-',
+                priority: item.priority || '-',
+                cost_optimization_lever: item.costOptimizationLever || '-',
+                allocation_type: item.allocationType || '-',
+
                 budget_head_name: item.budgetHead?.name || '-',
                 tower_name: item.tower?.name || '-',
                 contract_id: item.contractId || '-',

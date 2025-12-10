@@ -109,7 +109,7 @@ model AllocationBasis {
 
 model LineItem {
   id            Int          @id @default(autoincrement())
-  uid           String       @unique
+  uid           String
   parentUid     String?      // Parent UID for grouping
   description   String
   towerId       Int?
@@ -146,6 +146,23 @@ model LineItem {
   poEntity      POEntity?    @relation(fields: [poEntityId], references: [id])
   allocationBasis AllocationBasis? @relation(fields: [allocationBasisId], references: [id])
   serviceType   ServiceType? @relation(fields: [serviceTypeId], references: [id])
+
+  // New fields requested
+  renewalDate         DateTime?
+  initiativeType      String?  // New / Existing
+  priority            String?
+  costOptimizationLever String? // Avoidance / Optimization
+  allocationType      String?  // Dedicated / Shared (if different from serviceType)
+  
+  // Boolean overrides requested
+  hasContract         Boolean? @default(false)
+  isSharedService     Boolean? @default(false)
+
+  @@index([uid])
+  @@index([vendorId])
+  @@index([fiscalYearId])
+  @@index([budgetHeadId])
+  @@index([towerId])
 }
 
 model BudgetMonth {
@@ -171,10 +188,11 @@ model FiscalYear {
 
 model PO {
   id                  Int       @id @default(autoincrement())
-  poNumber            String    @unique
+  poNumber            Int    @unique
   poDate              DateTime
-  prNumber            String?
+  prNumber            Int?
   prDate              DateTime?
+  prAmount            Float?
   vendorId            Int?
   currency            String    @default("INR")
   poValue             Float
@@ -379,6 +397,36 @@ model ActualsCalculation {
 
   budget_boa      BudgetBOA   @relation(fields: [budget_boa_id], references: [id])
   actuals_boa     ActualsBOA  @relation(fields: [actuals_boa_id], references: [id])
+}
+
+model BudgetBOAData {
+  id                        Int      @id @default(autoincrement())
+  vendor_service            String
+  basis_of_allocation       String?
+  total_count               Int?     @default(0)
+  jpm_corporate             Int?     @default(0)
+  jphi_corporate            Int?     @default(0)
+  biosys_bengaluru          Int?     @default(0)
+  biosys_noida              Int?     @default(0)
+  biosys_greater_noida      Int?     @default(0)
+  pharmova_api              Int?     @default(0)
+  jgl_dosage                Int?     @default(0)
+  jgl_ibp                   Int?     @default(0)
+  cadista_dosage            Int?     @default(0)
+  jdi_radio_pharmaceuticals Int?     @default(0)
+  jdi_radiopharmacies       Int?     @default(0)
+  jhs_gp_cmo                Int?     @default(0)
+  jhs_llc_cmo               Int?     @default(0)
+  jhs_llc_allergy           Int?     @default(0)
+  ingrevia                  Int?     @default(0)
+  jil_jacpl                 Int?     @default(0)
+  jfl                       Int?     @default(0)
+  consumer                  Int?     @default(0)
+  jti                       Int?     @default(0)
+  jogpl                     Int?     @default(0)
+  enpro                     Int?     @default(0)
+  created_at                DateTime @default(now())
+  updated_at                DateTime @default(now()) @updatedAt
 }
 
 model ActualBOAData {

@@ -29,7 +29,7 @@ const Login = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%)',
+                background: 'linear-gradient(135deg, #003399 0%, #1A73E8 50%, #78BE20 100%)',
                 position: 'relative',
                 overflow: 'hidden',
                 '&::before': {
@@ -39,7 +39,7 @@ const Login = () => {
                     left: '-50%',
                     width: '200%',
                     height: '200%',
-                    background: 'radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%)',
+                    background: 'radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%)',
                     animation: 'rotate 20s linear infinite',
                 },
                 '@keyframes rotate': {
@@ -57,14 +57,14 @@ const Login = () => {
                     elevation={8}
                     sx={{
                         borderRadius: 3,
-                        background: 'linear-gradient(135deg, rgba(22, 33, 62, 0.95) 0%, rgba(15, 15, 30, 0.95) 100%)',
+                        background: 'rgba(255, 255, 255, 0.98)',
                         backdropFilter: 'blur(10px)',
-                        border: '2px solid rgba(255, 215, 0, 0.3)',
-                        boxShadow: '0 16px 48px rgba(255, 215, 0, 0.3), 0 0 80px rgba(0, 217, 255, 0.2)',
+                        border: '2px solid rgba(0, 51, 153, 0.2)',
+                        boxShadow: '0 16px 48px rgba(0, 51, 153, 0.3), 0 0 80px rgba(120, 190, 32, 0.2)',
                         animation: 'float 6s ease-in-out infinite',
                         transition: 'all 0.3s ease',
                         '&:hover': {
-                            boxShadow: '0 20px 60px rgba(255, 215, 0, 0.4), 0 0 100px rgba(0, 217, 255, 0.3)',
+                            boxShadow: '0 20px 60px rgba(0, 51, 153, 0.4), 0 0 100px rgba(120, 190, 32, 0.3)',
                             transform: 'scale(1.02)',
                         }
                     }}
@@ -72,22 +72,18 @@ const Login = () => {
                     <CardContent sx={{ p: 5 }}>
                         <Box sx={{ textAlign: 'center', mb: 4 }}>
                             <Typography
-                                variant="h3"
+                                variant="h1"
                                 component="h1"
                                 gutterBottom
                                 sx={{
+                                    fontFamily: '"Poppins", sans-serif',
                                     fontWeight: 800,
-                                    background: 'linear-gradient(135deg, #FFD700 0%, #00D9FF 100%)',
+                                    fontSize: { xs: '2rem', sm: '2.5rem' },
+                                    background: 'linear-gradient(135deg, #003399 0%, #1A73E8 50%, #78BE20 100%)',
                                     WebkitBackgroundClip: 'text',
                                     WebkitTextFillColor: 'transparent',
                                     mb: 1,
-                                    fontSize: { xs: '2rem', sm: '2.5rem' },
                                     letterSpacing: '0.02em',
-                                    '@keyframes glow': {
-                                        '0%, 100%': { filter: 'brightness(1)' },
-                                        '50%': { filter: 'brightness(1.3)' },
-                                    },
-                                    animation: 'glow 3s ease-in-out infinite',
                                 }}
                             >
                                 OPEX MANAGER
@@ -95,18 +91,19 @@ const Login = () => {
                             <Typography
                                 variant="h6"
                                 sx={{
-                                    color: '#B8C5D0',
+                                    color: '#374151',
                                     fontWeight: 500,
                                     mb: 1,
+                                    fontFamily: '"Poppins", sans-serif',
                                 }}
                             >
-                                Powered by Neno Banana Pro AI
+                                Jubilant Pharma
                             </Typography>
                             <Typography
                                 variant="body2"
                                 sx={{
-                                    color: '#B8C5D0',
-                                    opacity: 0.8,
+                                    color: '#9CA3AF',
+                                    opacity: 0.9,
                                 }}
                             >
                                 Sign in to manage your operational expenses
@@ -118,9 +115,9 @@ const Login = () => {
                                 severity="error"
                                 sx={{
                                     mb: 3,
-                                    background: 'linear-gradient(135deg, rgba(255, 51, 102, 0.2) 0%, rgba(204, 0, 51, 0.2) 100%)',
-                                    border: '1px solid #FF3366',
-                                    color: '#FF3366',
+                                    background: 'rgba(220, 38, 38, 0.1)',
+                                    border: '1px solid #DC2626',
+                                    color: '#DC2626',
                                     borderRadius: 2,
                                 }}
                             >
@@ -142,22 +139,22 @@ const Login = () => {
                                     mb: 2,
                                     '& .MuiOutlinedInput-root': {
                                         '& fieldset': {
-                                            borderColor: 'rgba(255, 215, 0, 0.3)',
+                                            borderColor: 'rgba(0, 51, 153, 0.3)',
                                             borderWidth: '2px',
                                         },
                                         '&:hover fieldset': {
-                                            borderColor: '#FFD700',
-                                            boxShadow: '0 0 8px rgba(255, 215, 0, 0.3)',
+                                            borderColor: '#003399',
+                                            boxShadow: '0 0 8px rgba(0, 51, 153, 0.3)',
                                         },
                                         '&.Mui-focused fieldset': {
-                                            borderColor: '#FFD700',
-                                            boxShadow: '0 0 12px rgba(255, 215, 0, 0.5)',
+                                            borderColor: '#003399',
+                                            boxShadow: '0 0 12px rgba(0, 51, 153, 0.5)',
                                         },
                                     },
                                     '& .MuiInputLabel-root': {
-                                        color: '#B8C5D0',
+                                        color: '#374151',
                                         '&.Mui-focused': {
-                                            color: '#FFD700',
+                                            color: '#003399',
                                         },
                                     },
                                 }}
@@ -174,22 +171,22 @@ const Login = () => {
                                     mb: 3,
                                     '& .MuiOutlinedInput-root': {
                                         '& fieldset': {
-                                            borderColor: 'rgba(255, 215, 0, 0.3)',
+                                            borderColor: 'rgba(0, 51, 153, 0.3)',
                                             borderWidth: '2px',
                                         },
                                         '&:hover fieldset': {
-                                            borderColor: '#FFD700',
-                                            boxShadow: '0 0 8px rgba(255, 215, 0, 0.3)',
+                                            borderColor: '#003399',
+                                            boxShadow: '0 0 8px rgba(0, 51, 153, 0.3)',
                                         },
                                         '&.Mui-focused fieldset': {
-                                            borderColor: '#FFD700',
-                                            boxShadow: '0 0 12px rgba(255, 215, 0, 0.5)',
+                                            borderColor: '#003399',
+                                            boxShadow: '0 0 12px rgba(0, 51, 153, 0.5)',
                                         },
                                     },
                                     '& .MuiInputLabel-root': {
-                                        color: '#B8C5D0',
+                                        color: '#374151',
                                         '&.Mui-focused': {
-                                            color: '#FFD700',
+                                            color: '#003399',
                                         },
                                     },
                                 }}
@@ -206,9 +203,9 @@ const Login = () => {
                                     fontWeight: 700,
                                     fontSize: '1rem',
                                     borderRadius: '12px',
-                                    background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                                    color: '#1a1a2e',
-                                    boxShadow: '0 4px 16px rgba(255, 215, 0, 0.4)',
+                                    background: 'linear-gradient(135deg, #003399 0%, #1A73E8 100%)',
+                                    color: '#FFFFFF',
+                                    boxShadow: '0 4px 16px rgba(0, 51, 153, 0.4)',
                                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                     position: 'relative',
                                     overflow: 'hidden',
@@ -230,8 +227,8 @@ const Login = () => {
                                     },
                                     '&:hover': {
                                         transform: 'translateY(-2px) scale(1.02)',
-                                        boxShadow: '0 8px 24px rgba(255, 215, 0, 0.6)',
-                                        background: 'linear-gradient(135deg, #FFE44D 0%, #FFB84D 100%)',
+                                        boxShadow: '0 8px 24px rgba(0, 51, 153, 0.6)',
+                                        background: 'linear-gradient(135deg, #1A73E8 0%, #003399 100%)',
                                     },
                                     '&:active': {
                                         transform: 'translateY(0) scale(0.98)',
@@ -247,14 +244,14 @@ const Login = () => {
                                 mt: 3,
                                 p: 2,
                                 borderRadius: 2,
-                                background: 'rgba(255, 215, 0, 0.05)',
-                                border: '1px solid rgba(255, 215, 0, 0.2)',
+                                background: 'rgba(0, 51, 153, 0.05)',
+                                border: '1px solid rgba(0, 51, 153, 0.2)',
                             }}
                         >
                             <Typography
                                 variant="caption"
                                 sx={{
-                                    color: '#B8C5D0',
+                                    color: '#374151',
                                     display: 'block',
                                     textAlign: 'center',
                                     fontWeight: 500,
@@ -265,13 +262,13 @@ const Login = () => {
                             <Typography
                                 variant="body2"
                                 sx={{
-                                    color: '#FFD700',
+                                    color: '#003399',
                                     textAlign: 'center',
                                     fontWeight: 600,
                                     mt: 0.5,
                                 }}
                             >
-                                admin@example.com / admin123
+                                admin@example.com / password123
                             </Typography>
                         </Box>
                     </CardContent>

@@ -202,31 +202,82 @@ const MasterData = () => {
     // 8. Currency Rates
     const [openRateDialog, setOpenRateDialog] = useState(false);
     const [rateFormData, setRateFormData] = useState({ id: null, from_currency: 'USD', to_currency: 'INR', rate: '' });
+
     const handleRateSubmit = async () => {
         try {
             const token = localStorage.getItem('token');
+            // Assuming the backend uses POST for upsert as per routes
             await axios.post('/api/currency-rates', rateFormData, { headers: { Authorization: `Bearer ${token}` } });
-            setSnackbar({ open: true, message: 'Rate saved', severity: 'success' });
-            setOpenRateDialog(false); fetchMasterData();
-        } catch (error) { setSnackbar({ open: true, message: error.response?.data?.message || 'Error saving rate', severity: 'error' }); }
+            setSnackbar({ open: true, message: 'Currency Rate saved', severity: 'success' });
+            setOpenRateDialog(false);
+            fetchMasterData();
+        } catch (error) {
+            setSnackbar({ open: true, message: error.response?.data?.message || 'Error saving rate', severity: 'error' });
+        }
     };
+
     const handleDeleteRate = async (id) => {
-        if (!window.confirm('Delete rate?')) return;
+        if (!window.confirm('Delete Rate?')) return;
         try {
             const token = localStorage.getItem('token');
             await axios.delete(`/api/currency-rates/${id}`, { headers: { Authorization: `Bearer ${token}` } });
-            setSnackbar({ open: true, message: 'Deleted', severity: 'success' }); fetchMasterData();
-        } catch (error) { setSnackbar({ open: true, message: 'Error deleting', severity: 'error' }); }
+            setSnackbar({ open: true, message: 'Deleted', severity: 'success' });
+            fetchMasterData();
+        } catch (error) {
+            setSnackbar({ open: true, message: 'Error deleting', severity: 'error' });
+        }
     };
+
     const openAddRate = () => { setRateFormData({ id: null, from_currency: 'USD', to_currency: 'INR', rate: '' }); setOpenRateDialog(true); };
-    const openEditRate = (item) => { setRateFormData({ id: item.id, from_currency: item.from_currency, to_currency: item.to_currency, rate: item.rate }); setOpenRateDialog(true); };
+    const openEditRate = (item) => { setRateFormData(item); setOpenRateDialog(true); };
+
+    // 9. Fiscal Years
+    const [openFYDialog, setOpenFYDialog] = useState(false);
+    const [fyFormData, setFYFormData] = useState({ id: null, label: '', start_date: '', end_date: '', is_active: true });
+    const [fiscalYears, setFiscalYears] = useState([]);
+
+    const handleFYSubmit = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const url = '/api/fiscal-years' + (fyFormData.id ? `/${fyFormData.id}` : ''); // Note: Edit might not be fully supported by backend yet, mostly Create and Toggle
+            // Backend currently supports POST / and PATCH /:id/status. 
+            // We will use POST for create. For edit, we might need to add a route or just support create.
+            // Given user request "with same logic", mostly likely toggle is key, but adding new FY is good.
+
+            if (fyFormData.id) {
+                // If ID exists, it's an edit - but we only have toggle status endpoint or we need to add UPDATE endpoint.
+                // For now, let's assume we can only create or toggle. 
+                // Or better, let's use the toggle logic if it's just status, but for full edit we need backend support.
+                // Use POST for creation.
+                showSnackbar('Editing details not fully supported, primarily for Status Toggle', 'info');
+            } else {
+                await axios.post('/api/fiscal-years', fyFormData, { headers: { Authorization: `Bearer ${token}` } });
+                setSnackbar({ open: true, message: 'Fiscal Year created', severity: 'success' });
+            }
+            setOpenFYDialog(false); fetchMasterData();
+        } catch (error) { setSnackbar({ open: true, message: error.response?.data?.message || 'Error saving FY', severity: 'error' }); }
+    };
+
+    const handleToggleFYStatus = async (id, currentStatus) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.patch(`/api/fiscal-years/${id}/status`,
+                { is_active: !currentStatus },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            fetchMasterData();
+            setSnackbar({ open: true, message: 'Status updated', severity: 'success' });
+        } catch (error) { setSnackbar({ open: true, message: 'Error updating status', severity: 'error' }); }
+    };
+
+    const openAddFY = () => { setFYFormData({ id: null, label: '', start_date: '', end_date: '', is_active: true }); setOpenFYDialog(true); };
 
     useEffect(() => { fetchMasterData(); }, []);
     const fetchMasterData = async () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const [towersRes, budgetHeadsRes, vendorsRes, costCentresRes, poEntitiesRes, serviceTypesRes, allocationBasesRes, currencyRatesRes]
+            const [towersRes, budgetHeadsRes, vendorsRes, costCentresRes, poEntitiesRes, serviceTypesRes, allocationBasesRes, currencyRatesRes, fiscalYearsRes]
                 = await Promise.all([
                     axios.get('/api/master/towers', config),
                     axios.get('/api/master/budget-heads', config),
@@ -235,7 +286,8 @@ const MasterData = () => {
                     axios.get('/api/master/po-entities', config),
                     axios.get('/api/master/service-types', config),
                     axios.get('/api/master/allocation-bases', config),
-                    axios.get('/api/currency-rates', config)
+                    axios.get('/api/currency-rates', config),
+                    axios.get('/api/fiscal-years', config)
                 ]);
             setTowers(towersRes.data);
             setBudgetHeads(budgetHeadsRes.data);
@@ -245,6 +297,7 @@ const MasterData = () => {
             setServiceTypes(serviceTypesRes.data);
             setAllocationBases(allocationBasesRes.data);
             setCurrencyRates(currencyRatesRes.data);
+            setFiscalYears(fiscalYearsRes.data);
         } catch (error) { console.error('Error fetching data:', error); }
     };
 
@@ -255,6 +308,7 @@ const MasterData = () => {
             </Box>
             <Paper elevation={2}>
                 <Tabs value={tab} onChange={(e, v) => setTab(v)} sx={{ borderBottom: 1, borderColor: 'divider' }} variant="scrollable" scrollButtons="auto">
+                    <Tab label="Fiscal Years" />
                     <Tab label="Towers" />
                     <Tab label="Budget Heads" />
                     <Tab label="Vendors" />
@@ -266,6 +320,49 @@ const MasterData = () => {
                 </Tabs>
 
                 {tab === 0 && (
+                    <Box>
+                        {isAdmin && (
+                            <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end' }}>
+                                <Button variant="contained" startIcon={<Add />} onClick={openAddFY}>Add Fiscal Year</Button>
+                            </Box>
+                        )}
+                        <TableContainer>
+                            <Table>
+                                <TableHead><TableRow sx={{ backgroundColor: 'primary.main' }}>
+                                    <TableCell sx={{ fontWeight: 600, color: 'white' }}>Name</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, color: 'white' }}>Start Date</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, color: 'white' }}>End Date</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, color: 'white' }}>Status</TableCell>
+                                    {isAdmin && <TableCell sx={{ fontWeight: 600, color: 'white' }}>Actions</TableCell>}
+                                </TableRow></TableHead>
+                                <TableBody>{fiscalYears.map((item) => (
+                                    <TableRow key={item.id} hover>
+                                        <TableCell>{item.label || item.name}</TableCell>
+                                        <TableCell>{new Date(item.startDate || item.start_date).toLocaleDateString()}</TableCell>
+                                        <TableCell>{new Date(item.endDate || item.end_date).toLocaleDateString()}</TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant={item.isActive || item.is_active ? "contained" : "outlined"}
+                                                color={item.isActive || item.is_active ? "success" : "error"}
+                                                size="small"
+                                                onClick={() => handleToggleFYStatus(item.id, item.isActive || item.is_active)}
+                                            >
+                                                {item.isActive || item.is_active ? "Active" : "Inactive"}
+                                            </Button>
+                                        </TableCell>
+                                        {isAdmin && (
+                                            <TableCell>
+                                                {/* Edit not fully implemented in backend yet */}
+                                            </TableCell>
+                                        )}
+                                    </TableRow>
+                                ))}</TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
+                )}
+
+                {tab === 1 && (
                     <Box>
                         {isAdmin && (
                             <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end' }}>
@@ -525,6 +622,20 @@ const MasterData = () => {
                     </Box>
                 )}
             </Paper>
+
+            <Dialog open={openFYDialog} onClose={() => setOpenFYDialog(false)}>
+                <DialogTitle>{fyFormData.id ? 'Edit Fiscal Year' : 'Add Fiscal Year'}</DialogTitle>
+                <DialogContent>
+                    <TextField autoFocus margin="dense" label="Name (e.g., FY26)" fullWidth value={fyFormData.label} onChange={(e) => setFYFormData({ ...fyFormData, label: e.target.value })} sx={{ mb: 2 }} />
+                    <TextField margin="dense" type="date" label="Start Date" fullWidth value={fyFormData.start_date} onChange={(e) => setFYFormData({ ...fyFormData, start_date: e.target.value })} InputLabelProps={{ shrink: true }} sx={{ mb: 2 }} />
+                    <TextField margin="dense" type="date" label="End Date" fullWidth value={fyFormData.end_date} onChange={(e) => setFYFormData({ ...fyFormData, end_date: e.target.value })} InputLabelProps={{ shrink: true }} sx={{ mb: 2 }} />
+                    {/* Active status is default true for new creation usually, or managed via table toggle */}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenFYDialog(false)}>Cancel</Button>
+                    <Button onClick={handleFYSubmit} variant="contained">Save</Button>
+                </DialogActions>
+            </Dialog>
 
             <Dialog open={openTowerDialog} onClose={() => setOpenTowerDialog(false)}>
                 <DialogTitle>{towerFormData.id ? 'Edit Tower' : 'Add Tower'}</DialogTitle>

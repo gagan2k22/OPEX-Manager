@@ -30,7 +30,7 @@ class POService {
             // 1. Create PO
             const po = await tx.pO.create({
                 data: {
-                    poNumber,
+                    poNumber: parseInt(poNumber),
                     poDate: new Date(poDate),
                     vendorId: parseInt(vendorId),
                     currency,
@@ -39,7 +39,7 @@ class POService {
                     commonCurrencyValue,
                     valueInLac,
                     status: 'Draft',
-                    prNumber,
+                    prNumber: prNumber ? parseInt(prNumber) : null,
                     prDate: prDate ? new Date(prDate) : null,
                     towerId: towerId ? parseInt(towerId) : null,
                     budgetHeadId: budgetHeadId ? parseInt(budgetHeadId) : null,
@@ -112,6 +112,8 @@ class POService {
         if (updateData.budgetHeadId) updateData.budgetHeadId = parseInt(updateData.budgetHeadId);
         if (updateData.poValue) updateData.poValue = parseFloat(updateData.poValue);
         if (updateData.exchangeRate) updateData.exchangeRate = parseFloat(updateData.exchangeRate);
+        if (updateData.poNumber) updateData.poNumber = parseInt(updateData.poNumber);
+        if (updateData.prNumber) updateData.prNumber = parseInt(updateData.prNumber);
 
         return await prisma.$transaction(async (tx) => {
             // 1. Update PO
@@ -185,10 +187,14 @@ class POService {
 
         const where = {};
         if (search) {
-            where.OR = [
-                { poNumber: { contains: search } },
-                { prNumber: { contains: search } }
-            ];
+            // Try to parse as integer for PO/PR number search
+            const searchInt = parseInt(search);
+            if (!isNaN(searchInt)) {
+                where.OR = [
+                    { poNumber: searchInt },
+                    { prNumber: searchInt }
+                ];
+            }
         }
         if (status) where.status = status;
         if (vendorId) where.vendorId = parseInt(vendorId);

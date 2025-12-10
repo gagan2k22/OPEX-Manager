@@ -230,27 +230,24 @@ const POForm = () => {
                         type="submit"
                         form="po-form"
                         disabled={loading}
-                        startIcon={loading ? <CircularProgress size={18} sx={{ color: '#1a1a2e' }} /> : <Save />}
+                        startIcon={loading ? <CircularProgress size={18} sx={{ color: '#FFFFFF' }} /> : <Save />}
                         size="medium"
                         sx={{
                             px: 4,
                             py: 1,
                             fontWeight: 700,
                             fontSize: '0.95rem',
-                            background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                            color: '#1a1a2e',
-                            boxShadow: '0 4px 12px rgba(255, 215, 0, 0.5)',
-                            border: '2px solid #FFD700',
+                            background: '#78BE20',
+                            color: '#FFFFFF',
+                            boxShadow: '0 4px 12px rgba(120, 190, 32, 0.4)',
                             '&:hover': {
-                                background: 'linear-gradient(135deg, #FFA500 0%, #FF8C00 100%)',
-                                boxShadow: '0 6px 16px rgba(255, 165, 0, 0.7)',
+                                background: '#A3E635',
+                                boxShadow: '0 6px 16px rgba(120, 190, 32, 0.6)',
                                 transform: 'translateY(-2px)',
-                                border: '2px solid #FFA500',
                             },
                             '&:disabled': {
-                                background: 'rgba(255, 215, 0, 0.3)',
-                                color: 'rgba(26, 26, 46, 0.5)',
-                                border: '2px solid rgba(255, 215, 0, 0.3)'
+                                background: 'rgba(120, 190, 32, 0.3)',
+                                color: 'rgba(255, 255, 255, 0.5)',
                             },
                             transition: 'all 0.3s ease'
                         }}
@@ -267,7 +264,7 @@ const POForm = () => {
                     {/* LEFT SIDE - COMPACT SUMMARY */}
                     <Grid item xs={12} lg={3.5}>
                         <Paper sx={{ p: 2, height: '100%' }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#FFD700', mb: 1.5, fontSize: '0.75rem' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#003399', mb: 1.5, fontSize: '0.75rem' }}>
                                 SUMMARY
                             </Typography>
 
@@ -295,7 +292,7 @@ const POForm = () => {
                                     </Box>
                                 </Box>
 
-                                <Box sx={{ borderTop: '1px solid rgba(255, 215, 0, 0.2)', pt: 1.5 }}>
+                                <Box sx={{ borderTop: '1px solid rgba(0, 51, 153, 0.2)', pt: 1.5 }}>
                                     <Typography variant="caption" sx={{ color: '#B8C5D0', fontSize: '0.7rem', mb: 0.5, display: 'block' }}>
                                         Financial
                                     </Typography>
@@ -309,17 +306,17 @@ const POForm = () => {
                                             </Typography>
                                         </Box>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <Typography variant="caption" sx={{ fontSize: '0.7rem', color: '#00D9FF' }}>
+                                            <Typography variant="caption" sx={{ fontSize: '0.7rem', color: '#78BE20' }}>
                                                 INR Value
                                             </Typography>
-                                            <Typography variant="caption" sx={{ fontWeight: 700, fontSize: '0.7rem', color: '#00D9FF' }}>
+                                            <Typography variant="caption" sx={{ fontWeight: 700, fontSize: '0.7rem', color: '#78BE20' }}>
                                                 ₹{new Intl.NumberFormat('en-IN').format(summary.commonCurrencyValue.toFixed(0))}
                                             </Typography>
                                         </Box>
                                     </Stack>
                                 </Box>
 
-                                <Box sx={{ borderTop: '1px solid rgba(255, 215, 0, 0.2)', pt: 1.5 }}>
+                                <Box sx={{ borderTop: '1px solid rgba(0, 51, 153, 0.2)', pt: 1.5 }}>
                                     <Typography variant="caption" sx={{ color: '#B8C5D0', fontSize: '0.7rem', mb: 0.5, display: 'block' }}>
                                         Allocation
                                     </Typography>
@@ -360,20 +357,20 @@ const POForm = () => {
                                                 <Typography variant="caption" sx={{ fontSize: '0.65rem', color: '#B8C5D0' }}>
                                                     Progress
                                                 </Typography>
-                                                <Typography variant="caption" sx={{ fontSize: '0.65rem', color: '#FFD700', fontWeight: 600 }}>
+                                                <Typography variant="caption" sx={{ fontSize: '0.65rem', color: '#003399', fontWeight: 600 }}>
                                                     {summary.allocationPercentage.toFixed(0)}%
                                                 </Typography>
                                             </Box>
                                             <Box sx={{
                                                 height: 6,
                                                 borderRadius: 1,
-                                                background: 'rgba(255, 215, 0, 0.1)',
+                                                background: 'rgba(0, 51, 153, 0.1)',
                                                 overflow: 'hidden'
                                             }}>
                                                 <Box sx={{
                                                     height: '100%',
                                                     width: `${Math.min(summary.allocationPercentage, 100)}%`,
-                                                    background: 'linear-gradient(90deg, #FFD700 0%, #00FF88 100%)',
+                                                    background: 'linear-gradient(90deg, #003399 0%, #78BE20 100%)',
                                                     transition: 'width 0.3s ease'
                                                 }} />
                                             </Box>
@@ -403,13 +400,13 @@ const POForm = () => {
                                             <TableCell
                                                 colSpan={4}
                                                 sx={{
-                                                    background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                                                    color: '#1a1a2e',
+                                                    background: '#003399',
+                                                    color: '#FFFFFF',
                                                     fontWeight: 700,
                                                     fontSize: '0.75rem',
                                                     textTransform: 'uppercase',
                                                     letterSpacing: '0.5px',
-                                                    borderBottom: '2px solid #00D9FF',
+                                                    borderBottom: '2px solid #78BE20',
                                                     py: 1
                                                 }}
                                             >
@@ -419,7 +416,7 @@ const POForm = () => {
                                     </TableHead>
                                     <TableBody>
                                         <TableRow>
-                                            <TableCell sx={{ fontWeight: 600, width: '15%', bgcolor: 'rgba(255, 215, 0, 0.05)', fontSize: '0.7rem' }}>
+                                            <TableCell sx={{ fontWeight: 600, width: '15%', bgcolor: 'rgba(0, 51, 153, 0.05)', fontSize: '0.7rem' }}>
                                                 Tower
                                             </TableCell>
                                             <TableCell sx={{ width: '35%' }}>
@@ -439,7 +436,7 @@ const POForm = () => {
                                                     ))}
                                                 </TextField>
                                             </TableCell>
-                                            <TableCell sx={{ fontWeight: 600, width: '15%', bgcolor: 'rgba(255, 215, 0, 0.05)', fontSize: '0.7rem' }}>
+                                            <TableCell sx={{ fontWeight: 600, width: '15%', bgcolor: 'rgba(0, 51, 153, 0.05)', fontSize: '0.7rem' }}>
                                                 Budget Head
                                             </TableCell>
                                             <TableCell sx={{ width: '35%' }}>
@@ -461,7 +458,7 @@ const POForm = () => {
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell sx={{ fontWeight: 600, bgcolor: 'rgba(255, 215, 0, 0.05)', fontSize: '0.7rem' }}>
+                                            <TableCell sx={{ fontWeight: 600, bgcolor: 'rgba(0, 51, 153, 0.05)', fontSize: '0.7rem' }}>
                                                 PR Number
                                             </TableCell>
                                             <TableCell>
@@ -476,7 +473,7 @@ const POForm = () => {
                                                     sx={{ '& .MuiInputBase-input': { fontSize: '0.75rem' } }}
                                                 />
                                             </TableCell>
-                                            <TableCell sx={{ fontWeight: 600, bgcolor: 'rgba(255, 215, 0, 0.05)', fontSize: '0.7rem' }}>
+                                            <TableCell sx={{ fontWeight: 600, bgcolor: 'rgba(0, 51, 153, 0.05)', fontSize: '0.7rem' }}>
                                                 PR Date
                                             </TableCell>
                                             <TableCell>
@@ -504,13 +501,13 @@ const POForm = () => {
                                             <TableCell
                                                 colSpan={4}
                                                 sx={{
-                                                    background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                                                    color: '#1a1a2e',
+                                                    background: '#003399',
+                                                    color: '#FFFFFF',
                                                     fontWeight: 700,
                                                     fontSize: '0.75rem',
                                                     textTransform: 'uppercase',
                                                     letterSpacing: '0.5px',
-                                                    borderBottom: '2px solid #00D9FF',
+                                                    borderBottom: '2px solid #78BE20',
                                                     py: 1
                                                 }}
                                             >
@@ -520,7 +517,7 @@ const POForm = () => {
                                     </TableHead>
                                     <TableBody>
                                         <TableRow>
-                                            <TableCell sx={{ fontWeight: 600, width: '15%', bgcolor: 'rgba(255, 215, 0, 0.05)', fontSize: '0.7rem' }}>
+                                            <TableCell sx={{ fontWeight: 600, width: '15%', bgcolor: 'rgba(0, 51, 153, 0.05)', fontSize: '0.7rem' }}>
                                                 Currency
                                             </TableCell>
                                             <TableCell sx={{ width: '35%' }}>
@@ -541,7 +538,7 @@ const POForm = () => {
                                                     <MenuItem value="CAD">CAD</MenuItem>
                                                 </TextField>
                                             </TableCell>
-                                            <TableCell sx={{ fontWeight: 600, width: '15%', bgcolor: 'rgba(255, 215, 0, 0.05)', fontSize: '0.7rem' }}>
+                                            <TableCell sx={{ fontWeight: 600, width: '15%', bgcolor: 'rgba(0, 51, 153, 0.05)', fontSize: '0.7rem' }}>
                                                 PO Value *
                                             </TableCell>
                                             <TableCell sx={{ width: '35%' }}>
@@ -560,7 +557,7 @@ const POForm = () => {
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell sx={{ fontWeight: 600, bgcolor: 'rgba(255, 215, 0, 0.05)', fontSize: '0.7rem' }}>
+                                            <TableCell sx={{ fontWeight: 600, bgcolor: 'rgba(0, 51, 153, 0.05)', fontSize: '0.7rem' }}>
                                                 Exchange Rate (Auto)
                                             </TableCell>
                                             <TableCell colSpan={3}>
@@ -577,7 +574,7 @@ const POForm = () => {
                                                     sx={{
                                                         '& .MuiInputBase-input': { fontSize: '0.75rem' },
                                                         '& .Mui-disabled': {
-                                                            WebkitTextFillColor: '#00D9FF !important',
+                                                            WebkitTextFillColor: '#78BE20 !important',
                                                             fontWeight: 600
                                                         }
                                                     }}
@@ -597,13 +594,13 @@ const POForm = () => {
                                             <TableCell
                                                 colSpan={4}
                                                 sx={{
-                                                    background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                                                    color: '#1a1a2e',
+                                                    background: '#003399',
+                                                    color: '#FFFFFF',
                                                     fontWeight: 700,
                                                     fontSize: '0.75rem',
                                                     textTransform: 'uppercase',
                                                     letterSpacing: '0.5px',
-                                                    borderBottom: '2px solid #00D9FF',
+                                                    borderBottom: '2px solid #78BE20',
                                                     py: 1
                                                 }}
                                             >
@@ -613,7 +610,7 @@ const POForm = () => {
                                     </TableHead>
                                     <TableBody>
                                         <TableRow>
-                                            <TableCell sx={{ fontWeight: 600, width: '15%', bgcolor: 'rgba(255, 215, 0, 0.05)', fontSize: '0.7rem' }}>
+                                            <TableCell sx={{ fontWeight: 600, width: '15%', bgcolor: 'rgba(0, 51, 153, 0.05)', fontSize: '0.7rem' }}>
                                                 PO Number *
                                             </TableCell>
                                             <TableCell sx={{ width: '35%' }}>
@@ -629,7 +626,7 @@ const POForm = () => {
                                                     sx={{ '& .MuiInputBase-input': { fontSize: '0.75rem' } }}
                                                 />
                                             </TableCell>
-                                            <TableCell sx={{ fontWeight: 600, width: '15%', bgcolor: 'rgba(255, 215, 0, 0.05)', fontSize: '0.7rem' }}>
+                                            <TableCell sx={{ fontWeight: 600, width: '15%', bgcolor: 'rgba(0, 51, 153, 0.05)', fontSize: '0.7rem' }}>
                                                 PO Date *
                                             </TableCell>
                                             <TableCell sx={{ width: '35%' }}>
@@ -647,7 +644,7 @@ const POForm = () => {
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
-                                            <TableCell sx={{ fontWeight: 600, bgcolor: 'rgba(255, 215, 0, 0.05)', fontSize: '0.7rem' }}>
+                                            <TableCell sx={{ fontWeight: 600, bgcolor: 'rgba(0, 51, 153, 0.05)', fontSize: '0.7rem' }}>
                                                 Vendor *
                                             </TableCell>
                                             <TableCell>
@@ -668,7 +665,7 @@ const POForm = () => {
                                                     ))}
                                                 </TextField>
                                             </TableCell>
-                                            <TableCell sx={{ fontWeight: 600, bgcolor: 'rgba(255, 215, 0, 0.05)', fontSize: '0.7rem' }}>
+                                            <TableCell sx={{ fontWeight: 600, bgcolor: 'rgba(0, 51, 153, 0.05)', fontSize: '0.7rem' }}>
                                                 Status
                                             </TableCell>
                                             <TableCell>

@@ -142,6 +142,18 @@ const createLineItem = async (req, res) => {
             return res.status(404).json({ message: 'Budget Head not found', budget_head_id: numericFields.budget_head_id });
         }
 
+        // Helper to get Fiscal Year ID
+        const getFiscalYearId = async (yearInput) => {
+            if (!yearInput) return null;
+            const yearNum = parseInt(yearInput);
+            const shortYear = yearNum > 2000 ? yearNum - 2000 : yearNum; // Handle 2025 -> 25
+            const name = `FY${shortYear}`;
+            const fy = await prisma.fiscalYear.findUnique({ where: { name } });
+            return fy ? fy.id : null;
+        };
+
+        const fiscalYearId = await getFiscalYearId(fiscal_year);
+
         // Map total_cost to the appropriate fiscal year allocation field
         const fyYear = fiscal_year ? parseInt(fiscal_year) : null;
         const allocationData = {
@@ -154,12 +166,9 @@ const createLineItem = async (req, res) => {
             data: {
                 uid,
                 parentUid: parent_uid || null,
-                // po_id is not directly on LineItem in new schema, linked via relation? 
-                // schema says: pos PO[] @relation("PO_LineItems")
-                // but imported data might have contractId string
                 contractId: req.body.contract_id || null,
                 vendorId: numericFields.vendor_id,
-                description: service_description, // Schema has 'description'
+                description: service_description,
                 serviceStartDate: service_start_date ? new Date(service_start_date) : null,
                 serviceEndDate: service_end_date ? new Date(service_end_date) : null,
                 towerId: numericFields.tower_id,
@@ -167,11 +176,8 @@ const createLineItem = async (req, res) => {
                 poEntityId: po_entity_id ? parseInt(po_entity_id) : null,
                 serviceTypeId: service_type_id ? parseInt(service_type_id) : null,
                 allocationBasisId: allocation_basis_id ? parseInt(allocation_basis_id) : null,
-                // is_renewal: Boolean(is_renewal), // Removed from schema? checking...
-                // unit_cost: numericFields.unit_cost, // Removed?
-                // quantity: numericFields.quantity, // Removed?
-                totalBudget: numericFields.total_cost, // Schema has totalBudget
-                fiscalYearId: fyYear, // Schema has fiscalYearId
+                totalBudget: numericFields.total_cost,
+                fiscalYearId: fiscalYearId,
                 remarks: remarks || null
             },
             include: {
@@ -187,7 +193,6 @@ const createLineItem = async (req, res) => {
         res.status(201).json(lineItem);
     } catch (error) {
         console.error('Error creating line item:', error);
-        // ... (error handling)
         res.status(500).json({
             message: 'Error creating line item',
             error: error.message
@@ -219,8 +224,15 @@ const updateLineItem = async (req, res) => {
         if (service_type_id) updateData.serviceTypeId = parseInt(service_type_id);
         if (allocation_basis_id) updateData.allocationBasisId = parseInt(allocation_basis_id);
         if (total_cost) updateData.totalBudget = parseFloat(total_cost);
-        if (fiscal_year) updateData.fiscalYearId = parseInt(fiscal_year); // Assuming ID passed
         if (remarks !== undefined) updateData.remarks = remarks;
+
+        if (fiscal_year) {
+            const yearNum = parseInt(fiscal_year);
+            const shortYear = yearNum > 2000 ? yearNum - 2000 : yearNum;
+            const name = `FY${shortYear}`;
+            const fy = await prisma.fiscalYear.findUnique({ where: { name } });
+            if (fy) updateData.fiscalYearId = fy.id;
+        }
 
         const lineItem = await prisma.lineItem.update({
             where: { id: parseInt(id) },

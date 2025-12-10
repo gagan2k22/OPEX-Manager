@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import BudgetList from './pages/BudgetList';
+// import BudgetListNew from './pages/BudgetListNew';
 import BudgetMonthlyView from './pages/BudgetMonthlyView';
 import BudgetDetail from './pages/BudgetDetail';
 import POList from './pages/POList';
@@ -15,7 +16,7 @@ import UserManagement from './pages/UserManagement';
 import ActualBOA from './pages/ActualBOA';
 import BudgetBOA from './pages/BudgetBOA';
 import { ThemeProvider, CssBaseline } from '@mui/material';
-import theme from './theme';
+import jubilantTheme from './theme/jubilantTheme';
 
 const ProtectedRoute = ({ children }) => {
     const { token } = useAuth();
@@ -25,7 +26,7 @@ const ProtectedRoute = ({ children }) => {
 function App() {
     return (
         <AuthProvider>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={jubilantTheme}>
                 <CssBaseline />
                 <Router>
                     <Routes>

@@ -3,10 +3,19 @@ const prisma = require('../prisma');
 const getFiscalYears = async (req, res) => {
     try {
         const fiscalYears = await prisma.fiscalYear.findMany({
-            orderBy: { year: 'asc' }
+            orderBy: { name: 'asc' }
         });
-        res.json(fiscalYears);
+
+        // Map to format expected by frontend (which expects 'label')
+        const formattedYears = fiscalYears.map(fy => ({
+            ...fy,
+            label: fy.name,
+            year: parseInt(fy.name.replace(/\D/g, '')) + 2000 // Approximate year from FYxx
+        }));
+
+        res.json(formattedYears);
     } catch (error) {
+        console.error('Error fetching fiscal years:', error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -18,32 +27,32 @@ const toggleFiscalYearStatus = async (req, res) => {
 
         const fiscalYear = await prisma.fiscalYear.update({
             where: { id: parseInt(id) },
-            data: { is_active }
+            data: { isActive: is_active } // Schema uses isActive, frontend sends is_active
         });
 
         res.json(fiscalYear);
     } catch (error) {
+        console.error('Error toggling fiscal year:', error);
         res.status(500).json({ message: error.message });
     }
 };
 
 const createFiscalYear = async (req, res) => {
     try {
-        const { year, label, description, start_date, end_date, is_active } = req.body;
+        const { label, start_date, end_date, is_active } = req.body;
 
         const fiscalYear = await prisma.fiscalYear.create({
             data: {
-                year: parseInt(year),
-                label,
-                description,
-                start_date: new Date(start_date),
-                end_date: new Date(end_date),
-                is_active: is_active !== undefined ? is_active : true
+                name: label, // Map label to name
+                startDate: new Date(start_date),
+                endDate: new Date(end_date),
+                isActive: is_active !== undefined ? is_active : true
             }
         });
 
         res.status(201).json(fiscalYear);
     } catch (error) {
+        console.error('Error creating fiscal year:', error);
         res.status(500).json({ message: error.message });
     }
 };

@@ -29,6 +29,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import NenoHelper from './NenoHelper';
 
 const Layout = () => {
     const navigate = useNavigate();
@@ -307,6 +308,7 @@ const Layout = () => {
             >
                 <Outlet />
             </Box>
+            <NenoHelper />
         </Box>
     );
 };

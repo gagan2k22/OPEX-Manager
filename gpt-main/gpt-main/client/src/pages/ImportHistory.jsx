@@ -1,18 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Box,
     Typography,
     Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
     Chip,
     CircularProgress,
     Alert
 } from '@mui/material';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { CheckCircle, Error as ErrorIcon, Schedule } from '@mui/icons-material';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -42,6 +37,81 @@ const ImportHistory = () => {
         }
     };
 
+    const columns = useMemo(() => [
+        {
+            field: 'createdAt',
+            headerName: 'Date',
+            width: 180,
+            valueFormatter: (params) => new Date(params.value).toLocaleString()
+        },
+        {
+            field: 'importType',
+            headerName: 'Type',
+            width: 120,
+            renderCell: (params) => (
+                <Chip
+                    label={params.value === 'budgets' ? 'Budget' : 'Actuals'}
+                    color={params.value === 'budgets' ? 'primary' : 'secondary'}
+                    size="small"
+                    variant="outlined"
+                />
+            )
+        },
+        {
+            field: 'filename',
+            headerName: 'Filename',
+            width: 250
+        },
+        {
+            field: 'user',
+            headerName: 'User',
+            width: 150,
+            valueGetter: (params) => params.row.user?.name || 'Unknown'
+        },
+        {
+            field: 'rowsTotal',
+            headerName: 'Rows',
+            width: 100,
+            type: 'number',
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            field: 'rowsAccepted',
+            headerName: 'Accepted',
+            width: 100,
+            type: 'number',
+            align: 'center',
+            headerAlign: 'center',
+            cellClassName: 'success-cell'
+        },
+        {
+            field: 'rowsRejected',
+            headerName: 'Rejected',
+            width: 100,
+            type: 'number',
+            align: 'center',
+            headerAlign: 'center',
+            cellClassName: (params) => params.value > 0 ? 'error-cell' : ''
+        },
+        {
+            field: 'status',
+            headerName: 'Status',
+            width: 140,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => {
+                if (params.value === 'Completed') {
+                    return <Chip icon={<CheckCircle />} label="Completed" color="success" size="small" />;
+                } else if (params.value === 'Failed') {
+                    return <Chip icon={<ErrorIcon />} label="Failed" color="error" size="small" />;
+                } else {
+                    return <Chip icon={<Schedule />} label={params.value} color="default" size="small" />;
+                }
+            }
+        }
+    ], []);
+
     if (loading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
@@ -60,63 +130,36 @@ const ImportHistory = () => {
 
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-            <TableContainer component={Paper} elevation={2}>
-                <Table>
-                    <TableHead>
-                        <TableRow sx={{ bgcolor: '#f5f5f5' }}>
-                            <TableCell>Date</TableCell>
-                            <TableCell>Type</TableCell>
-                            <TableCell>Filename</TableCell>
-                            <TableCell>User</TableCell>
-                            <TableCell align="center">Rows</TableCell>
-                            <TableCell align="center">Accepted</TableCell>
-                            <TableCell align="center">Rejected</TableCell>
-                            <TableCell align="center">Status</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {history.length > 0 ? (
-                            history.map((job) => (
-                                <TableRow key={job.id} hover>
-                                    <TableCell>{new Date(job.createdAt).toLocaleString()}</TableCell>
-                                    <TableCell>
-                                        <Chip
-                                            label={job.importType === 'budgets' ? 'Budget' : 'Actuals'}
-                                            color={job.importType === 'budgets' ? 'primary' : 'secondary'}
-                                            size="small"
-                                            variant="outlined"
-                                        />
-                                    </TableCell>
-                                    <TableCell>{job.filename}</TableCell>
-                                    <TableCell>{job.user?.name || 'Unknown'}</TableCell>
-                                    <TableCell align="center">{job.rowsTotal}</TableCell>
-                                    <TableCell align="center" sx={{ color: 'success.main', fontWeight: 500 }}>
-                                        {job.rowsAccepted}
-                                    </TableCell>
-                                    <TableCell align="center" sx={{ color: job.rowsRejected > 0 ? 'error.main' : 'text.secondary', fontWeight: job.rowsRejected > 0 ? 700 : 400 }}>
-                                        {job.rowsRejected}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        {job.status === 'Completed' ? (
-                                            <Chip icon={<CheckCircle />} label="Completed" color="success" size="small" />
-                                        ) : job.status === 'Failed' ? (
-                                            <Chip icon={<ErrorIcon />} label="Failed" color="error" size="small" />
-                                        ) : (
-                                            <Chip icon={<Schedule />} label={job.status} color="default" size="small" />
-                                        )}
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={8} align="center" sx={{ py: 4 }}>
-                                    <Typography color="text.secondary">No import history found</Typography>
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <Paper elevation={0} sx={{ width: '100%', height: 600, border: '1px solid #d0d7de', borderRadius: '6px' }}>
+                <DataGrid
+                    rows={history}
+                    columns={columns}
+                    getRowId={(row) => row.id}
+                    initialState={{
+                        pagination: { paginationModel: { pageSize: 25 } },
+                        sorting: { sortModel: [{ field: 'createdAt', sort: 'desc' }] }
+                    }}
+                    pageSizeOptions={[25, 50, 100]}
+                    disableRowSelectionOnClick
+                    density="compact"
+                    slots={{ toolbar: GridToolbar }}
+                    sx={{
+                        '& .MuiDataGrid-columnHeaders': {
+                            backgroundColor: '#f6f8fa',
+                            color: '#24292f',
+                            fontWeight: 'bold',
+                        },
+                        '& .success-cell': {
+                            color: 'success.main',
+                            fontWeight: 500
+                        },
+                        '& .error-cell': {
+                            color: 'error.main',
+                            fontWeight: 700
+                        }
+                    }}
+                />
+            </Paper>
         </Box>
     );
 };

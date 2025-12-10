@@ -4,12 +4,6 @@ import {
     Paper,
     Typography,
     Button,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
     IconButton,
     Chip,
     Dialog,
@@ -33,6 +27,7 @@ import {
     CardContent,
     Grid
 } from '@mui/material';
+import { DataGrid, GridToolbar, GridActionsCellItem } from '@mui/x-data-grid';
 import {
     Add as AddIcon,
     Edit as EditIcon,
@@ -276,71 +271,103 @@ const UserManagement = () => {
             </Grid>
 
             {/* Users Table */}
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow sx={{ bgcolor: 'primary.main' }}>
-                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Name</TableCell>
-                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Email</TableCell>
-                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Roles</TableCell>
-                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Status</TableCell>
-                            <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {users.map((user) => (
-                            <TableRow key={user.id} hover>
-                                <TableCell>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <PersonIcon color="action" />
-                                        <Typography fontWeight="medium">{user.name}</Typography>
-                                    </Box>
-                                </TableCell>
-                                <TableCell>{user.email}</TableCell>
-                                <TableCell>
-                                    <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                                        {user.roles?.map((role) => (
-                                            <Chip
-                                                key={role}
-                                                label={role}
-                                                size="small"
-                                                color={ROLE_COLORS[role] || 'default'}
-                                            />
-                                        ))}
-                                    </Box>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip
-                                        label={user.is_active ? 'Active' : 'Inactive'}
-                                        size="small"
-                                        color={user.is_active ? 'success' : 'default'}
-                                    />
-                                </TableCell>
-                                <TableCell align="right">
-                                    <Tooltip title="Edit">
-                                        <IconButton
+            <Paper elevation={0} sx={{ width: '100%', height: 500, border: '1px solid #d0d7de', borderRadius: '6px' }}>
+                <DataGrid
+                    rows={users}
+                    columns={[
+                        {
+                            field: 'name',
+                            headerName: 'Name',
+                            width: 200,
+                            renderCell: (params) => (
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <PersonIcon color="action" />
+                                    <Typography fontWeight="medium">{params.value}</Typography>
+                                </Box>
+                            )
+                        },
+                        {
+                            field: 'email',
+                            headerName: 'Email',
+                            width: 250
+                        },
+                        {
+                            field: 'roles',
+                            headerName: 'Roles',
+                            width: 300,
+                            renderCell: (params) => (
+                                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                                    {params.value?.map((role) => (
+                                        <Chip
+                                            key={role}
+                                            label={role}
                                             size="small"
-                                            color="primary"
-                                            onClick={() => handleOpenDialog(user)}
-                                        >
+                                            color={ROLE_COLORS[role] || 'default'}
+                                        />
+                                    ))}
+                                </Box>
+                            )
+                        },
+                        {
+                            field: 'is_active',
+                            headerName: 'Status',
+                            width: 120,
+                            renderCell: (params) => (
+                                <Chip
+                                    label={params.value ? 'Active' : 'Inactive'}
+                                    size="small"
+                                    color={params.value ? 'success' : 'default'}
+                                />
+                            )
+                        },
+                        {
+                            field: 'actions',
+                            headerName: 'Actions',
+                            width: 120,
+                            type: 'actions',
+                            getActions: (params) => [
+                                <GridActionsCellItem
+                                    icon={
+                                        <Tooltip title="Edit">
                                             <EditIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Delete">
-                                        <IconButton
-                                            size="small"
-                                            color="error"
-                                            onClick={() => handleDelete(user.id)}
-                                        >
+                                        </Tooltip>
+                                    }
+                                    label="Edit"
+                                    onClick={() => handleOpenDialog(params.row)}
+                                />,
+                                <GridActionsCellItem
+                                    icon={
+                                        <Tooltip title="Delete">
                                             <DeleteIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                                        </Tooltip>
+                                    }
+                                    label="Delete"
+                                    onClick={() => handleDelete(params.row.id)}
+                                    showInMenu={false}
+                                />
+                            ]
+                        }
+                    ]}
+                    getRowId={(row) => row.id}
+                    initialState={{
+                        pagination: { paginationModel: { pageSize: 10 } }
+                    }}
+                    pageSizeOptions={[10, 25, 50]}
+                    disableRowSelectionOnClick
+                    density="comfortable"
+                    slots={{ toolbar: GridToolbar }}
+                    sx={{
+                        '& .MuiDataGrid-columnHeaders': {
+                            backgroundColor: '#1976d2',
+                            color: 'white',
+                            fontWeight: 'bold',
+                        },
+                        '& .MuiDataGrid-columnHeaderTitle': {
+                            fontWeight: 'bold'
+                        }
+                    }}
+                />
+            </Paper>
 
             {/* User Dialog */}
             <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
