@@ -36,15 +36,18 @@ import {
     Security as SecurityIcon,
     Person as PersonIcon
 } from '@mui/icons-material';
-import axios from 'axios';
+import api from '../utils/api';
 import {
     pageContainerStyles,
     pageHeaderStyles,
     pageTitleStyles,
     pageTransitionStyles
 } from '../styles/commonStyles';
+import ExportDialog from '../components/ExportDialog';
+import * as XLSX from 'xlsx';
+import { FileDownload } from '@mui/icons-material';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 
 const ROLE_COLORS = {
     Admin: 'error',
@@ -79,6 +82,7 @@ const UserManagement = () => {
         is_active: true
     });
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    const [openExportDialog, setOpenExportDialog] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -87,11 +91,8 @@ const UserManagement = () => {
 
     const fetchUsers = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/users`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setUsers(response.data);
+            const data = await api.get('/users');
+            setUsers(data);
         } catch (error) {
             console.error('Error fetching users:', error);
             showSnackbar('Error fetching users', 'error');
@@ -133,19 +134,11 @@ const UserManagement = () => {
 
             if (editingUser) {
                 // Update user
-                await axios.put(
-                    `${API_URL}/users/${editingUser.id}`,
-                    formData,
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
+                await api.put(`/users/${editingUser.id}`, formData);
                 showSnackbar('User updated successfully', 'success');
             } else {
                 // Create user
-                await axios.post(
-                    `${API_URL}/users`,
-                    formData,
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
+                await api.post('/users', formData);
                 showSnackbar('User created successfully', 'success');
             }
 
@@ -165,10 +158,7 @@ const UserManagement = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`${API_URL}/users/${userId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.delete(`/users/${userId}`);
             showSnackbar('User deleted successfully', 'success');
             fetchUsers();
         } catch (error) {
@@ -181,8 +171,50 @@ const UserManagement = () => {
         setSnackbar({ open: true, message, severity });
     };
 
+    const handleExport = (format) => {
+        try {
+            const exportData = users.map(u => ({
+                Name: u.name,
+                Email: u.email,
+                Roles: u.roles?.join(', '),
+                Status: u.is_active ? 'Active' : 'Inactive'
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Users');
+
+            const timestamp = new Date().toISOString().split('T')[0];
+            const extension = format === 'csv' ? 'csv' : 'xlsx';
+            const filename = `User_Management_${timestamp}.${extension}`;
+
+            XLSX.writeFile(wb, filename, { bookType: format === 'csv' ? 'csv' : 'xlsx' });
+            showSnackbar(`User data exported as ${format.toUpperCase()} successfully!`, 'success');
+        } catch (error) {
+            console.error('Export error:', error);
+            showSnackbar('Error exporting data', 'error');
+        }
+    };
+
     const handleCloseSnackbar = () => {
         setSnackbar({ ...snackbar, open: false });
+    };
+
+    const processRowUpdate = async (newRow, oldRow) => {
+        try {
+            await api.put(`/users/${newRow.id}`, newRow);
+            showSnackbar('User updated successfully', 'success');
+            return newRow;
+        } catch (error) {
+            console.error('Update error:', error);
+            showSnackbar('Error updating user: ' + (error.message || 'Unknown error'), 'error');
+            return oldRow;
+        }
+    };
+
+    const handleProcessRowUpdateError = (error) => {
+        showSnackbar('Error processing update', 'error');
+        console.error('Process row update error:', error);
     };
 
     return (
@@ -201,6 +233,14 @@ const UserManagement = () => {
                     </Box>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Button
+                        variant="outlined"
+                        color="success"
+                        startIcon={<FileDownload />}
+                        onClick={() => setOpenExportDialog(true)}
+                    >
+                        Export
+                    </Button>
                     <Button
                         variant="outlined"
                         startIcon={<ViewIcon />}
@@ -279,6 +319,7 @@ const UserManagement = () => {
                             field: 'name',
                             headerName: 'Name',
                             width: 200,
+                            editable: true,
                             renderCell: (params) => (
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                     <PersonIcon color="action" />
@@ -289,7 +330,8 @@ const UserManagement = () => {
                         {
                             field: 'email',
                             headerName: 'Email',
-                            width: 250
+                            width: 250,
+                            editable: true
                         },
                         {
                             field: 'roles',
@@ -349,13 +391,15 @@ const UserManagement = () => {
                         }
                     ]}
                     getRowId={(row) => row.id}
+                    processRowUpdate={processRowUpdate}
+                    onProcessRowUpdateError={handleProcessRowUpdateError}
+                    density="compact"
+                    slots={{ toolbar: GridToolbar }}
                     initialState={{
                         pagination: { paginationModel: { pageSize: 10 } }
                     }}
                     pageSizeOptions={[10, 25, 50]}
                     disableRowSelectionOnClick
-                    density="comfortable"
-                    slots={{ toolbar: GridToolbar }}
                     sx={{
                         '& .MuiDataGrid-columnHeaders': {
                             backgroundColor: '#1976d2',
@@ -497,6 +541,13 @@ const UserManagement = () => {
                     <Button onClick={() => setOpenPermissionDialog(false)}>Close</Button>
                 </DialogActions>
             </Dialog>
+
+            {/* Export Dialog */}
+            <ExportDialog
+                open={openExportDialog}
+                onClose={() => setOpenExportDialog(false)}
+                onExport={handleExport}
+            />
 
             {/* Snackbar */}
             <Snackbar

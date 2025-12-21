@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/user.controller');
-const { authenticateToken } = require('../middleware/auth.middleware');
+const { authenticate } = require('../middleware/auth');
 const { checkPermission } = require('../middleware/permission.middleware');
 
 // All routes require authentication
-router.use(authenticateToken);
+router.use(authenticate);
 
 // Get all users (Admin only)
 router.get('/', checkPermission('VIEW_USERS'), userController.getAllUsers);

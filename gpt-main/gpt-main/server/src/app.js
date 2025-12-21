@@ -1,258 +1,212 @@
+/**
+ * Application Entry Point
+ * Production-ready Express application structure
+ */
+
 const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
+require('express-async-errors'); // Must be imported before routes
 const compression = require('compression');
-const helmet = require('helmet');
-const activityLogger = require('./middleware/activityLog.middleware');
+const morgan = require('morgan');
+const path = require('path');
+
+// Import configuration and utilities
+const config = require('./config');
+const logger = require('./utils/logger');
 const { initCronJobs } = require('./utils/cronJobs');
 
-dotenv.config();
+// Import middleware
+const { helmetConfig, corsConfig, apiLimiter, xssFilter } = require('./middleware/security');
+const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
+const { sanitizeInput } = require('./middleware/validator');
+const activityLogger = require('./middleware/activityLog.middleware');
 
+// Import routes
+// Note: We'll import these dynamically or explicitly as needed
+
+// Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Security middleware - should be first
-app.use(helmet({
-    contentSecurityPolicy: false, // Disable for API
-    crossOriginEmbedderPolicy: false
-}));
+// ==========================================
+// 1. Security & Basic Middleware (Run first)
+// ==========================================
 
-// Compression middleware for response optimization
-app.use(compression({
-    filter: (req, res) => {
-        if (req.headers['x-no-compression']) {
-            return false;
-        }
-        return compression.filter(req, res);
-    },
-    level: 6 // Balance between speed and compression ratio
-}));
+// Security Headers (Helmet)
+app.use(helmetConfig);
 
-// Enhanced CORS configuration
-const corsOptions = {
-    origin: process.env.CORS_ORIGIN || '*',
-    credentials: true,
-    optionsSuccessStatus: 200,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    maxAge: 86400 // Cache preflight requests for 24 hours
-};
+// Cross-Origin Resource Sharing (CORS)
+app.use(corsConfig);
 
-app.use(cors(corsOptions));
-
-// Global Rate Limiting
-const { apiLimiter } = require('./middleware/rateLimiter.middleware');
+// Rate Limiting (Global API limit)
 app.use('/api', apiLimiter);
 
-// Input Sanitization
-const { sanitizeInput } = require('./middleware/validation.middleware');
+// Input Sanitization (XSS & Basic)
+app.use(xssFilter);
 app.use(sanitizeInput);
 
-// Body parsing middleware with size limits
-app.use(express.json({ limit: '5mb' })); // Reduced from 10mb
-app.use(express.urlencoded({ extended: true, limit: '5mb' }));
+// Compression (Gzip)
+if (config.performance.compressionEnabled) {
+    app.use(compression({
+        level: config.performance.compressionLevel,
+        filter: (req, res) => {
+            if (req.headers['x-no-compression']) return false;
+            return compression.filter(req, res);
+        }
+    }));
+}
 
-// Request timeout middleware
+// Logging
+app.use(morgan('combined', { stream: logger.stream }));
+
+// Body Parsing
+app.use(express.json({ limit: process.env.MAX_FILE_SIZE ? '10mb' : '5mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Static Files
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
+// Activity Logger
+app.use(activityLogger);
+
+// Request Timeout
 app.use((req, res, next) => {
-    req.setTimeout(15000); // Reduced to 15 seconds
+    req.setTimeout(15000); // 15 seconds
     res.setTimeout(15000);
     next();
 });
 
-// Lightweight request logging (only in development)
-if (process.env.NODE_ENV === 'development') {
-    app.use((req, res, next) => {
-        console.log(`${req.method} ${req.url}`);
-        next();
-    });
-}
+// ==========================================
+// 2. Application Routes
+// ==========================================
 
-// Activity Logger Middleware
-// Note: This must be placed AFTER body parsing middleware to capture request details
-// and ideally AFTER authentication if we want to log user details (which we do).
-// However, since auth is handled in routes, we might miss the user info if placed here globally
-// unless we extract user info from token manually or rely on it being available.
-// Actually, `activityLogger` checks `req.user`. If `authenticateToken` is used in routes,
-// `req.user` is set there. But global middleware runs BEFORE route-specific middleware.
-// So `req.user` will be undefined here for most requests unless we have a global auth middleware.
-// To fix this, we should probably add a global token parser (non-blocking) or rely on `activityLogger`
-// being smart enough.
-// BETTER APPROACH: Let's add a global "attempt to extract user" middleware before this,
-// OR just accept that `req.user` might be null for now if we don't have global auth.
-// Given the current structure, let's place it here. It will log anonymous for now,
-// but we can improve it by adding a global token decoder if needed.
-// WAIT: The routes use `authenticateToken`. If we put this here, it runs BEFORE the route handler
-// but the `res.end` hook runs AFTER the route handler (and after `authenticateToken` has run).
-// So `req.user` SHOULD be available in the `res.end` callback!
-app.use(activityLogger);
+// Health Check
+app.use('/health', require('./routes/health.routes')); // Mount at /health
 
-// Health check endpoint
-app.get('/', (req, res) => {
-    res.json({
-        status: 'running',
-        message: 'OPEX Management System API is running',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0'
-    });
-});
-
-app.get('/health', (req, res) => {
-    res.json({
-        status: 'healthy',
-        uptime: process.uptime(),
-        timestamp: new Date().toISOString()
-    });
-});
-
-// Routes with error handling wrappers
+// API Routes
 try {
-    const authRoutes = require('./routes/auth.routes');
-    const userRoutes = require('./routes/user.routes');
-    const masterDataRoutes = require('./routes/masterData.routes');
-    const budgetRoutes = require('./routes/budget.routes');
-    const poRoutes = require('./routes/po.routes');
-    const actualsRoutes = require('./routes/actuals.routes');
-    const lineItemRoutes = require('./routes/lineItem.routes');
-    const fiscalYearRoutes = require('./routes/fiscalYear.routes');
+    // Auth & User
+    app.use('/api/auth', require('./routes/auth.routes'));
+    app.use('/api/users', require('./routes/user.routes'));
 
-    app.use('/api/auth', authRoutes);
-    app.use('/api/users', userRoutes);
-    app.use('/api/master', masterDataRoutes);
-    app.use('/api/budgets', budgetRoutes);
-    app.use('/api/pos', poRoutes);
-    app.use('/api/actuals', actualsRoutes);
-    app.use('/api/actuals', require('./routes/actualsImport.routes')); // Mount on same base path
-    app.use('/api/line-items', lineItemRoutes);
-    app.use('/api/fiscal-years', fiscalYearRoutes);
+    // Core Modules
+    app.use('/api/master', require('./routes/masterData.routes'));
+    app.use('/api/budgets', require('./routes/budget.routes'));
+    app.use('/api/pos', require('./routes/po.routes'));
+    app.use('/api/actuals', require('./routes/actuals.routes'));
+    app.use('/api/actuals', require('./routes/actualsImport.routes'));
+
+    // Helper Modules
+    app.use('/api/line-items', require('./routes/lineItem.routes'));
+    app.use('/api/fiscal-years', require('./routes/fiscalYear.routes'));
+    app.use('/api/currency-rates', require('./routes/currencyRate.routes'));
+
+    // Reports & Analytics
     app.use('/api/reports', require('./routes/reports.routes'));
     app.use('/api/imports', require('./routes/importHistory.routes'));
-    app.use('/api/currency-rates', require('./routes/currencyRate.routes'));
     app.use('/api/actual-boa', require('./routes/actualBOA.routes'));
     app.use('/api/budget-boa', require('./routes/budgetBOA.routes'));
     app.use('/api/budget-detail', require('./routes/budgetDetail.routes'));
 
 } catch (error) {
-    console.error('Error loading routes:', error);
+    logger.error('Failed to load routes: %s', error.message);
     process.exit(1);
 }
 
-// 404 handler
-app.use((req, res) => {
-    res.status(404).json({
-        message: 'Route not found',
-        path: req.url,
-        method: req.method
+// Serve frontend in production
+if (process.env.NODE_ENV === 'production') {
+    const clientDistPath = path.join(__dirname, '..', '..', 'client', 'dist');
+    logger.info(`Serving static files from: ${clientDistPath}`);
+    app.use(express.static(clientDistPath));
+
+    // API Status info moved from root
+    app.get('/api/status', (req, res) => {
+        res.json({
+            message: config.server.appName + ' API',
+            version: '2.0.0',
+            status: 'running',
+            env: config.env,
+        });
     });
-});
 
-// Global Error Handler with detailed logging
-app.use((err, req, res, next) => {
-    console.error('=== ERROR ===');
-    console.error('Time:', new Date().toISOString());
-    console.error('Path:', req.path);
-    console.error('Method:', req.method);
-    console.error('Error:', err.message);
-    console.error('Stack:', err.stack);
-    console.error('=============');
-
-    // Handle specific error types
-    if (err.name === 'ValidationError') {
-        return res.status(400).json({
-            message: 'Validation Error',
-            error: process.env.NODE_ENV === 'development' ? err.message : 'Invalid input data'
-        });
-    }
-
-    if (err.name === 'UnauthorizedError') {
-        return res.status(401).json({
-            message: 'Unauthorized',
-            error: process.env.NODE_ENV === 'development' ? err.message : 'Authentication required'
-        });
-    }
-
-    if (err.code === 'P2002') { // Prisma unique constraint error
-        return res.status(409).json({
-            message: 'Duplicate entry',
-            error: process.env.NODE_ENV === 'development' ? err.message : 'Record already exists'
-        });
-    }
-
-    if (err.code === 'P2025') { // Prisma record not found
-        return res.status(404).json({
-            message: 'Record not found',
-            error: process.env.NODE_ENV === 'development' ? err.message : 'Requested resource not found'
-        });
-    }
-
-    // Default error response
-    res.status(err.status || 500).json({
-        message: err.message || 'Internal Server Error',
-        error: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    app.get('*', (req, res, next) => {
+        // Only serve index.html if it's not an API or uploads route
+        if (req.url.startsWith('/api') || req.url.startsWith('/health') || req.url.startsWith('/uploads')) {
+            return next();
+        }
+        res.sendFile(path.join(clientDistPath, 'index.html'));
     });
-});
+} else {
+    // Root Route for development
+    app.get('/', (req, res) => {
+        res.json({
+            message: config.server.appName + ' API (Dev)',
+            version: '2.0.0',
+            status: 'running',
+            env: config.env,
+        });
+    });
+}
 
-// Start server with error handling
-let server;
-try {
-    server = app.listen(PORT, () => {
-        console.log('='.repeat(50));
-        console.log(`✓ Server is running on port ${PORT}`);
-        console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
-        console.log(`✓ Time: ${new Date().toISOString()}`);
-        console.log('='.repeat(50));
+// ==========================================
+// 3. Error Handling (Run last)
+// ==========================================
+
+// 404 Handler
+app.use(notFoundHandler);
+
+// Global Error Handler
+app.use(errorHandler);
+
+// ==========================================
+// 4. Server Initialization
+// ==========================================
+
+// Only start server if this file is run directly
+if (require.main === module) {
+    const PORT = config.server.port;
+
+    const server = app.listen(PORT, () => {
+        logger.info(`Server running in ${config.env} mode on port ${PORT}`);
 
         // Initialize Cron Jobs
-        initCronJobs();
+        try {
+            initCronJobs();
+            logger.info('Cron jobs initialized');
+        } catch (err) {
+            logger.error('Failed to init cron jobs:', err);
+        }
     });
 
+    // Handle server errors
     server.on('error', (error) => {
         if (error.code === 'EADDRINUSE') {
-            console.error(`Port ${PORT} is already in use`);
+            logger.error(`Port ${PORT} is already in use`);
         } else {
-            console.error('Server error:', error);
+            logger.error('Server error:', error);
         }
         process.exit(1);
     });
-} catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-}
 
-// Graceful shutdown
-const gracefulShutdown = async (signal) => {
-    console.log(`\n${signal} received. Starting graceful shutdown...`);
+    // Graceful Shutdown
+    const gracefulShutdown = async (signal) => {
+        logger.info(`${signal} received. Starting graceful shutdown...`);
 
-    if (server) {
         server.close(() => {
-            console.log('HTTP server closed');
+            logger.info('HTTP server closed');
         });
-    }
 
-    try {
-        const prisma = require('./prisma');
-        await prisma.$disconnect();
-        console.log('Database connection closed');
-    } catch (error) {
-        console.error('Error closing database connection:', error);
-    }
+        try {
+            const prisma = require('./prisma');
+            await prisma.$disconnect();
+            logger.info('Database connection closed');
+        } catch (err) {
+            logger.error('Error closing DB:', err);
+        }
 
-    console.log('Graceful shutdown completed');
-    process.exit(0);
-};
+        process.exit(0);
+    };
 
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-
-// Handle uncaught exceptions
-process.on('uncaughtException', (error) => {
-    console.error('Uncaught Exception:', error);
-    gracefulShutdown('uncaughtException');
-});
-
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-    gracefulShutdown('unhandledRejection');
-});
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+}
 
 module.exports = app;

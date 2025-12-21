@@ -1,317 +1,270 @@
-const prisma = require('../prisma');
+/**
+ * Master Data Controller
+ * Managed with caching for performance optimization
+ */
 
+const prisma = require('../prisma');
+const cache = require('../utils/cache');
+const { NotFoundError } = require('../middleware/errorHandler');
+
+// Generic helper to get data with cache
+const getWithCache = async (key, fetchFn, ttl = 3600) => {
+    const cached = await cache.get(key);
+    if (cached) return cached;
+
+    const data = await fetchFn();
+    await cache.set(key, data, ttl);
+    return data;
+};
+
+// Generic helper to clear related caches
+// When modifying 'Tower', we might want to clear 'towers' list and complex objects relying on it
+const invalidateCache = async (pattern) => {
+    // Simple implementation: clear specific keys known.
+    // Real implementation might need pattern matching or tags if using Redis 
+    await cache.del(pattern);
+};
+
+// ==========================================
 // Towers
+// ==========================================
+
 const getTowers = async (req, res) => {
-    try {
-        const towers = await prisma.tower.findMany({
-            include: { budget_heads: true }
-        });
-        res.json(towers);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const towers = await getWithCache('towers:all', () =>
+        prisma.tower.findMany({
+            include: { budget_heads: true },
+            orderBy: { name: 'asc' }
+        })
+    );
+    res.json(towers);
 };
 
 const createTower = async (req, res) => {
-    try {
-        const { name } = req.body;
-        const tower = await prisma.tower.create({ data: { name } });
-        res.status(201).json(tower);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const { name } = req.body;
+    const tower = await prisma.tower.create({ data: { name } });
+    await invalidateCache('towers:all');
+    res.status(201).json(tower);
 };
 
 const updateTower = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name } = req.body;
-        const tower = await prisma.tower.update({ where: { id: parseInt(id) }, data: { name } });
-        res.json(tower);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const { id } = req.params;
+    const { name } = req.body;
+
+    const tower = await prisma.tower.update({
+        where: { id: parseInt(id) },
+        data: { name }
+    });
+
+    await invalidateCache('towers:all');
+    res.json(tower);
 };
 
 const deleteTower = async (req, res) => {
+    const { id } = req.params;
+
     try {
-        const { id } = req.params;
         await prisma.tower.delete({ where: { id: parseInt(id) } });
-        res.json({ message: 'Tower deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    } catch (err) {
+        if (err.code === 'P2025') throw new NotFoundError('Tower');
+        throw err;
     }
+
+    await invalidateCache('towers:all');
+    res.json({ message: 'Tower deleted successfully' });
 };
 
+// ==========================================
 // Budget Heads
+// ==========================================
+
 const getBudgetHeads = async (req, res) => {
-    try {
-        const budgetHeads = await prisma.budgetHead.findMany({
-            include: { tower: true }
-        });
-        res.json(budgetHeads);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const budgetHeads = await getWithCache('budgetHeads:all', () =>
+        prisma.budgetHead.findMany({
+            include: { tower: true },
+            orderBy: { name: 'asc' }
+        })
+    );
+    res.json(budgetHeads);
 };
 
 const createBudgetHead = async (req, res) => {
-    try {
-        const { name, tower_id } = req.body;
-        const budgetHead = await prisma.budgetHead.create({
-            data: { name, tower_id: parseInt(tower_id) }
-        });
-        res.status(201).json(budgetHead);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const { name, tower_id } = req.body;
+    const budgetHead = await prisma.budgetHead.create({
+        data: { name, tower_id: parseInt(tower_id) }
+    });
+
+    await Promise.all([
+        invalidateCache('budgetHeads:all'),
+        invalidateCache('towers:all') // Towers include budget heads
+    ]);
+
+    res.status(201).json(budgetHead);
 };
 
 const updateBudgetHead = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name, tower_id } = req.body;
-        const budgetHead = await prisma.budgetHead.update({
-            where: { id: parseInt(id) },
-            data: { name, tower_id: parseInt(tower_id) }
-        });
-        res.json(budgetHead);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const { id } = req.params;
+    const { name, tower_id } = req.body;
+
+    const budgetHead = await prisma.budgetHead.update({
+        where: { id: parseInt(id) },
+        data: { name, tower_id: parseInt(tower_id) }
+    });
+
+    await Promise.all([
+        invalidateCache('budgetHeads:all'),
+        invalidateCache('towers:all')
+    ]);
+
+    res.json(budgetHead);
 };
 
 const deleteBudgetHead = async (req, res) => {
-    try {
-        const { id } = req.params;
-        await prisma.budgetHead.delete({ where: { id: parseInt(id) } });
-        res.json({ message: 'Budget Head deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const { id } = req.params;
+    await prisma.budgetHead.delete({ where: { id: parseInt(id) } });
+
+    await Promise.all([
+        invalidateCache('budgetHeads:all'),
+        invalidateCache('towers:all')
+    ]);
+
+    res.json({ message: 'Budget Head deleted successfully' });
 };
 
+// ==========================================
 // Vendors
+// ==========================================
+
 const getVendors = async (req, res) => {
-    try {
-        const vendors = await prisma.vendor.findMany();
-        res.json(vendors);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const vendors = await getWithCache('vendors:all', () =>
+        prisma.vendor.findMany({ orderBy: { name: 'asc' } })
+    );
+    res.json(vendors);
 };
 
 const createVendor = async (req, res) => {
-    try {
-        const { name, gst_number, contact_person } = req.body;
-        const vendor = await prisma.vendor.create({
-            data: { name, gst_number, contact_person }
-        });
-        res.status(201).json(vendor);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const { name, gst_number, contact_person } = req.body;
+    const vendor = await prisma.vendor.create({
+        data: { name, gst_number, contact_person }
+    });
+    await invalidateCache('vendors:all');
+    res.status(201).json(vendor);
 };
 
 const updateVendor = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name, gst_number, contact_person } = req.body;
-        const vendor = await prisma.vendor.update({
-            where: { id: parseInt(id) },
-            data: { name, gst_number, contact_person }
-        });
-        res.json(vendor);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const { id } = req.params;
+    const { name, gst_number, contact_person } = req.body;
+    const vendor = await prisma.vendor.update({
+        where: { id: parseInt(id) },
+        data: { name, gst_number, contact_person }
+    });
+    await invalidateCache('vendors:all');
+    res.json(vendor);
 };
 
 const deleteVendor = async (req, res) => {
-    try {
-        const { id } = req.params;
-        await prisma.vendor.delete({ where: { id: parseInt(id) } });
-        res.json({ message: 'Vendor deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const { id } = req.params;
+    await prisma.vendor.delete({ where: { id: parseInt(id) } });
+    await invalidateCache('vendors:all');
+    res.json({ message: 'Vendor deleted successfully' });
 };
 
+// ==========================================
 // Cost Centres
+// ==========================================
+
 const getCostCentres = async (req, res) => {
-    try {
-        const costCentres = await prisma.costCentre.findMany();
-        res.json(costCentres);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const costCentres = await getWithCache('costCentres:all', () =>
+        prisma.costCentre.findMany({ orderBy: { code: 'asc' } })
+    );
+    res.json(costCentres);
 };
 
 const createCostCentre = async (req, res) => {
-    try {
-        const { code, description } = req.body;
-        const costCentre = await prisma.costCentre.create({
-            data: { code, description }
-        });
-        res.status(201).json(costCentre);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const { code, description } = req.body;
+    const costCentre = await prisma.costCentre.create({
+        data: { code, description }
+    });
+    await invalidateCache('costCentres:all');
+    res.status(201).json(costCentre);
 };
 
 const updateCostCentre = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { code, description } = req.body;
-        const costCentre = await prisma.costCentre.update({
-            where: { id: parseInt(id) },
-            data: { code, description }
-        });
-        res.json(costCentre);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const { id } = req.params;
+    const { code, description } = req.body;
+    const costCentre = await prisma.costCentre.update({
+        where: { id: parseInt(id) },
+        data: { code, description }
+    });
+    await invalidateCache('costCentres:all');
+    res.json(costCentre);
 };
 
 const deleteCostCentre = async (req, res) => {
-    try {
-        const { id } = req.params;
-        await prisma.costCentre.delete({ where: { id: parseInt(id) } });
-        res.json({ message: 'Cost Centre deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const { id } = req.params;
+    await prisma.costCentre.delete({ where: { id: parseInt(id) } });
+    await invalidateCache('costCentres:all');
+    res.json({ message: 'Cost Centre deleted successfully' });
 };
 
-// PO Entities
-const getPOEntities = async (req, res) => {
-    try {
-        const poEntities = await prisma.pOEntity.findMany({ orderBy: { name: 'asc' } });
-        res.json(poEntities);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+// ==========================================
+// Other Entities (Simple Implementations)
+// ==========================================
 
-const createPOEntity = async (req, res) => {
-    try {
+// Helper for simple entity CRUD
+const createEntityHandlers = (modelName, cacheKey) => ({
+    getAll: async (req, res) => {
+        const data = await getWithCache(cacheKey, () =>
+            prisma[modelName].findMany({ orderBy: { name: 'asc' } })
+        );
+        res.json(data);
+    },
+    create: async (req, res) => {
         const { name } = req.body;
-        const poEntity = await prisma.pOEntity.create({ data: { name } });
-        res.status(201).json(poEntity);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const updatePOEntity = async (req, res) => {
-    try {
+        const item = await prisma[modelName].create({ data: { name } });
+        await invalidateCache(cacheKey);
+        res.status(201).json(item);
+    },
+    update: async (req, res) => {
         const { id } = req.params;
         const { name } = req.body;
-        const poEntity = await prisma.pOEntity.update({ where: { id: parseInt(id) }, data: { name } });
-        res.json(poEntity);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const deletePOEntity = async (req, res) => {
-    try {
+        const item = await prisma[modelName].update({
+            where: { id: parseInt(id) },
+            data: { name }
+        });
+        await invalidateCache(cacheKey);
+        res.json(item);
+    },
+    delete: async (req, res) => {
         const { id } = req.params;
-        await prisma.pOEntity.delete({ where: { id: parseInt(id) } });
-        res.json({ message: 'PO Entity deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+        await prisma[modelName].delete({ where: { id: parseInt(id) } });
+        await invalidateCache(cacheKey);
+        res.json({ message: 'Deleted successfully' });
     }
-};
+});
 
-// Service Types
-const getServiceTypes = async (req, res) => {
-    try {
-        const serviceTypes = await prisma.serviceType.findMany({ orderBy: { name: 'asc' } });
-        res.json(serviceTypes);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const createServiceType = async (req, res) => {
-    try {
-        const { name } = req.body;
-        const serviceType = await prisma.serviceType.create({ data: { name } });
-        res.status(201).json(serviceType);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const updateServiceType = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name } = req.body;
-        const serviceType = await prisma.serviceType.update({ where: { id: parseInt(id) }, data: { name } });
-        res.json(serviceType);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const deleteServiceType = async (req, res) => {
-    try {
-        const { id } = req.params;
-        await prisma.serviceType.delete({ where: { id: parseInt(id) } });
-        res.json({ message: 'Service Type deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// Allocation Bases
-const getAllocationBases = async (req, res) => {
-    try {
-        const allocationBases = await prisma.allocationBasis.findMany({ orderBy: { name: 'asc' } });
-        res.json(allocationBases);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const createAllocationBasis = async (req, res) => {
-    try {
-        const { name } = req.body;
-        const allocationBasis = await prisma.allocationBasis.create({ data: { name } });
-        res.status(201).json(allocationBasis);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const updateAllocationBasis = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name } = req.body;
-        const allocationBasis = await prisma.allocationBasis.update({ where: { id: parseInt(id) }, data: { name } });
-        res.json(allocationBasis);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const deleteAllocationBasis = async (req, res) => {
-    try {
-        const { id } = req.params;
-        await prisma.allocationBasis.delete({ where: { id: parseInt(id) } });
-        res.json({ message: 'Allocation Basis deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+// Create handlers for simple entities
+const poHandlers = createEntityHandlers('pOEntity', 'poEntities:all');
+const serviceHandlers = createEntityHandlers('serviceType', 'serviceTypes:all');
+const allocHandlers = createEntityHandlers('allocationBasis', 'allocBases:all');
 
 module.exports = {
     getTowers, createTower, updateTower, deleteTower,
     getBudgetHeads, createBudgetHead, updateBudgetHead, deleteBudgetHead,
     getVendors, createVendor, updateVendor, deleteVendor,
     getCostCentres, createCostCentre, updateCostCentre, deleteCostCentre,
-    getPOEntities, createPOEntity, updatePOEntity, deletePOEntity,
-    getServiceTypes, createServiceType, updateServiceType, deleteServiceType,
-    getAllocationBases, createAllocationBasis, updateAllocationBasis, deleteAllocationBasis
+
+    getPOEntities: poHandlers.getAll,
+    createPOEntity: poHandlers.create,
+    updatePOEntity: poHandlers.update,
+    deletePOEntity: poHandlers.delete,
+
+    getServiceTypes: serviceHandlers.getAll,
+    createServiceType: serviceHandlers.create,
+    updateServiceType: serviceHandlers.update,
+    deleteServiceType: serviceHandlers.delete,
+
+    getAllocationBases: allocHandlers.getAll,
+    createAllocationBasis: allocHandlers.create,
+    updateAllocationBasis: allocHandlers.update,
+    deleteAllocationBasis: allocHandlers.delete
 };

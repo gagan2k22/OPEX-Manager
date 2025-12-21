@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../prisma');
+const crypto = require('crypto');
 
 // Security: Ensure JWT_SECRET is set
 if (!process.env.JWT_SECRET) {
@@ -106,12 +107,22 @@ const login = async (req, res) => {
         // Extract role names
         const roleNames = user.roles.map(ur => ur.role.name);
 
-        // Generate JWT token
+        // Generate a new Session ID for single session enforcement
+        const sessionId = crypto.randomUUID();
+
+        // Update user with currentSessionId to invalidate other sessions
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { currentSessionId: sessionId }
+        });
+
+        // Generate JWT token including sessionId
         const token = jwt.sign(
             {
                 id: user.id,
                 email: user.email,
-                roles: roleNames
+                roles: roleNames,
+                sessionId: sessionId
             },
             process.env.JWT_SECRET,
             {

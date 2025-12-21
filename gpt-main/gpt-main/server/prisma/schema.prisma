@@ -19,6 +19,7 @@ model User {
   is_active     Boolean   @default(true)
   created_at    DateTime  @default(now())
   updated_at    DateTime  @default(now()) @updatedAt
+  currentSessionId String?
   roles         UserRole[]
   
   currency_rates       CurrencyRate[]       @relation("CurrencyRateUpdatedBy")
@@ -109,7 +110,7 @@ model AllocationBasis {
 
 model LineItem {
   id            Int          @id @default(autoincrement())
-  uid           String
+  uid           String       @unique
   parentUid     String?      // Parent UID for grouping
   description   String
   towerId       Int?
@@ -153,12 +154,12 @@ model LineItem {
   priority            String?
   costOptimizationLever String? // Avoidance / Optimization
   allocationType      String?  // Dedicated / Shared (if different from serviceType)
+  customFields        Json?    // Stores user-defined custom columns
   
   // Boolean overrides requested
   hasContract         Boolean? @default(false)
   isSharedService     Boolean? @default(false)
 
-  @@index([uid])
   @@index([vendorId])
   @@index([fiscalYearId])
   @@index([budgetHeadId])

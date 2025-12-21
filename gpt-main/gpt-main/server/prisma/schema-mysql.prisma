@@ -1,0 +1,480 @@
+// This is your Prisma schema file for MySQL
+// Converted from SQLite to MySQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// User & Auth
+model User {
+  id            Int       @id @default(autoincrement())
+  name          String    @db.VarChar(255)
+  email         String    @unique @db.VarChar(255)
+  password_hash String    @db.VarChar(255)
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now()) @db.DateTime(0)
+  updated_at    DateTime  @default(now()) @updatedAt @db.DateTime(0)
+  roles         UserRole[]
+  
+  currency_rates       CurrencyRate[]       @relation("CurrencyRateUpdatedBy")
+  activity_logs        UserActivityLog[]
+  audit_logs           AuditLog[]
+  import_jobs          ImportJob[]
+  saved_views          SavedView[]
+  reconciliation_notes ReconciliationNote[]
+
+  @@index([email])
+  @@index([is_active])
+}
+
+model Role {
+  id    Int        @id @default(autoincrement())
+  name  String     @unique @db.VarChar(50) // Viewer, Editor, Approver, Admin
+  users UserRole[]
+
+  @@index([name])
+}
+
+model UserRole {
+  id      Int  @id @default(autoincrement())
+  user_id Int
+  role_id Int
+  user    User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  role    Role @relation(fields: [role_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, role_id])
+  @@index([user_id])
+  @@index([role_id])
+}
+
+// Master Data
+model Tower {
+  id           Int          @id @default(autoincrement())
+  name         String       @db.VarChar(255)
+  budget_heads BudgetHead[]
+  lineItems    LineItem[]
+  pos          PO[]
+  budgetBOAs   BudgetBOA[]
+  actualsBOAs  ActualsBOA[]
+
+  @@index([name])
+}
+
+model BudgetHead {
+  id           Int          @id @default(autoincrement())
+  name         String       @db.VarChar(255)
+  tower_id     Int
+  tower        Tower        @relation(fields: [tower_id], references: [id], onDelete: Cascade)
+  lineItems    LineItem[]
+  pos          PO[]
+  budgetBOAs   BudgetBOA[]
+  actualsBOAs  ActualsBOA[]
+
+  @@index([tower_id])
+  @@index([name])
+}
+
+model Vendor {
+  id             Int        @id @default(autoincrement())
+  name           String     @db.VarChar(255)
+  gst_number     String?    @db.VarChar(50)
+  contact_person String?    @db.VarChar(255)
+  pos            PO[]
+  actuals        Actual[]
+  lineItems      LineItem[]
+
+  @@index([name])
+}
+
+model CostCentre {
+  id           Int          @id @default(autoincrement())
+  code         String       @unique @db.VarChar(50)
+  description  String?      @db.Text
+  lineItems    LineItem[]
+  budgetBOAs   BudgetBOA[]
+  actualsBOAs  ActualsBOA[]
+
+  @@index([code])
+}
+
+model POEntity {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique @db.VarChar(255)
+  lineItems   LineItem[]
+}
+
+model ServiceType {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique @db.VarChar(100) // Shared Service, Dedicated Service
+  lineItems   LineItem[]
+}
+
+model AllocationBasis {
+  id           Int          @id @default(autoincrement())
+  name         String       @unique @db.VarChar(255)
+  actualsBOAs  ActualsBOA[]
+  lineItems    LineItem[]
+}
+
+// New / Updated Models
+
+model LineItem {
+  id            Int          @id @default(autoincrement())
+  uid           String       @db.VarChar(100)
+  parentUid     String?      @db.VarChar(100) // Parent UID for grouping
+  description   String       @db.Text
+  towerId       Int?
+  budgetHeadId  Int?
+  costCentreId  Int?
+  fiscalYearId  Int?
+  vendorId      Int?
+  serviceStartDate DateTime? @db.Date
+  serviceEndDate   DateTime? @db.Date
+  contractId    String?      @db.VarChar(100)
+  poEntityId    Int?
+  allocationBasisId Int?
+  serviceTypeId Int?
+  
+  totalBudget   Float        @default(0) @db.Double
+  currency      String       @default("INR") @db.VarChar(10)
+  remarks       String?      @db.Text
+  createdBy     Int?
+  updatedBy     Int?
+  createdAt     DateTime     @default(now()) @db.DateTime(0)
+  updatedAt     DateTime     @updatedAt @db.DateTime(0)
+
+  months               BudgetMonth[]
+  pos                  PO[]                   @relation("PO_LineItems")
+  actuals              Actual[]
+  poLineItems          POLineItem[]
+  reconciliationNotes  ReconciliationNote[]
+  
+  tower         Tower?       @relation(fields: [towerId], references: [id], onDelete: SetNull)
+  budgetHead    BudgetHead?  @relation(fields: [budgetHeadId], references: [id], onDelete: SetNull)
+  costCentre    CostCentre?  @relation(fields: [costCentreId], references: [id], onDelete: SetNull)
+  fiscalYear    FiscalYear?  @relation(fields: [fiscalYearId], references: [id], onDelete: SetNull)
+  vendor        Vendor?      @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  poEntity      POEntity?    @relation(fields: [poEntityId], references: [id], onDelete: SetNull)
+  allocationBasis AllocationBasis? @relation(fields: [allocationBasisId], references: [id], onDelete: SetNull)
+  serviceType   ServiceType? @relation(fields: [serviceTypeId], references: [id], onDelete: SetNull)
+
+  // New fields requested
+  renewalDate         DateTime? @db.Date
+  initiativeType      String?   @db.VarChar(50) // New / Existing
+  priority            String?   @db.VarChar(50)
+  costOptimizationLever String? @db.VarChar(50) // Avoidance / Optimization
+  allocationType      String?   @db.VarChar(50) // Dedicated / Shared (if different from serviceType)
+  
+  // Boolean overrides requested
+  hasContract         Boolean? @default(false)
+  isSharedService     Boolean? @default(false)
+
+  @@index([uid])
+  @@index([vendorId])
+  @@index([fiscalYearId])
+  @@index([budgetHeadId])
+  @@index([towerId])
+}
+
+model BudgetMonth {
+  id          Int      @id @default(autoincrement())
+  lineItemId  Int
+  month       String   @db.VarChar(20) // Jan, Feb, Mar, etc.
+  amount      Float    @default(0) @db.Double
+  lineItem    LineItem @relation(fields: [lineItemId], references: [id], onDelete: Cascade)
+
+  @@index([lineItemId])
+  @@unique([lineItemId, month], name: "lineitem_month_unique")
+}
+
+model FiscalYear {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar(50)
+  startDate DateTime @db.Date
+  endDate   DateTime @db.Date
+  isActive  Boolean  @default(false)
+  
+  lineItems LineItem[]
+
+  @@index([isActive])
+}
+
+model PO {
+  id                  Int       @id @default(autoincrement())
+  poNumber            Int       @unique
+  poDate              DateTime  @db.Date
+  prNumber            Int?
+  prDate              DateTime? @db.Date
+  prAmount            Float?    @db.Double
+  vendorId            Int?
+  currency            String    @default("INR") @db.VarChar(10)
+  poValue             Float     @db.Double
+  exchangeRate        Float?    @db.Double
+  commonCurrencyValue Float?    @db.Double
+  valueInLac          Float?    @db.Double
+  status              String?   @db.VarChar(50)
+  createdAt           DateTime  @default(now()) @db.DateTime(0)
+  lineItems           LineItem[] @relation("PO_LineItems")
+  poLineItems         POLineItem[]
+  
+  vendor              Vendor?    @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  
+  // Relations to Master Data (optional but good for integrity if needed, user didn't specify but PO usually has Tower/BudgetHead)
+  // Adding them as optional to avoid breaking if not provided
+  towerId             Int?
+  budgetHeadId        Int?
+  tower               Tower?     @relation(fields: [towerId], references: [id], onDelete: SetNull)
+  budgetHead          BudgetHead? @relation(fields: [budgetHeadId], references: [id], onDelete: SetNull)
+
+  @@index([poNumber])
+  @@index([vendorId])
+  @@index([status])
+}
+
+model Actual {
+  id              Int      @id @default(autoincrement())
+  invoiceNo       String?  @db.VarChar(100)
+  invoiceDate     DateTime @db.Date
+  amount          Float    @db.Double
+  currency        String   @default("INR") @db.VarChar(10)
+  convertedAmount Float?   @db.Double
+  lineItemId      Int?
+  month           String?  @db.VarChar(20) // optional shorthand month allocation (Jan, Feb, Mar, etc.)
+  vendorId        Int?
+  createdAt       DateTime @default(now()) @db.DateTime(0)
+  lineItem        LineItem? @relation(fields: [lineItemId], references: [id], onDelete: SetNull)
+  vendor          Vendor?   @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  reconciliationNotes ReconciliationNote[]
+
+  @@index([lineItemId])
+  @@index([invoiceDate])
+  @@index([vendorId])
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  entity     String   @db.VarChar(100)
+  entityId   Int?
+  action     String   @db.VarChar(50)
+  userId     Int?
+  diff       String?  @db.Text // JSON string for compatibility
+  createdAt  DateTime @default(now()) @db.DateTime(0)
+  
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entity])
+  @@index([entityId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Keep UserActivityLog and CurrencyRate
+model UserActivityLog {
+  id          Int      @id @default(autoincrement())
+  user_id     Int?
+  username    String?  @db.VarChar(255)
+  action      String   @db.VarChar(255) // HTTP Method + URL
+  details     String?  @db.Text // Request body or query params
+  ip_address  String?  @db.VarChar(45)
+  timestamp   DateTime @default(now()) @db.DateTime(0)
+
+  user        User?    @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@index([user_id])
+  @@index([timestamp])
+}
+
+model CurrencyRate {
+  id              Int      @id @default(autoincrement())
+  from_currency   String   @db.VarChar(10) // e.g., "USD"
+  to_currency     String   @db.VarChar(10) // e.g., "INR"
+  rate            Float    @db.Double // e.g., 83.50
+  effective_date  DateTime @default(now()) @db.Date
+  updated_by_id   Int?
+  updated_by      User?    @relation("CurrencyRateUpdatedBy", fields: [updated_by_id], references: [id], onDelete: SetNull)
+  created_at      DateTime @default(now()) @db.DateTime(0)
+  updated_at      DateTime @updatedAt @db.DateTime(0)
+
+  @@unique([from_currency, to_currency])
+  @@index([from_currency, to_currency])
+}
+
+// New Models for Phase 1-7
+
+// Link table for PO to LineItems
+model POLineItem {
+  id               Int      @id @default(autoincrement())
+  po_id            Int
+  line_item_id     Int
+  allocated_amount Float    @default(0) @db.Double
+  
+  po               PO       @relation(fields: [po_id], references: [id], onDelete: Cascade)
+  lineItem         LineItem @relation(fields: [line_item_id], references: [id], onDelete: Cascade)
+  
+  @@unique([po_id, line_item_id])
+  @@index([po_id])
+  @@index([line_item_id])
+}
+
+// Import job tracking
+model ImportJob {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  filename      String   @db.VarChar(255)
+  fileSize      Int
+  rowsTotal     Int
+  rowsAccepted  Int
+  rowsRejected  Int
+  status        String   @default("pending") @db.VarChar(50)
+  importType    String   @db.VarChar(50) // 'budgets', 'actuals'
+  metadata      String?  @db.Text // JSON string for compatibility
+  createdAt     DateTime @default(now()) @db.DateTime(0)
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([importType])
+}
+
+// Saved views for filters
+model SavedView {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  name      String   @db.VarChar(255)
+  filters   String   @db.Text // JSON string for compatibility
+  page      String   @db.VarChar(100)
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, name, page])
+  @@index([userId])
+}
+
+// Reconciliation notes
+model ReconciliationNote {
+  id           Int      @id @default(autoincrement())
+  lineItemId   Int
+  actualId     Int?
+  note         String   @db.Text
+  createdBy    Int
+  createdAt    DateTime @default(now()) @db.DateTime(0)
+  
+  lineItem     LineItem @relation(fields: [lineItemId], references: [id], onDelete: Cascade)
+  actual       Actual?  @relation(fields: [actualId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@index([lineItemId])
+  @@index([actualId])
+}
+
+// Start of missing BOA models
+model BudgetBOA {
+  id              Int      @id @default(autoincrement())
+  fiscal_year     Int
+  tower_id        Int
+  budget_head_id  Int
+  cost_centre_id  Int
+  created_at      DateTime @default(now()) @db.DateTime(0)
+
+  tower           Tower      @relation(fields: [tower_id], references: [id], onDelete: Cascade)
+  budget_head     BudgetHead @relation(fields: [budget_head_id], references: [id], onDelete: Cascade)
+  cost_centre     CostCentre @relation(fields: [cost_centre_id], references: [id], onDelete: Cascade)
+
+  monthly_breakdown BudgetBOAMonth[]
+  calculations      ActualsCalculation[]
+
+  @@unique([fiscal_year, tower_id, budget_head_id, cost_centre_id], name: "budget_boa_unique")
+}
+
+model BudgetBOAMonth {
+  id              Int      @id @default(autoincrement())
+  budget_boa_id   Int
+  month           Int      // 1-12
+  budget_amount   Float    @default(0) @db.Double
+  
+  budget_boa      BudgetBOA @relation(fields: [budget_boa_id], references: [id], onDelete: Cascade)
+
+  @@unique([budget_boa_id, month])
+}
+
+model ActualsBOA {
+  id              Int      @id @default(autoincrement())
+  fiscal_year     Int
+  month           Int      // 1-12
+  tower_id        Int
+  budget_head_id  Int
+  cost_centre_id  Int
+  actual_amount   Float    @db.Double
+  remarks         String?  @db.Text
+  created_at      DateTime @default(now()) @db.DateTime(0)
+
+  tower           Tower      @relation(fields: [tower_id], references: [id], onDelete: Cascade)
+  budget_head     BudgetHead @relation(fields: [budget_head_id], references: [id], onDelete: Cascade)
+  cost_centre     CostCentre @relation(fields: [cost_centre_id], references: [id], onDelete: Cascade)
+  
+  calculations    ActualsCalculation[]
+  
+  // Optional relations
+  basis_id        Int?
+  basis           AllocationBasis? @relation(fields: [basis_id], references: [id], onDelete: SetNull)
+}
+
+model ActualsCalculation {
+  id                  Int      @id @default(autoincrement())
+  budget_boa_id       Int
+  actuals_boa_id      Int
+  variance_amount     Float    @db.Double
+  variance_percentage Float    @db.Double
+  created_at          DateTime @default(now()) @db.DateTime(0)
+
+  budget_boa      BudgetBOA   @relation(fields: [budget_boa_id], references: [id], onDelete: Cascade)
+  actuals_boa     ActualsBOA  @relation(fields: [actuals_boa_id], references: [id], onDelete: Cascade)
+}
+
+model BudgetBOAData {
+  id                        Int      @id @default(autoincrement())
+  vendor_service            String   @db.VarChar(255)
+  basis_of_allocation       String?  @db.VarChar(255)
+  total_count               Int?     @default(0)
+  jpm_corporate             Int?     @default(0)
+  jphi_corporate            Int?     @default(0)
+  biosys_bengaluru          Int?     @default(0)
+  biosys_noida              Int?     @default(0)
+  biosys_greater_noida      Int?     @default(0)
+  pharmova_api              Int?     @default(0)
+  jgl_dosage                Int?     @default(0)
+  jgl_ibp                   Int?     @default(0)
+  cadista_dosage            Int?     @default(0)
+  jdi_radio_pharmaceuticals Int?     @default(0)
+  jdi_radiopharmacies       Int?     @default(0)
+  jhs_gp_cmo                Int?     @default(0)
+  jhs_llc_cmo               Int?     @default(0)
+  jhs_llc_allergy           Int?     @default(0)
+  ingrevia                  Int?     @default(0)
+  jil_jacpl                 Int?     @default(0)
+  jfl                       Int?     @default(0)
+  consumer                  Int?     @default(0)
+  jti                       Int?     @default(0)
+  jogpl                     Int?     @default(0)
+  enpro                     Int?     @default(0)
+  created_at                DateTime @default(now()) @db.DateTime(0)
+  updated_at                DateTime @default(now()) @updatedAt @db.DateTime(0)
+}
+
+model ActualBOAData {
+  id                  Int      @id @default(autoincrement())
+  vendor_service      String   @db.VarChar(255)
+  fiscal_year         String   @db.VarChar(50) // String 'FY25' etc
+  basis_of_allocation String?  @db.VarChar(255)
+  total_count         Int?
+  created_at          DateTime @default(now()) @db.DateTime(0)
+  updated_at          DateTime @default(now()) @updatedAt @db.DateTime(0)
+}

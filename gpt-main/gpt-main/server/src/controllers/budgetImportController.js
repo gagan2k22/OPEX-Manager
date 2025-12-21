@@ -6,13 +6,13 @@ const importBudgets = async (req, res) => {
             return res.status(400).json({ message: 'No file uploaded' });
         }
 
-        const dryRun = req.query.dryRun === 'true';
-        const createMissingMasters = req.body.createMissingMasters === 'true';
+        const { dryRun, createMissingMasters, customMapping } = req.body;
         const userId = req.user ? req.user.id : null;
 
         const result = await budgetImportService.processImport(req.file.buffer, userId, {
-            dryRun,
-            createMissingMasters
+            dryRun: dryRun === 'true',
+            createMissingMasters: createMissingMasters === 'true',
+            customMapping: customMapping ? JSON.parse(customMapping) : {}
         });
 
         res.json(result);

@@ -22,7 +22,7 @@ import {
     TrendingUp,
     History
 } from '@mui/icons-material';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { pageContainerStyles, pageHeaderStyles, pageTitleStyles, pageTransitionStyles } from '../styles/commonStyles';
 import BudgetDetailTabs from '../components/BudgetDetailTabs';
@@ -40,14 +40,12 @@ const BudgetDetail = () => {
     const fetchDetail = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/budget-detail/${uid}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setData(response.data);
+            const data = await api.get(`/budget-detail/${uid}`);
+            setData(data);
             setError(null);
         } catch (err) {
             console.error('Error fetching budget detail:', err);
-            setError(err.response?.data?.message || 'Failed to fetch budget detail');
+            setError(err.message || 'Failed to fetch budget detail');
         } finally {
             setLoading(false);
         }

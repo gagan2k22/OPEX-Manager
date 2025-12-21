@@ -1,35 +1,57 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('token'));
+    const [isLoading, setIsLoading] = useState(true);
 
+    // Initialize user from storage
     useEffect(() => {
-        if (token) {
-            // Ideally verify token with backend here
-            // For now, just decode or assume valid if we had a user object stored
-            const storedUser = localStorage.getItem('user');
-            if (storedUser) {
-                setUser(JSON.parse(storedUser));
-            }
+        const storedUser = localStorage.getItem('user');
+        const storedToken = localStorage.getItem('token');
+
+        if (storedToken && storedUser) {
+            setToken(storedToken);
+            setUser(JSON.parse(storedUser));
         }
-    }, [token]);
+        setIsLoading(false);
+    }, []);
+
+    // Listen for unauthorized events from api interceptor
+    useEffect(() => {
+        const handleUnauthorized = () => {
+            setToken(null);
+            setUser(null);
+            // Optional: redirect to login or show toast
+        };
+
+        window.addEventListener('auth:unauthorized', handleUnauthorized);
+        return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    }, []);
 
     const login = async (email, password) => {
         try {
-            const response = await axios.post('/api/auth/login', { email, password });
-            const { token, user } = response.data;
-            setToken(token);
-            setUser(user);
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user));
-            return true;
+            // Note: api utility returns response.data directly
+            const data = await api.post('/auth/login', { email, password });
+
+            const { token: newToken, user: newUser } = data;
+
+            setToken(newToken);
+            setUser(newUser);
+
+            localStorage.setItem('token', newToken);
+            localStorage.setItem('user', JSON.stringify(newUser));
+
+            return { success: true };
         } catch (error) {
-            console.error('Login failed', error);
-            return false;
+            console.error('Login failed:', error);
+            return {
+                success: false,
+                message: error.message || 'Login failed'
+            };
         }
     };
 
@@ -40,28 +62,26 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('user');
     };
 
-    useEffect(() => {
-        const interceptor = axios.interceptors.response.use(
-            (response) => response,
-            (error) => {
-                if (error.response && error.response.status === 403 && error.response.data?.message === 'Invalid or expired token') {
-                    setToken(null);
-                    setUser(null);
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('user');
-                }
-                return Promise.reject(error);
-            }
-        );
-
-        return () => axios.interceptors.response.eject(interceptor);
-    }, []);
+    const value = {
+        user,
+        token,
+        login,
+        logout,
+        isAuthenticated: !!token,
+        isLoading
+    };
 
     return (
-        <AuthContext.Provider value={{ user, token, login, logout }}>
-            {children}
+        <AuthContext.Provider value={value}>
+            {!isLoading && children}
         </AuthContext.Provider>
     );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+};

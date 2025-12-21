@@ -20,7 +20,7 @@ import {
     TableRow
 } from '@mui/material';
 import { Save, ArrowBack } from '@mui/icons-material';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { pageContainerStyles, pageHeaderStyles, pageTitleStyles, pageTransitionStyles } from '../styles/commonStyles';
 import POLineItemSelector from '../components/POLineItemSelector';
@@ -79,25 +79,22 @@ const POForm = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [vendorsRes, towersRes, budgetHeadsRes, currencyRatesRes] = await Promise.all([
-                    axios.get(`${import.meta.env.VITE_API_URL}/api/master/vendors`, { headers: { Authorization: `Bearer ${token}` } }),
-                    axios.get(`${import.meta.env.VITE_API_URL}/api/master/towers`, { headers: { Authorization: `Bearer ${token}` } }),
-                    axios.get(`${import.meta.env.VITE_API_URL}/api/master/budget-heads`, { headers: { Authorization: `Bearer ${token}` } }),
-                    axios.get(`${import.meta.env.VITE_API_URL}/api/currency-rates`, { headers: { Authorization: `Bearer ${token}` } })
+                const [vendors, towers, budgetHeads, currencyRates] = await Promise.all([
+                    api.get('/master/vendors'),
+                    api.get('/master/towers'),
+                    api.get('/master/budget-heads'),
+                    api.get('/currency-rates')
                 ]);
 
                 setMasters({
-                    vendors: vendorsRes.data,
-                    towers: towersRes.data,
-                    budgetHeads: budgetHeadsRes.data,
-                    currencyRates: currencyRatesRes.data
+                    vendors,
+                    towers,
+                    budgetHeads,
+                    currencyRates
                 });
 
                 if (isEdit) {
-                    const poRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/pos/${id}`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    const po = poRes.data;
+                    const po = await api.get(`/pos/${id}`);
                     setFormData({
                         poNumber: po.poNumber,
                         poDate: po.poDate.split('T')[0],
@@ -174,13 +171,9 @@ const POForm = () => {
             };
 
             if (isEdit) {
-                await axios.put(`${import.meta.env.VITE_API_URL}/api/pos/${id}`, payload, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                await api.put(`/pos/${id}`, payload);
             } else {
-                await axios.post(`${import.meta.env.VITE_API_URL}/api/pos`, payload, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                await api.post('/pos', payload);
             }
             navigate('/pos');
         } catch (err) {

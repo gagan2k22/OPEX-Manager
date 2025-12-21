@@ -1,40 +1,66 @@
 {
   "name": "opex-server",
-  "version": "1.0.0",
-  "description": "Backend for OPEX Management System",
+  "version": "2.0.0",
+  "description": "Backend for OPEX Management System - Production Ready",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
+    "prod": "cross-env NODE_ENV=production node src/app.js",
     "test": "node test_comprehensive.js",
     "test:api": "node test_api_endpoints.js",
     "test:all": "node test_comprehensive.js && node test_api_endpoints.js",
     "fix": "node fix_database.js",
-    "db:check": "node check_schema.js"
+    "db:check": "node check_schema.js",
+    "db:migrate": "npx prisma migrate deploy",
+    "db:seed": "npx prisma db seed",
+    "db:reset": "npx prisma migrate reset --force",
+    "lint": "eslint src/**/*.js",
+    "format": "prettier --write \"src/**/*.js\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "opex",
+    "budget",
+    "management",
+    "enterprise"
+  ],
+  "author": "OPEX Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "dependencies": {
-    "@prisma/client": "^5.10.2",
-    "axios": "^1.13.2",
-    "bcryptjs": "^2.4.3",
-    "compression": "^1.8.1",
+    "@prisma/client": "^6.4.1",
+    "axios": "^1.8.1",
+    "bcryptjs": "^3.0.3",
+    "compression": "^1.8.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.2.3",
     "exceljs": "^4.4.0",
-    "express": "^4.18.3",
+    "express": "^4.21.2",
+    "express-async-errors": "^3.1.1",
     "express-rate-limit": "^8.2.1",
-    "helmet": "^8.1.0",
+    "express-validator": "^7.2.0",
+    "helmet": "^8.0.0",
+    "joi": "^18.0.2",
     "jsonwebtoken": "^9.0.2",
-    "multer": "^2.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.11",
-    "validator": "^13.15.23"
+    "pino": "^10.1.0",
+    "pino-pretty": "^13.0.0",
+    "redis": "^5.10.0",
+    "validator": "^13.15.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0",
-    "prisma": "^5.10.2"
+    "eslint": "^9.17.0",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.4.2",
+    "prisma": "^6.4.1"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

@@ -24,6 +24,9 @@ import {
     pageTitleStyles,
     pageTransitionStyles
 } from '../styles/commonStyles';
+import ExportDialog from '../components/ExportDialog';
+import * as XLSX from 'xlsx';
+import { FileDownload } from '@mui/icons-material';
 
 const BudgetBOA = () => {
     const [data, setData] = useState([]);
@@ -31,6 +34,7 @@ const BudgetBOA = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [openExportDialog, setOpenExportDialog] = useState(false);
     const [editedData, setEditedData] = useState([]);
     const [activeTab, setActiveTab] = useState(0); // 0 = Values, 1 = Percentages
     const { token } = useAuth();
@@ -256,6 +260,36 @@ const BudgetBOA = () => {
         return ((value / total) * 100).toFixed(2);
     };
 
+    const handleExport = (format) => {
+        try {
+            const exportData = data.map(row => {
+                const rowData = {};
+                columns.forEach(col => {
+                    if (activeTab === 1 && col.editable) {
+                        rowData[col.label] = `${calculatePercentage(row[col.id], row.total_count)}%`;
+                    } else {
+                        rowData[col.label] = row[col.id];
+                    }
+                });
+                return rowData;
+            });
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Budget BOA');
+
+            const timestamp = new Date().toISOString().split('T')[0];
+            const extension = format === 'csv' ? 'csv' : 'xlsx';
+            const filename = `Budget_BOA_${activeTab === 0 ? 'Values' : 'Percentage'}_${timestamp}.${extension}`;
+
+            XLSX.writeFile(wb, filename, { bookType: format === 'csv' ? 'csv' : 'xlsx' });
+            setSuccess(`Data exported as ${format.toUpperCase()} successfully!`);
+            setTimeout(() => setSuccess(null), 3000);
+        } catch (err) {
+            setError('Error exporting data');
+        }
+    };
+
     if (loading) return <Box display="flex" justifyContent="center" m={4}><CircularProgress /></Box>;
 
     const displayData = isEditMode ? editedData : data;
@@ -265,6 +299,14 @@ const BudgetBOA = () => {
             <Box sx={pageHeaderStyles}>
                 <Typography sx={pageTitleStyles}>Budget BOA</Typography>
                 <Box display="flex" gap={2}>
+                    <Button
+                        variant="outlined"
+                        color="success"
+                        startIcon={<FileDownload />}
+                        onClick={() => setOpenExportDialog(true)}
+                    >
+                        Export
+                    </Button>
                     {data.length === 0 && (
                         <Button variant="contained" color="primary" onClick={handleSeed}>
                             Seed Default Data
@@ -349,6 +391,12 @@ const BudgetBOA = () => {
                     Use Tab or Ctrl+V to paste multiple cells at once.
                 </Alert>
             )}
+
+            <ExportDialog
+                open={openExportDialog}
+                onClose={() => setOpenExportDialog(false)}
+                onExport={handleExport}
+            />
         </Box>
     );
 };

@@ -1,12 +1,13 @@
 const express = require('express');
-const { register, login } = require('../controllers/auth.controller');
-
 const router = express.Router();
 
-const { loginLimiter, registerLimiter } = require('../middleware/rateLimiter.middleware');
-const { validateEmail, validatePassword } = require('../middleware/validation.middleware');
+const { register, login } = require('../controllers/auth.controller');
+const { validate } = require('../middleware/validator');
+const { loginLimiter } = require('../middleware/security');
 
-router.post('/register', registerLimiter, validateEmail, validatePassword, register);
-router.post('/login', loginLimiter, validateEmail, login);
+// Apply rate limiting to login
+router.post('/login', loginLimiter, validate('login'), login);
+
+router.post('/register', validate('register'), register);
 
 module.exports = router;

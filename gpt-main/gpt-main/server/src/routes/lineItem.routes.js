@@ -1,12 +1,12 @@
 const express = require('express');
-const { authenticateToken } = require('../middleware/auth.middleware');
+const { authenticate } = require('../middleware/auth');
 const { checkPermission } = require('../middleware/permission.middleware');
 const { getLineItems, createLineItem, updateLineItem, deleteLineItem } = require('../controllers/lineItem.controller');
 const { updateLineItemMonths } = require('../controllers/lineItemMonth.controller');
 
 const router = express.Router();
 
-router.use(authenticateToken);
+router.use(authenticate);
 
 // View line items - All authenticated users
 router.get('/', checkPermission('VIEW_DASHBOARDS'), getLineItems);

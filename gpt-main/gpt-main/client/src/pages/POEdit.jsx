@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { Save, ArrowBack, Warning } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 
 const POEdit = () => {
     const navigate = useNavigate();
@@ -46,12 +46,7 @@ const POEdit = () => {
 
     const fetchPOData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`/api/pos/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            const po = response.data;
+            const po = await api.get(`/pos/${id}`);
             setPoData(po);
 
             // Populate form
@@ -78,11 +73,8 @@ const POEdit = () => {
 
     const fetchVendors = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('/api/master/vendors', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setVendors(response.data);
+            const data = await api.get('/master/vendors');
+            setVendors(data);
         } catch (error) {
             console.error('Error fetching vendors:', error);
         }
@@ -127,11 +119,7 @@ const POEdit = () => {
         setSaving(true);
 
         try {
-            const token = localStorage.getItem('token');
-
-            await axios.put(`/api/pos/${id}`, formData, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.put(`/pos/${id}`, formData);
 
             showSnackbar('PO updated successfully', 'success');
             setTimeout(() => navigate('/pos'), 1500);

@@ -99,7 +99,9 @@ const getBudgetTracker = async (req, res) => {
                 initiativeType: true,
                 priority: true,
                 costOptimizationLever: true,
-                allocationType: true
+                costOptimizationLever: true,
+                allocationType: true,
+                customFields: true
             }
         });
 
@@ -162,7 +164,9 @@ const getBudgetTracker = async (req, res) => {
                 initiative_type: item.initiativeType || '-',
                 priority: item.priority || '-',
                 cost_optimization_lever: item.costOptimizationLever || '-',
+                cost_optimization_lever: item.costOptimizationLever || '-',
                 allocation_type: item.allocationType || '-',
+                customFields: item.customFields,
 
                 budget_head_name: item.budgetHead?.name || '-',
                 tower_name: item.tower?.name || '-',
@@ -203,6 +207,10 @@ const getBudgetTracker = async (req, res) => {
             row.uid_total_fy26_actuals = totals.fy26_actuals;
             row.uid_total_fy27_budget = totals.fy27_budget;
             row.uid_total_fy27_actuals = totals.fy27_actuals;
+
+            // Add total_budget and total_actual for frontend compatibility
+            row.total_budget = row.fy25_budget + row.fy26_budget + row.fy27_budget;
+            row.total_actual = row.fy25_actuals + row.fy26_actuals + row.fy27_actuals;
         });
 
         res.json(trackerData);
@@ -212,4 +220,50 @@ const getBudgetTracker = async (req, res) => {
     }
 };
 
-module.exports = { getBudgets, createBudget, updateBudget, getBudgetTracker };
+const updateLineItem = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        // Remove fields that shouldn't be updated directly or need special handling
+        const {
+            id: _,
+            monthly_data,
+            actual_items,
+            uid_total_fy25_budget,
+            uid_total_fy25_actuals,
+            // ... other calculated fields
+            ...updateData
+        } = data;
+
+        // Map frontend field names to database schema names if necessary
+        const allowedUpdates = {};
+        if (data.uid) allowedUpdates.uid = data.uid;
+        if (data.parent_uid) allowedUpdates.parentUid = data.parent_uid;
+        if (data.service_description) allowedUpdates.description = data.service_description;
+        if (data.remarks) allowedUpdates.remarks = data.remarks;
+        if (data.contract_id) allowedUpdates.contractId = data.contract_id;
+        if (data.initiative_type) allowedUpdates.initiativeType = data.initiative_type;
+        if (data.priority) allowedUpdates.priority = data.priority;
+        if (data.cost_optimization_lever) allowedUpdates.costOptimizationLever = data.cost_optimization_lever;
+        if (data.allocation_type) allowedUpdates.allocationType = data.allocation_type;
+
+        // Date fields handling
+        if (data.service_start_date) allowedUpdates.serviceStartDate = new Date(data.service_start_date);
+        if (data.service_end_date) allowedUpdates.serviceEndDate = new Date(data.service_end_date);
+        if (data.renewal_date) allowedUpdates.renewalDate = new Date(data.renewal_date);
+
+        // Update the line item
+        const lineItem = await prisma.lineItem.update({
+            where: { id: parseInt(id) },
+            data: allowedUpdates
+        });
+
+        res.json(lineItem);
+    } catch (error) {
+        console.error('Error updating line item:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { getBudgets, createBudget, updateBudget, getBudgetTracker, updateLineItem };

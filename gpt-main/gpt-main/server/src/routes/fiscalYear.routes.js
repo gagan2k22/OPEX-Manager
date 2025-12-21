@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const fiscalYearController = require('../controllers/fiscalYear.controller');
-const { authenticateToken, authorizeRoles } = require('../middleware/auth.middleware');
+const { authenticate, restrictTo } = require('../middleware/auth');
+const { validate } = require('../middleware/validator');
 
 // Public route (authenticated) to get fiscal years
-router.get('/', authenticateToken, fiscalYearController.getFiscalYears);
+router.get('/', authenticate, fiscalYearController.getFiscalYears);
 
 // Admin only routes
-router.post('/', authenticateToken, authorizeRoles('Admin'), fiscalYearController.createFiscalYear);
-router.patch('/:id/status', authenticateToken, authorizeRoles('Admin'), fiscalYearController.toggleFiscalYearStatus);
+router.post('/', authenticate, restrictTo('Admin'), validate('createFiscalYear'), fiscalYearController.createFiscalYear);
+router.patch('/:id/status', authenticate, restrictTo('Admin'), fiscalYearController.toggleFiscalYearStatus);
 
 module.exports = router;

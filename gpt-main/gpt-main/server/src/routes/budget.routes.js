@@ -1,7 +1,7 @@
 const express = require('express');
-const { authenticateToken } = require('../middleware/auth.middleware');
+const { authenticate } = require('../middleware/auth');
 const { checkPermission } = require('../middleware/permission.middleware');
-const { getBudgets, createBudget, updateBudget, getBudgetTracker } = require('../controllers/budget.controller');
+const { getBudgets, createBudget, updateBudget, getBudgetTracker, updateLineItem } = require('../controllers/budget.controller');
 
 const multer = require('multer');
 const { importBudgets } = require('../controllers/budgetImportController');
@@ -11,7 +11,9 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const router = express.Router();
 
-router.use(authenticateToken);
+const { validate, validateId } = require('../middleware/validator');
+
+router.use(authenticate);
 
 // View budgets - All authenticated users
 router.get('/tracker', checkPermission('VIEW_DASHBOARDS'), getBudgetTracker);
@@ -24,7 +26,8 @@ router.get('/export', checkPermission('VIEW_DASHBOARDS'), exportBudgets);
 router.post('/import', checkPermission('EDIT_BUDGET_BOA'), upload.single('file'), importBudgets);
 
 // Create/Edit budget - Editor, Approver, Admin
-router.post('/', checkPermission('EDIT_BUDGET_BOA'), createBudget);
-router.put('/:id', checkPermission('EDIT_BUDGET_BOA'), updateBudget);
+router.post('/', checkPermission('EDIT_BUDGET_BOA'), validate('createBudget'), createBudget);
+router.put('/:id', checkPermission('EDIT_BUDGET_BOA'), validateId(), validate('updateBudget'), updateBudget);
+router.put('/line-items/:id', checkPermission('EDIT_BUDGET_BOA'), validateId(), updateLineItem);
 
 module.exports = router;

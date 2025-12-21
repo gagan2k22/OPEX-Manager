@@ -14,11 +14,11 @@ const Login = () => {
         e.preventDefault();
         setError('');
 
-        const success = await login(email, password);
-        if (success) {
+        const result = await login(email, password);
+        if (result.success) {
             navigate('/');
         } else {
-            setError('Invalid email or password');
+            setError(result.message || 'Invalid email or password');
         }
     };
 

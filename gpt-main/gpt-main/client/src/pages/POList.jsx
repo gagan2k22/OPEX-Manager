@@ -6,7 +6,7 @@ import {
 import { DataGrid, GridToolbar, GridActionsCellItem } from '@mui/x-data-grid';
 import { Add, FileDownload, Visibility, Edit } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import * as XLSX from 'xlsx';
 import { useIsAdmin } from '../hooks/usePermissions';
 import { pageContainerStyles, pageHeaderStyles, pageTitleStyles, pageTransitionStyles } from '../styles/commonStyles';
@@ -29,11 +29,8 @@ const POList = () => {
 
     const fetchPOs = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('/api/pos?limit=1000', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const posData = response.data.data || response.data;
+            const data = await api.get('/pos?limit=1000');
+            const posData = data.data || data;
             setPOs(posData);
         } catch (error) {
             console.error('Error fetching POs:', error);
@@ -45,12 +42,9 @@ const POList = () => {
 
     const fetchFiscalYears = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('/api/fiscal-years', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (response.data && response.data.length > 0) {
-                const activeYears = response.data
+            const data = await api.get('/fiscal-years');
+            if (data && data.length > 0) {
+                const activeYears = data
                     .filter(fy => fy.is_active)
                     .map(fy => fy.label);
                 if (activeYears.length > 0) {
@@ -123,13 +117,35 @@ const POList = () => {
             const extension = format === 'csv' ? 'csv' : 'xlsx';
             const filename = `PO_Tracker_${timestamp}.${extension}`;
 
-            XLSX.writeFile(wb, filename);
+            XLSX.writeFile(wb, filename, { bookType: format === 'csv' ? 'csv' : 'xlsx' });
             showSnackbar(`PO data exported as ${format.toUpperCase()} successfully!`, 'success');
         } catch (error) {
             console.error('Error exporting data:', error);
-            showSnackbar('Error exporting data', 'error');
+            setSnackbar({ open: true, message: 'Error exporting data', severity: 'error' });
         }
     }, [pos, formatDate, showSnackbar]);
+
+    const processRowUpdate = async (newRow, oldRow) => {
+        try {
+            const payload = { ...newRow };
+            // Ensure dates are sent correctly if updated
+            if (payload.poDate) payload.poDate = new Date(payload.poDate).toISOString();
+            if (payload.prDate) payload.prDate = new Date(payload.prDate).toISOString();
+
+            await api.put(`/pos/${newRow.id}`, payload);
+            setSnackbar({ open: true, message: 'PO updated successfully', severity: 'success' });
+            return newRow;
+        } catch (error) {
+            console.error('Update error:', error);
+            setSnackbar({ open: true, message: 'Error updating PO: ' + (error.message || 'Unknown error'), severity: 'error' });
+            return oldRow;
+        }
+    };
+
+    const handleProcessRowUpdateError = (error) => {
+        setSnackbar({ open: true, message: 'Error processing update', severity: 'error' });
+        console.error('Process row update error:', error);
+    };
 
     const getStatusColor = (status) => {
         const colors = {
@@ -144,58 +160,79 @@ const POList = () => {
 
     const columns = useMemo(() => [
         {
+            field: 'actions',
+            type: 'actions',
+            headerName: 'Actions',
+            width: 100,
+            getActions: (params) => [
+                <GridActionsCellItem
+                    icon={<Visibility />}
+                    label="View"
+                    onClick={() => navigate(`/pos/${params.id}`)}
+                />,
+                ...(isAdmin ? [<GridActionsCellItem
+                    icon={<Edit />}
+                    label="Edit"
+                    onClick={() => navigate(`/pos/${params.id}/edit`)}
+                    showInMenu={false}
+                />] : [])
+            ]
+        },
+        {
             field: 'fy',
             headerName: 'FY',
             width: 70,
-            valueGetter: (params) => `FY${new Date(params.row.poDate).getFullYear() % 100}`
+            valueGetter: (value, row) => row?.poDate ? `FY${new Date(row.poDate).getFullYear() % 100}` : '-'
         },
         {
             field: 'uid',
             headerName: 'UID',
             width: 150,
-            valueGetter: (params) => params.row.lineItems?.[0]?.uid || '-'
+            valueGetter: (value, row) => row?.lineItems?.[0]?.uid || '-'
         },
         {
             field: 'service_description',
             headerName: 'Service',
             width: 200,
-            valueGetter: (params) => params.row.lineItems?.[0]?.description || '-'
+            valueGetter: (value, row) => row?.lineItems?.[0]?.description || '-'
         },
-        { field: 'budgetHeadName', headerName: 'Budget Head', width: 150, valueGetter: (params) => params.row.budgetHead?.name || '-' },
-        { field: 'poEntityName', headerName: 'PO Entity', width: 120, valueGetter: (params) => params.row.poEntity?.name || '-' },
-        { field: 'prNumber', headerName: 'PR Number', width: 130 },
-        { field: 'prDate', headerName: 'PR Date', width: 110, valueFormatter: (params) => formatDate(params?.value) },
+        { field: 'budgetHeadName', headerName: 'Budget Head', width: 150, valueGetter: (value, row) => row?.budgetHead?.name || '-' },
+        { field: 'poEntityName', headerName: 'PO Entity', width: 120, valueGetter: (value, row) => row?.poEntity?.name || '-' },
+        { field: 'prNumber', headerName: 'PR Number', width: 130, editable: true },
+        { field: 'prDate', headerName: 'PR Date', width: 110, valueFormatter: (value) => formatDate(value), type: 'date', valueGetter: (value) => value ? new Date(value) : null, editable: true },
         {
             field: 'prAmount',
             headerName: 'PR Amount',
             width: 120,
             type: 'number',
-            valueFormatter: (params) => formatCurrency(params?.value)
+            valueFormatter: (value) => formatCurrency(value),
+            editable: true
         },
-        { field: 'currency', headerName: 'Currency', width: 80 },
-        { field: 'poNumber', headerName: 'PO Number', width: 130 },
-        { field: 'poDate', headerName: 'PO Date', width: 110, valueFormatter: (params) => formatDate(params?.value) },
-        { field: 'vendorName', headerName: 'Vendor', width: 150, valueGetter: (params) => params.row.vendor?.name || '-' },
+        { field: 'currency', headerName: 'Currency', width: 80, editable: true },
+        { field: 'poNumber', headerName: 'PO Number', width: 130, editable: true },
+        { field: 'poDate', headerName: 'PO Date', width: 110, valueFormatter: (value) => formatDate(value), type: 'date', valueGetter: (value) => value ? new Date(value) : null, editable: true },
+        { field: 'vendorName', headerName: 'Vendor', width: 150, valueGetter: (value, row) => row?.vendor?.name || '-' },
         {
             field: 'poValue',
             headerName: 'PO Value',
             width: 120,
             type: 'number',
-            valueFormatter: (params) => formatCurrency(params?.value, params.row?.currency)
+            valueFormatter: (value, row) => formatCurrency(value, row?.currency),
+            editable: true
         },
         {
             field: 'commonCurrencyValue',
             headerName: 'Common Currency Value (INR)',
             width: 180,
             type: 'number',
-            valueGetter: (params) => params.row.commonCurrencyValue || params.row.poValue,
-            valueFormatter: (params) => formatCurrency(params?.value)
+            valueGetter: (value, row) => row?.commonCurrencyValue || row?.poValue,
+            valueFormatter: (value) => formatCurrency(value)
         },
         {
             field: 'valueInLac',
             headerName: 'Value in Lac',
             width: 120,
-            valueFormatter: (params) => params.value ? `₹${params.value.toFixed(2)}L` : '-'
+            valueFormatter: (value) => value ? `₹${value.toFixed(2)}L` : '-'
         },
         {
             field: 'status',
@@ -296,6 +333,8 @@ const POList = () => {
                     rows={pos}
                     columns={columns}
                     getRowId={(row) => row.id}
+                    processRowUpdate={processRowUpdate}
+                    onProcessRowUpdateError={handleProcessRowUpdateError}
                     initialState={{
                         pagination: { paginationModel: { pageSize: 25 } },
                     }}
@@ -305,13 +344,16 @@ const POList = () => {
                     density="compact"
                     slots={{ toolbar: GridToolbar }}
                     sx={{
+                        fontSize: '9px',
                         '& .MuiDataGrid-columnHeaders': {
                             backgroundColor: '#f6f8fa',
                             color: '#24292f',
                             fontWeight: 'bold',
+                            fontSize: '9px',
                         },
                         '& .MuiDataGrid-cell': {
                             borderRight: '1px solid #e0e0e0',
+                            fontSize: '9px',
                         },
                         '& .MuiDataGrid-row:hover': {
                             backgroundColor: '#f5f5f5',

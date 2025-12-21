@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { Save, ArrowBack, Warning } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 
 const POCreate = () => {
     const navigate = useNavigate();
@@ -49,24 +49,21 @@ const POCreate = () => {
     const fetchInitialData = async () => {
         try {
             abortControllerRef.current = new AbortController();
-            const token = localStorage.getItem('token');
 
-            const [lineItemsRes, vendorsRes] = await Promise.all([
-                axios.get('/api/line-items?limit=1000', {
-                    headers: { Authorization: `Bearer ${token}` },
+            const [lineItemsRes, vendors] = await Promise.all([
+                api.get('/line-items?limit=1000', {
                     signal: abortControllerRef.current.signal
                 }),
-                axios.get('/api/master/vendors', {
-                    headers: { Authorization: `Bearer ${token}` },
+                api.get('/master/vendors', {
                     signal: abortControllerRef.current.signal
                 })
             ]);
 
             // Extract unique UIDs - optimized with Set
-            const lineItemsData = lineItemsRes.data.data || lineItemsRes.data;
+            const lineItemsData = lineItemsRes.data || lineItemsRes;
             const uniqueUids = [...new Set(lineItemsData.map(item => item.uid))];
             setUids(uniqueUids);
-            setVendors(vendorsRes.data);
+            setVendors(vendors);
         } catch (error) {
             if (error.name !== 'CanceledError') {
                 console.error('Error fetching initial data:', error);
@@ -88,16 +85,13 @@ const POCreate = () => {
     const fetchBudgetDetails = useCallback(async (uid) => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`/api/pos/budget-details/${uid}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setBudgetDetails(response.data);
+            const data = await api.get(`/pos/budget-details/${uid}`);
+            setBudgetDetails(data);
 
             // Auto-fill some PO fields if possible
             setPoData(prev => ({
                 ...prev,
-                vendor_id: response.data.vendor_id || '',
+                vendor_id: data.vendor_id || '',
             }));
         } catch (error) {
             console.error('Error fetching budget details:', error);
@@ -142,9 +136,7 @@ const POCreate = () => {
                 uid_details: budgetDetails
             };
 
-            await axios.post('/api/pos', payload, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.post('/pos', payload);
 
             showSnackbar('PO created successfully', 'success');
             setTimeout(() => navigate('/pos'), 1500);

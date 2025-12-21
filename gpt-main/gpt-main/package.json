@@ -1,10 +1,24 @@
 {
+  "name": "opex-manager-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install --legacy-peer-deps",
+    "setup": "npm run install:all && cd server && npx prisma generate && npx prisma db push && cd ../client && npm run build",
+    "start": "cd server && npm run prod",
+    "start:prod": "cd server && npm run prod",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "cd client && npm run build"
+  },
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "i": "^0.3.7",
     "npm": "^11.6.4",
-    "prisma": "^7.1.0"
+    "prisma": "^6.4.1"
   },
   "dependencies": {
-    "@prisma/client": "^7.1.0"
+    "@prisma/client": "^6.4.1"
   }
 }

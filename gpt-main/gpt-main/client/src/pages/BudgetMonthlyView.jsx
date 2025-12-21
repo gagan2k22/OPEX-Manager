@@ -15,7 +15,7 @@ import {
     Refresh as RefreshIcon,
     Download as DownloadIcon
 } from '@mui/icons-material';
-import axios from 'axios';
+import api from '../utils/api';
 import EditableGrid from '../components/EditableGrid';
 import {
     pageContainerStyles,
@@ -24,7 +24,7 @@ import {
     pageTransitionStyles
 } from '../styles/commonStyles';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 
 const BudgetMonthlyView = () => {
     const [lineItems, setLineItems] = useState([]);
@@ -45,13 +45,12 @@ const BudgetMonthlyView = () => {
 
     const fetchMasterData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const [towersRes, budgetHeadsRes] = await Promise.all([
-                axios.get(`${API_URL}/master/towers`, { headers: { Authorization: `Bearer ${token}` } }),
-                axios.get(`${API_URL}/master/budget-heads`, { headers: { Authorization: `Bearer ${token}` } })
+            const [towers, budgetHeads] = await Promise.all([
+                api.get('/master/towers'),
+                api.get('/master/budget-heads')
             ]);
-            setTowers(towersRes.data);
-            setBudgetHeads(budgetHeadsRes.data);
+            setTowers(towers);
+            setBudgetHeads(budgetHeads);
         } catch (err) {
             console.error('Error fetching master data:', err);
         }
@@ -61,15 +60,13 @@ const BudgetMonthlyView = () => {
         setLoading(true);
         setError(null);
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/line-items`, {
-                headers: { Authorization: `Bearer ${token}` },
+            const data = await api.get('/line-items', {
                 params: {
                     include_months: true,
                     ...filters
                 }
             });
-            setLineItems(response.data);
+            setLineItems(data);
         } catch (err) {
             console.error('Error fetching line items:', err);
             setError('Failed to load budget data');
@@ -80,13 +77,11 @@ const BudgetMonthlyView = () => {
 
     const handleExport = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/budgets/export?template=upload`, {
-                headers: { Authorization: `Bearer ${token}` },
+            const response = await api.get('/budgets/export?template=upload', {
                 responseType: 'blob'
             });
 
-            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const url = window.URL.createObjectURL(new Blob([response]));
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', `budget_monthly_${new Date().toISOString().split('T')[0]}.xlsx`);

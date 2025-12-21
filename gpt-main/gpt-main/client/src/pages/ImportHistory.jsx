@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { CheckCircle, Error as ErrorIcon, Schedule } from '@mui/icons-material';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { pageContainerStyles, pageHeaderStyles, pageTitleStyles, pageTransitionStyles } from '../styles/commonStyles';
 
@@ -25,10 +25,8 @@ const ImportHistory = () => {
 
     const fetchHistory = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/imports`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setHistory(response.data);
+            const data = await api.get('/imports');
+            setHistory(data);
             setLoading(false);
         } catch (err) {
             console.error('Error fetching import history:', err);

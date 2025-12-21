@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../prisma');
 const ExcelJS = require('exceljs');
 const { normalizeToMMM } = require('../utils/monthNormaliser');
 
@@ -15,7 +14,8 @@ class BudgetImportService {
             accepted: [],
             rejected: []
         };
-        const headerMapping = { rawHeaders: [], normalizedHeaders: [] };
+        const headerMapping = { rawHeaders: [], normalizedHeaders: [], fieldMap: {} };
+        const customMapping = options.customMapping || {}; // { "Excel Header": "appFieldName" }
 
         // Header processing
         const headerRow = worksheet.getRow(1);
@@ -43,70 +43,122 @@ class BudgetImportService {
             if (!header) return;
             headerMapping.rawHeaders.push(header);
 
+            // Check custom mapping first
+            if (customMapping[header]) {
+                const appField = customMapping[header];
+                if (appField.startsWith('month_')) {
+                    const mmm = appField.split('_')[1];
+                    monthColumns[mmm] = index;
+                } else {
+                    columnMap[appField] = index;
+                }
+                headerMapping.normalizedHeaders.push(appField);
+                headerMapping.fieldMap[header] = appField;
+                return;
+            }
+
+            // Fallback to intelligent fuzzy matching
             // UID column - matches: uid, UID, Uid, "UID ", etc.
-            if (matchesHeader(header, ['uid', /^uid$/i])) {
+            if (matchesHeader(header, ['uid', /^uid$/i, 'unique id'])) {
                 columnMap.uid = index;
                 headerMapping.normalizedHeaders.push('UID');
+                headerMapping.fieldMap[header] = 'uid';
             }
             // Parent UID column - matches: parent uid, parent_uid
             else if (matchesHeader(header, ['parent uid', 'parent_uid', 'parentuid'])) {
                 columnMap.parentUid = index;
                 headerMapping.normalizedHeaders.push('Parent UID');
+                headerMapping.fieldMap[header] = 'parentUid';
             }
             // Description column - matches: description, service description, desc, service desc
             else if (matchesHeader(header, ['description', 'service description', 'desc', 'service desc'])) {
                 columnMap.description = index;
                 headerMapping.normalizedHeaders.push('Description');
+                headerMapping.fieldMap[header] = 'description';
             }
             // Tower column - matches: tower, towers
             else if (matchesHeader(header, ['tower', 'towers'])) {
                 columnMap.tower = index;
                 headerMapping.normalizedHeaders.push('Tower');
+                headerMapping.fieldMap[header] = 'tower';
             }
             // Budget Head column
             else if (matchesHeader(header, ['budget head', 'budgethead', 'budget_head', 'budget-head'])) {
                 columnMap.budgetHead = index;
                 headerMapping.normalizedHeaders.push('Budget Head');
+                headerMapping.fieldMap[header] = 'budgetHead';
             }
             // Vendor column
             else if (matchesHeader(header, ['vendor', 'vendor name', 'vendor_name'])) {
                 columnMap.vendor = index;
                 headerMapping.normalizedHeaders.push('Vendor');
+                headerMapping.fieldMap[header] = 'vendor';
             }
             // Start Date
             else if (matchesHeader(header, ['start date', 'service start date', 'start_date'])) {
                 columnMap.startDate = index;
                 headerMapping.normalizedHeaders.push('Start Date');
+                headerMapping.fieldMap[header] = 'startDate';
             }
             // End Date
             else if (matchesHeader(header, ['end date', 'service end date', 'end_date'])) {
                 columnMap.endDate = index;
                 headerMapping.normalizedHeaders.push('End Date');
+                headerMapping.fieldMap[header] = 'endDate';
+            }
+            // Renewal Date
+            else if (matchesHeader(header, ['renewal date', 'renewal_date', 'renewal'])) {
+                columnMap.renewalDate = index;
+                headerMapping.normalizedHeaders.push('Renewal Date');
+                headerMapping.fieldMap[header] = 'renewalDate';
             }
             // Contract/PO
-            else if (matchesHeader(header, ['contract', 'contract/po', 'po number', 'po #', 'contract_id'])) {
+            else if (matchesHeader(header, ['contract', 'contract/po', 'po number', 'po #', 'contract_id', 'has contract'])) {
                 columnMap.contractId = index;
                 headerMapping.normalizedHeaders.push('Contract/PO');
+                headerMapping.fieldMap[header] = 'contractId';
             }
             // PO Entity
             else if (matchesHeader(header, ['po entity', 'po_entity', 'entity'])) {
                 columnMap.poEntity = index;
                 headerMapping.normalizedHeaders.push('PO Entity');
+                headerMapping.fieldMap[header] = 'poEntity';
             }
             // Allocation Basis
             else if (matchesHeader(header, ['allocation basis', 'allocation_basis', 'basis'])) {
                 columnMap.allocationBasis = index;
                 headerMapping.normalizedHeaders.push('Allocation Basis');
+                headerMapping.fieldMap[header] = 'allocationBasis';
+            }
+            // Allocation Type
+            else if (matchesHeader(header, ['allocation type', 'allocation_type', 'alloc type'])) {
+                columnMap.allocationType = index;
+                headerMapping.normalizedHeaders.push('Allocation Type');
+                headerMapping.fieldMap[header] = 'allocationType';
             }
             // Service Type
-            else if (matchesHeader(header, ['service type', 'service_type', 'type'])) {
+            else if (matchesHeader(header, ['service type', 'service_type'])) {
                 columnMap.serviceType = index;
                 headerMapping.normalizedHeaders.push('Service Type');
+                headerMapping.fieldMap[header] = 'serviceType';
             }
-            // Total column - matches: total, total budget, grand total
-            else if (matchesHeader(header, ['total', /^total$/i, 'total budget', 'grand total'])) {
+            // Initiative Type
+            else if (matchesHeader(header, ['initiative type', 'initiative_type', 'initiative'])) {
+                columnMap.initiativeType = index;
+                headerMapping.normalizedHeaders.push('Initiative Type');
+                headerMapping.fieldMap[header] = 'initiativeType';
+            }
+            // Priority
+            else if (matchesHeader(header, ['priority'])) {
+                columnMap.priority = index;
+                headerMapping.normalizedHeaders.push('Priority');
+                headerMapping.fieldMap[header] = 'priority';
+            }
+            // Total column - matches: total, total budget, grand total, and specific year totals like "FY26 Budget"
+            else if (matchesHeader(header, ['total', /^total$/i, 'total budget', 'grand total', /FY\d{2} Budget/i])) {
                 columnMap.total = index;
                 headerMapping.normalizedHeaders.push('Total');
+                headerMapping.fieldMap[header] = 'total';
             }
             // Month columns - try to normalize month names
             else {
@@ -114,8 +166,12 @@ class BudgetImportService {
                     const mmm = normalizeToMMM(header);
                     monthColumns[mmm] = index;
                     headerMapping.normalizedHeaders.push(mmm);
+                    headerMapping.fieldMap[header] = `month_${mmm}`;
                 } catch (e) {
                     headerMapping.normalizedHeaders.push(header); // Keep original if not a month
+                    // Store as custom column
+                    if (!columnMap.customColumns) columnMap.customColumns = {};
+                    columnMap.customColumns[header] = index;
                 }
             }
         });
@@ -150,22 +206,57 @@ class BudgetImportService {
             rowData.budgetHead = columnMap.budgetHead ? (row.getCell(columnMap.budgetHead).value ? row.getCell(columnMap.budgetHead).value.toString().trim() : null) : null;
 
             // Extract new fields
-            rowData.vendor = columnMap.vendor ? (row.getCell(columnMap.vendor).value ? row.getCell(columnMap.vendor).value.toString().trim() : null) : null;
-            rowData.startDate = columnMap.startDate ? (row.getCell(columnMap.startDate).value) : null;
-            rowData.endDate = columnMap.endDate ? (row.getCell(columnMap.endDate).value) : null;
-            rowData.contractId = columnMap.contractId ? (row.getCell(columnMap.contractId).value ? row.getCell(columnMap.contractId).value.toString().trim() : null) : null;
-            rowData.poEntity = columnMap.poEntity ? (row.getCell(columnMap.poEntity).value ? row.getCell(columnMap.poEntity).value.toString().trim() : null) : null;
-            rowData.allocationBasis = columnMap.allocationBasis ? (row.getCell(columnMap.allocationBasis).value ? row.getCell(columnMap.allocationBasis).value.toString().trim() : null) : null;
-            rowData.serviceType = columnMap.serviceType ? (row.getCell(columnMap.serviceType).value ? row.getCell(columnMap.serviceType).value.toString().trim() : null) : null;
+            // Extract new fields
+            const getCellValue = (cell) => {
+                if (!cell) return null;
+                if (cell.value && typeof cell.value === 'object' && cell.value.result !== undefined) {
+                    return cell.value.result;
+                }
+                return cell.value;
+            };
+
+            const parseDate = (val) => {
+                if (!val) return null;
+                if (val instanceof Date) return val;
+                const d = new Date(val);
+                return isNaN(d.getTime()) ? null : d;
+            };
+
+            rowData.vendor = columnMap.vendor ? (getCellValue(row.getCell(columnMap.vendor))?.toString().trim() || null) : null;
+            rowData.startDate = columnMap.startDate ? parseDate(getCellValue(row.getCell(columnMap.startDate))) : null;
+            rowData.endDate = columnMap.endDate ? parseDate(getCellValue(row.getCell(columnMap.endDate))) : null;
+            rowData.renewalDate = columnMap.renewalDate ? parseDate(getCellValue(row.getCell(columnMap.renewalDate))) : null;
+            rowData.contractId = columnMap.contractId ? (getCellValue(row.getCell(columnMap.contractId))?.toString().trim() || null) : null;
+            rowData.poEntity = columnMap.poEntity ? (getCellValue(row.getCell(columnMap.poEntity))?.toString().trim() || null) : null;
+            rowData.allocationBasis = columnMap.allocationBasis ? (getCellValue(row.getCell(columnMap.allocationBasis))?.toString().trim() || null) : null;
+            rowData.allocationType = columnMap.allocationType ? (getCellValue(row.getCell(columnMap.allocationType))?.toString().trim() || null) : null;
+            rowData.serviceType = columnMap.serviceType ? (getCellValue(row.getCell(columnMap.serviceType))?.toString().trim() || null) : null;
+            rowData.initiativeType = columnMap.initiativeType ? (getCellValue(row.getCell(columnMap.initiativeType))?.toString().trim() || null) : null;
+            rowData.priority = columnMap.priority ? (getCellValue(row.getCell(columnMap.priority))?.toString().trim() || null) : null;
+
+            // Extract custom fields
+            const customFields = {};
+            if (columnMap.customColumns) {
+                for (const [header, colIndex] of Object.entries(columnMap.customColumns)) {
+                    const val = getCellValue(row.getCell(colIndex));
+                    if (val !== null && val !== undefined && val !== '') {
+                        customFields[header] = val;
+                    }
+                }
+            }
+            rowData.customFields = Object.keys(customFields).length > 0 ? customFields : null;
 
 
             const computedMonths = {};
             let sumMonths = 0;
 
             for (const [mmm, colIndex] of Object.entries(monthColumns)) {
-                const val = row.getCell(colIndex).value;
+                const cell = row.getCell(colIndex);
+                const val = getCellValue(cell);
                 const num = parseFloat(val) || 0;
-                if (isNaN(num)) errors.push(`Invalid amount for ${mmm}`);
+                if (val !== null && val !== undefined && isNaN(parseFloat(val))) {
+                    errors.push(`Invalid amount for ${mmm}: ${val}`);
+                }
                 computedMonths[mmm] = num;
                 sumMonths += num;
             }
@@ -175,9 +266,10 @@ class BudgetImportService {
 
             let totalBudget = 0;
             if (columnMap.total) {
-                totalBudget = parseFloat(row.getCell(columnMap.total).value) || 0;
-                // Tolerance check only if Total column exists
-                if (Math.abs(sumMonths - totalBudget) > 0.5) {
+                const totalVal = getCellValue(row.getCell(columnMap.total));
+                totalBudget = parseFloat(totalVal) || 0;
+                // Tolerance check only if Total column exists - increased to 10 for floating-point precision
+                if (Math.abs(sumMonths - totalBudget) > 10) {
                     errors.push(`Total mismatch: Sum(${sumMonths}) != Total(${totalBudget})`);
                 }
             } else {
@@ -254,6 +346,11 @@ class BudgetImportService {
                         contractId: row.contractId,
                         serviceStartDate: row.startDate,
                         serviceEndDate: row.endDate,
+                        renewalDate: row.renewalDate,
+                        initiativeType: row.initiativeType,
+                        priority: row.priority,
+                        allocationType: row.allocationType,
+                        customFields: row.customFields || undefined,
                         totalBudget: row.totalBudget,
                         createdBy: userId
                     },
@@ -270,7 +367,12 @@ class BudgetImportService {
                         contractId: row.contractId || undefined,
                         serviceStartDate: row.startDate || undefined,
                         serviceEndDate: row.endDate || undefined,
-                        totalBudget: row.totalBudget,
+                        renewalDate: row.renewalDate || undefined,
+                        initiativeType: row.initiativeType || undefined,
+                        priority: row.priority || undefined,
+                        allocationType: row.allocationType || undefined,
+                        customFields: row.customFields || undefined,
+                        totalBudget: row.totalBudget || undefined,
                         updatedBy: userId
                     }
                 });

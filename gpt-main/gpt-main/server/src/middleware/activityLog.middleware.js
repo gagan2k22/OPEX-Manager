@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../prisma');
 
 const activityLogger = async (req, res, next) => {
     // Capture the original end function to log after response is sent

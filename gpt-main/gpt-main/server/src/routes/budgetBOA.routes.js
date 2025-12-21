@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const budgetBOAController = require('../controllers/budgetBOA.controller');
-const { authenticateToken } = require('../middleware/auth.middleware');
+const { authenticate } = require('../middleware/auth');
 
-router.get('/', authenticateToken, budgetBOAController.getAllBudgetBOA);
-router.post('/', authenticateToken, budgetBOAController.createBudgetBOA);
-router.put('/:id', authenticateToken, budgetBOAController.updateBudgetBOA);
-router.delete('/:id', authenticateToken, budgetBOAController.deleteBudgetBOA);
-router.post('/seed', authenticateToken, budgetBOAController.seedBudgetBOA);
+router.get('/', authenticate, budgetBOAController.getAllBudgetBOA);
+router.post('/', authenticate, budgetBOAController.createBudgetBOA);
+router.put('/:id', authenticate, budgetBOAController.updateBudgetBOA);
+router.delete('/:id', authenticate, budgetBOAController.deleteBudgetBOA);
+router.post('/seed', authenticate, budgetBOAController.seedBudgetBOA);
 
 module.exports = router;

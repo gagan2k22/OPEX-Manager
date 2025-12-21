@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Grid, Card, CardContent, Typography, Paper, CircularProgress } from '@mui/material';
 import { TrendingUp, TrendingDown, AccountBalance, ShoppingCart } from '@mui/icons-material';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import axios from 'axios';
+import api from '../utils/api';
 import {
     pageContainerStyles,
     pageHeaderStyles,
@@ -29,12 +29,8 @@ const Dashboard = () => {
 
     const fetchDashboardData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            if (!token) return;
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/reports/dashboard`, config);
-            const { summary, towerWise, vendorWise, monthlyTrend } = response.data;
+            const data = await api.get('/reports/dashboard');
+            const { summary, towerWise, vendorWise, monthlyTrend } = data;
 
             setStats({
                 totalBudget: summary.budget,

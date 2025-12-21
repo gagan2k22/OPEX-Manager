@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../prisma');
 
 // Get all Budget BOA data
 exports.getAllBudgetBOA = async (req, res) => {

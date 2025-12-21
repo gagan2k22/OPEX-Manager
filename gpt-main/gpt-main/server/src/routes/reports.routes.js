@@ -1,11 +1,11 @@
 const express = require('express');
-const { authenticateToken } = require('../middleware/auth.middleware');
+const { authenticate } = require('../middleware/auth');
 const { checkPermission } = require('../middleware/permission.middleware');
 const reportsController = require('../controllers/reports.controller');
 
 const router = express.Router();
 
-router.use(authenticateToken);
+router.use(authenticate);
 
 router.get('/dashboard', checkPermission('VIEW_DASHBOARDS'), reportsController.getDashboardStats);
 

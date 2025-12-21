@@ -1,11 +1,11 @@
 const express = require('express');
-const { authenticateToken } = require('../middleware/auth.middleware');
+const { authenticate } = require('../middleware/auth');
 const { checkPermission } = require('../middleware/permission.middleware');
 const { getBudgetDetail, addReconciliationNote } = require('../controllers/budgetDetail.controller');
 
 const router = express.Router();
 
-router.use(authenticateToken);
+router.use(authenticate);
 
 // Get budget detail - All authenticated users (or restrict to VIEW_DASHBOARDS)
 router.get('/:uid', checkPermission('VIEW_DASHBOARDS'), getBudgetDetail);
