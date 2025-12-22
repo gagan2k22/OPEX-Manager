@@ -75,84 +75,106 @@ const updateBudget = async (req, res) => {
 
 const getBudgetTracker = async (req, res) => {
     try {
-        // Optimized: Only select necessary fields to reduce data transfer
-        const lineItems = await prisma.lineItem.findMany({
-            select: {
-                id: true,
-                uid: true,
-                parentUid: true,
-                description: true,
-                remarks: true,
-                serviceStartDate: true,
-                serviceEndDate: true,
-                contractId: true,
-                tower: { select: { name: true } },
-                budgetHead: { select: { name: true } },
-                fiscalYear: { select: { name: true } },
-                vendor: { select: { name: true } },
-                poEntity: { select: { name: true } },
-                allocationBasis: { select: { name: true } },
-                serviceType: { select: { name: true } },
-                months: { select: { month: true, amount: true } },
-                actuals: { select: { amount: true } },
-                renewalDate: true,
-                initiativeType: true,
-                priority: true,
-                costOptimizationLever: true,
-                costOptimizationLever: true,
-                allocationType: true,
-                customFields: true
-            }
-        });
+        const page = parseInt(req.query.page) || 0;
+        const pageSize = parseInt(req.query.pageSize) || 25;
+        const skip = page * pageSize;
 
-        // Pre-calculate UID totals in a single pass
+        // Optimized: usage of transaction for count and paginated data
+        const [totalRows, lineItems] = await prisma.$transaction([
+            prisma.lineItem.count(),
+            prisma.lineItem.findMany({
+                skip,
+                take: pageSize,
+                orderBy: { id: 'asc' }, // Ensure stable ordering
+                select: {
+                    id: true,
+                    uid: true,
+                    parentUid: true,
+                    description: true,
+                    remarks: true,
+                    serviceStartDate: true,
+                    serviceEndDate: true,
+                    contractId: true,
+                    tower: { select: { name: true } },
+                    budgetHead: { select: { name: true } },
+                    fiscalYear: { select: { name: true } },
+                    vendor: { select: { name: true } },
+                    poEntity: { select: { name: true } },
+                    allocationBasis: { select: { name: true } },
+                    serviceType: { select: { name: true } },
+                    months: { select: { month: true, amount: true } },
+                    actuals: { select: { amount: true } },
+                    renewalDate: true,
+                    initiativeType: true,
+                    priority: true,
+                    costOptimizationLever: true,
+                    allocationType: true,
+                    customFields: true
+                }
+            })
+        ]);
+
+        // Extract UIDs to calculate global totals for the items on THIS page only
+        const uniqueUids = [...new Set(lineItems.map(i => i.uid).filter(Boolean))];
         const uidTotals = {};
-        const trackerData = [];
 
-        lineItems.forEach(item => {
-            // Initialize UID totals if not exists
-            if (!uidTotals[item.uid]) {
-                uidTotals[item.uid] = {
-                    fy25_budget: 0,
-                    fy25_actuals: 0,
-                    fy26_budget: 0,
-                    fy26_actuals: 0,
-                    fy27_budget: 0,
-                    fy27_actuals: 0
-                };
-            }
+        // Fetch all related items for these UIDs to calculate accurate totals (even for off-page items)
+        if (uniqueUids.length > 0) {
+            const relatedItems = await prisma.lineItem.findMany({
+                where: { uid: { in: uniqueUids } },
+                select: {
+                    uid: true,
+                    fiscalYear: { select: { name: true } },
+                    months: { select: { amount: true } },
+                    actuals: { select: { amount: true } }
+                }
+            });
 
-            // Calculate monthly budget and actuals
-            const monthlyBudget = item.months.reduce((sum, m) => sum + m.amount, 0);
-            const actualAmount = item.actuals.reduce((sum, a) => sum + a.amount, 0);
+            // Aggregate totals in memory (efficient since we only fetch for ~25 UIDs)
+            relatedItems.forEach(item => {
+                if (!uidTotals[item.uid]) {
+                    uidTotals[item.uid] = {
+                        fy25_budget: 0, fy25_actuals: 0,
+                        fy26_budget: 0, fy26_actuals: 0,
+                        fy27_budget: 0, fy27_actuals: 0
+                    };
+                }
 
-            // Determine fiscal year and assign values
-            let fy25Budget = 0, fy25Actuals = 0;
-            let fy26Budget = 0, fy26Actuals = 0;
-            let fy27Budget = 0, fy27Actuals = 0;
+                const monthlyBudget = item.months.reduce((sum, m) => sum + m.amount, 0);
+                const actualAmount = item.actuals.reduce((sum, a) => sum + a.amount, 0);
+                const fyName = item.fiscalYear?.name;
 
-            if (item.fiscalYear) {
-                const fyName = item.fiscalYear.name;
                 if (fyName === 'FY25') {
-                    fy25Budget = monthlyBudget;
-                    fy25Actuals = actualAmount;
                     uidTotals[item.uid].fy25_budget += monthlyBudget;
                     uidTotals[item.uid].fy25_actuals += actualAmount;
                 } else if (fyName === 'FY26') {
-                    fy26Budget = monthlyBudget;
-                    fy26Actuals = actualAmount;
                     uidTotals[item.uid].fy26_budget += monthlyBudget;
                     uidTotals[item.uid].fy26_actuals += actualAmount;
                 } else if (fyName === 'FY27') {
-                    fy27Budget = monthlyBudget;
-                    fy27Actuals = actualAmount;
                     uidTotals[item.uid].fy27_budget += monthlyBudget;
                     uidTotals[item.uid].fy27_actuals += actualAmount;
                 }
-            }
+            });
+        }
 
-            // Build tracker row
-            trackerData.push({
+        const trackerData = lineItems.map(item => {
+            // Calculate individual line item values
+            const monthlyBudget = item.months.reduce((sum, m) => sum + m.amount, 0);
+            const actualAmount = item.actuals.reduce((sum, a) => sum + a.amount, 0);
+            let fy25Budget = 0, fy25Actuals = 0, fy26Budget = 0, fy26Actuals = 0, fy27Budget = 0, fy27Actuals = 0;
+
+            const fyName = item.fiscalYear?.name;
+            if (fyName === 'FY25') { fy25Budget = monthlyBudget; fy25Actuals = actualAmount; }
+            else if (fyName === 'FY26') { fy26Budget = monthlyBudget; fy26Actuals = actualAmount; }
+            else if (fyName === 'FY27') { fy27Budget = monthlyBudget; fy27Actuals = actualAmount; }
+
+            const totals = uidTotals[item.uid] || {
+                fy25_budget: 0, fy25_actuals: 0,
+                fy26_budget: 0, fy26_actuals: 0,
+                fy27_budget: 0, fy27_actuals: 0
+            };
+
+            return {
                 id: item.id,
                 uid: item.uid,
                 parent_uid: item.parentUid,
@@ -164,7 +186,6 @@ const getBudgetTracker = async (req, res) => {
                 initiative_type: item.initiativeType || '-',
                 priority: item.priority || '-',
                 cost_optimization_lever: item.costOptimizationLever || '-',
-                cost_optimization_lever: item.costOptimizationLever || '-',
                 allocation_type: item.allocationType || '-',
                 customFields: item.customFields,
 
@@ -175,7 +196,7 @@ const getBudgetTracker = async (req, res) => {
                 allocation_basis_name: item.allocationBasis?.name || '-',
                 service_type_name: item.serviceType?.name || '-',
 
-                // Individual fiscal year data
+                // Current Item Values
                 fy25_budget: fy25Budget,
                 fy25_actuals: fy25Actuals,
                 fy26_budget: fy26Budget,
@@ -183,37 +204,29 @@ const getBudgetTracker = async (req, res) => {
                 fy27_budget: fy27Budget,
                 fy27_actuals: fy27Actuals,
 
-                // UID totals (will be filled in next step)
-                uid_total_fy25_budget: 0,
-                uid_total_fy25_actuals: 0,
-                uid_total_fy26_budget: 0,
-                uid_total_fy26_actuals: 0,
-                uid_total_fy27_budget: 0,
-                uid_total_fy27_actuals: 0,
+                // UID Totals (Global)
+                uid_total_fy25_budget: totals.fy25_budget,
+                uid_total_fy25_actuals: totals.fy25_actuals,
+                uid_total_fy26_budget: totals.fy26_budget,
+                uid_total_fy26_actuals: totals.fy26_actuals,
+                uid_total_fy27_budget: totals.fy27_budget,
+                uid_total_fy27_actuals: totals.fy27_actuals,
+
+                // Combined Totals for Display
+                total_budget: totals.fy25_budget + totals.fy26_budget + totals.fy27_budget,
+                total_actual: totals.fy25_actuals + totals.fy26_actuals + totals.fy27_actuals,
 
                 remarks: item.remarks,
                 monthly_data: item.months || [],
                 actual_items: item.actuals || [],
                 fiscal_year_name: item.fiscalYear?.name
-            });
+            };
         });
 
-        // Fill in UID totals in a second pass
-        trackerData.forEach(row => {
-            const totals = uidTotals[row.uid];
-            row.uid_total_fy25_budget = totals.fy25_budget;
-            row.uid_total_fy25_actuals = totals.fy25_actuals;
-            row.uid_total_fy26_budget = totals.fy26_budget;
-            row.uid_total_fy26_actuals = totals.fy26_actuals;
-            row.uid_total_fy27_budget = totals.fy27_budget;
-            row.uid_total_fy27_actuals = totals.fy27_actuals;
-
-            // Add total_budget and total_actual for frontend compatibility
-            row.total_budget = row.fy25_budget + row.fy26_budget + row.fy27_budget;
-            row.total_actual = row.fy25_actuals + row.fy26_actuals + row.fy27_actuals;
+        res.json({
+            rows: trackerData,
+            totalRowCount: totalRows
         });
-
-        res.json(trackerData);
     } catch (error) {
         console.error('Error in getBudgetTracker:', error);
         res.status(500).json({ message: error.message });

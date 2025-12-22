@@ -32,6 +32,11 @@ const formatCurrency = (amount) => {
 
 const BudgetList = () => {
     const [budgets, setBudgets] = useState([]);
+    const [rowCount, setRowCount] = useState(0);
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 25,
+    });
     const [loading, setLoading] = useState(true);
     const [openDialog, setOpenDialog] = useState(false);
     const [openImportModal, setOpenImportModal] = useState(false);
@@ -47,12 +52,21 @@ const BudgetList = () => {
     useEffect(() => {
         fetchBudgets();
         fetchMasterData();
-    }, []);
+    }, [paginationModel]);
 
     const fetchBudgets = async () => {
+        setLoading(true);
         try {
-            const data = await api.get('/budgets/tracker');
-            setBudgets(data);
+            const { page, pageSize } = paginationModel;
+            const response = await api.get(`/budgets/tracker?page=${page}&pageSize=${pageSize}`);
+            // Check if response has rows/totalRowCount structure (new server logic) or is just array (fallback)
+            if (response.rows && typeof response.totalRowCount === 'number') {
+                setBudgets(response.rows);
+                setRowCount(response.totalRowCount);
+            } else {
+                setBudgets(response);
+                setRowCount(response.length);
+            }
         } catch (error) {
             console.error('Error fetching budgets:', error);
             showSnackbar('Error fetching budget data', 'error');
@@ -105,7 +119,7 @@ const BudgetList = () => {
                 link.click();
                 link.remove();
             } else {
-                // Use XLSX library for quick CSV export of current view
+                // Export Current Page Only
                 const exportData = budgets.map(b => ({
                     'FY': b.fiscal_year_name || 'FY25',
                     'UID': b.uid,
@@ -124,13 +138,13 @@ const BudgetList = () => {
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.setAttribute('href', url);
-                link.setAttribute('download', 'budget_export.csv');
+                link.setAttribute('download', 'budget_export_page.csv');
                 link.style.visibility = 'hidden';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                showSnackbar('Exported current page to CSV', 'success');
             }
-            showSnackbar('Export successful', 'success');
         } catch (error) {
             console.error('Export error:', error);
             showSnackbar('Error exporting data', 'error');
@@ -237,9 +251,9 @@ const BudgetList = () => {
             }
         },
         { field: 'remarks', headerName: 'Remarks', width: 200, editable: true },
-    ], []);
+    ], [customColumns]);
 
-    if (loading) {
+    if (loading && budgets.length === 0) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
                 <CircularProgress />
@@ -273,10 +287,15 @@ const BudgetList = () => {
                     onColumnVisibilityModelChange={handleColumnVisibilityChange}
                     processRowUpdate={processRowUpdate}
                     onProcessRowUpdateError={handleProcessRowUpdateError}
-                    initialState={{
-                        pagination: { paginationModel: { pageSize: 25 } },
-                    }}
+
+                    // Server-side Pagination
+                    rowCount={rowCount}
+                    loading={loading}
                     pageSizeOptions={[25, 50, 100]}
+                    paginationModel={paginationModel}
+                    paginationMode="server"
+                    onPaginationModelChange={setPaginationModel}
+
                     checkboxSelection
                     disableRowSelectionOnClick
                     density="compact"
