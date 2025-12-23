@@ -1,47 +1,17 @@
 /**
  * Caching Service
- * Supports Redis with in-memory fallback
+ * Optimized In-Memory Cache (Redis removed for performance/size optimization)
  */
 
-const { createClient } = require('redis');
 const config = require('../config');
 const logger = require('./logger');
 
 class CacheService {
     constructor() {
         this.memoryCache = new Map();
-        this.useRedis = !!(config.redis && config.redis.host);
+        this.useRedis = false; // Forced false as dependency removed
         this.client = null;
         this.isConnected = false;
-
-        if (this.useRedis) {
-            this.initRedis();
-        }
-    }
-
-    async initRedis() {
-        try {
-            this.client = createClient({
-                url: `redis://${config.redis.host}:${config.redis.port}`,
-                password: config.redis.password || undefined,
-                database: config.redis.db || 0,
-            });
-
-            this.client.on('error', (err) => {
-                logger.error('Redis Client Error:', err);
-                this.isConnected = false;
-            });
-
-            this.client.on('connect', () => {
-                logger.info('Redis Client Connected');
-                this.isConnected = true;
-            });
-
-            await this.client.connect();
-        } catch (err) {
-            logger.warn('Failed to connect to Redis, using memory cache fallback');
-            this.useRedis = false;
-        }
     }
 
     /**

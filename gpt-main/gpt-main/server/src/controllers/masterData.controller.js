@@ -1,8 +1,3 @@
-/**
- * Master Data Controller
- * Managed with caching for performance optimization
- */
-
 const prisma = require('../prisma');
 const cache = require('../utils/cache');
 const { NotFoundError } = require('../middleware/errorHandler');
@@ -11,260 +6,161 @@ const { NotFoundError } = require('../middleware/errorHandler');
 const getWithCache = async (key, fetchFn, ttl = 3600) => {
     const cached = await cache.get(key);
     if (cached) return cached;
-
     const data = await fetchFn();
     await cache.set(key, data, ttl);
     return data;
 };
 
-// Generic helper to clear related caches
-// When modifying 'Tower', we might want to clear 'towers' list and complex objects relying on it
 const invalidateCache = async (pattern) => {
-    // Simple implementation: clear specific keys known.
-    // Real implementation might need pattern matching or tags if using Redis 
     await cache.del(pattern);
 };
 
 // ==========================================
-// Towers
+// 4️⃣ Entity Master (Receiving Units)
 // ==========================================
 
+const getEntities = async (req, res) => {
+    const entities = await getWithCache('entities:all', () =>
+        prisma.entityMaster.findMany({ orderBy: { entity_name: 'asc' } })
+    );
+    res.json(entities);
+};
+
+const createEntity = async (req, res) => {
+    const { name } = req.body;
+    const entity = await prisma.entityMaster.create({
+        data: { entity_name: name }
+    });
+    await invalidateCache('entities:all');
+    res.status(201).json(entity);
+};
+
+// ==========================================
+// 1️⃣ Service Master (UIDs / Contracts)
+// ==========================================
+
+const getServices = async (req, res) => {
+    const services = await getWithCache('services:all', () =>
+        prisma.serviceMaster.findMany({ orderBy: { uid: 'asc' } })
+    );
+    res.json(services);
+};
+
+const createService = async (req, res) => {
+    const data = req.body;
+    const service = await prisma.serviceMaster.create({
+        data: {
+            ...data,
+            service_start_date: data.service_start_date ? new Date(data.service_start_date) : null,
+            service_end_date: data.service_end_date ? new Date(data.service_end_date) : null,
+            renewal_date: data.renewal_date ? new Date(data.renewal_date) : null,
+        }
+    });
+    await invalidateCache('services:all');
+    res.status(201).json(service);
+};
+
+// ==========================================
+// 5️⃣ PO Entity Master
+// ==========================================
+const getPOEntities = async (req, res) => {
+    const entities = await getWithCache('po_entities:all', () =>
+        prisma.pOEntityMaster.findMany({ orderBy: { entity_name: 'asc' } })
+    ); // Prisma capitalizes first letter after prefix => pOEntityMaster
+    res.json(entities);
+};
+
+const createPOEntity = async (req, res) => {
+    const { name } = req.body;
+    const entity = await prisma.pOEntityMaster.create({
+        data: { entity_name: name }
+    });
+    await invalidateCache('po_entities:all');
+    res.status(201).json(entity);
+};
+
+// ==========================================
+// 6️⃣ Budget Head Master
+// ==========================================
+const getBudgetHeads = async (req, res) => {
+    const heads = await getWithCache('budget_heads:all', () =>
+        prisma.budgetHeadMaster.findMany({ orderBy: { head_name: 'asc' } })
+    );
+    res.json(heads);
+};
+
+const createBudgetHead = async (req, res) => {
+    const { name } = req.body;
+    const head = await prisma.budgetHeadMaster.create({
+        data: { head_name: name }
+    });
+    await invalidateCache('budget_heads:all');
+    res.status(201).json(head);
+};
+
+// ==========================================
+// 7️⃣ Tower Master
+// ==========================================
 const getTowers = async (req, res) => {
     const towers = await getWithCache('towers:all', () =>
-        prisma.tower.findMany({
-            include: { budget_heads: true },
-            orderBy: { name: 'asc' }
-        })
+        prisma.towerMaster.findMany({ orderBy: { tower_name: 'asc' } })
     );
     res.json(towers);
 };
 
 const createTower = async (req, res) => {
     const { name } = req.body;
-    const tower = await prisma.tower.create({ data: { name } });
+    const tower = await prisma.towerMaster.create({
+        data: { tower_name: name }
+    });
     await invalidateCache('towers:all');
     res.status(201).json(tower);
 };
 
-const updateTower = async (req, res) => {
-    const { id } = req.params;
+// ==========================================
+// 8️⃣ Allocation Type Master
+// ==========================================
+const getAllocationTypes = async (req, res) => {
+    const types = await getWithCache('allocation_types:all', () =>
+        prisma.allocationTypeMaster.findMany({ orderBy: { type_name: 'asc' } })
+    );
+    res.json(types);
+};
+
+const createAllocationType = async (req, res) => {
     const { name } = req.body;
-
-    const tower = await prisma.tower.update({
-        where: { id: parseInt(id) },
-        data: { name }
+    const type = await prisma.allocationTypeMaster.create({
+        data: { type_name: name }
     });
-
-    await invalidateCache('towers:all');
-    res.json(tower);
-};
-
-const deleteTower = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        await prisma.tower.delete({ where: { id: parseInt(id) } });
-    } catch (err) {
-        if (err.code === 'P2025') throw new NotFoundError('Tower');
-        throw err;
-    }
-
-    await invalidateCache('towers:all');
-    res.json({ message: 'Tower deleted successfully' });
+    await invalidateCache('allocation_types:all');
+    res.status(201).json(type);
 };
 
 // ==========================================
-// Budget Heads
+// 9️⃣ Allocation Basis Master
 // ==========================================
-
-const getBudgetHeads = async (req, res) => {
-    const budgetHeads = await getWithCache('budgetHeads:all', () =>
-        prisma.budgetHead.findMany({
-            include: { tower: true },
-            orderBy: { name: 'asc' }
-        })
+const getAllocationBases = async (req, res) => {
+    const bases = await getWithCache('allocation_bases:all', () =>
+        prisma.allocationBasisMaster.findMany({ orderBy: { basis_name: 'asc' } })
     );
-    res.json(budgetHeads);
+    res.json(bases);
 };
 
-const createBudgetHead = async (req, res) => {
-    const { name, tower_id } = req.body;
-    const budgetHead = await prisma.budgetHead.create({
-        data: { name, tower_id: parseInt(tower_id) }
+const createAllocationBasis = async (req, res) => {
+    const { name } = req.body;
+    const basis = await prisma.allocationBasisMaster.create({
+        data: { basis_name: name }
     });
-
-    await Promise.all([
-        invalidateCache('budgetHeads:all'),
-        invalidateCache('towers:all') // Towers include budget heads
-    ]);
-
-    res.status(201).json(budgetHead);
+    await invalidateCache('allocation_bases:all');
+    res.status(201).json(basis);
 };
-
-const updateBudgetHead = async (req, res) => {
-    const { id } = req.params;
-    const { name, tower_id } = req.body;
-
-    const budgetHead = await prisma.budgetHead.update({
-        where: { id: parseInt(id) },
-        data: { name, tower_id: parseInt(tower_id) }
-    });
-
-    await Promise.all([
-        invalidateCache('budgetHeads:all'),
-        invalidateCache('towers:all')
-    ]);
-
-    res.json(budgetHead);
-};
-
-const deleteBudgetHead = async (req, res) => {
-    const { id } = req.params;
-    await prisma.budgetHead.delete({ where: { id: parseInt(id) } });
-
-    await Promise.all([
-        invalidateCache('budgetHeads:all'),
-        invalidateCache('towers:all')
-    ]);
-
-    res.json({ message: 'Budget Head deleted successfully' });
-};
-
-// ==========================================
-// Vendors
-// ==========================================
-
-const getVendors = async (req, res) => {
-    const vendors = await getWithCache('vendors:all', () =>
-        prisma.vendor.findMany({ orderBy: { name: 'asc' } })
-    );
-    res.json(vendors);
-};
-
-const createVendor = async (req, res) => {
-    const { name, gst_number, contact_person } = req.body;
-    const vendor = await prisma.vendor.create({
-        data: { name, gst_number, contact_person }
-    });
-    await invalidateCache('vendors:all');
-    res.status(201).json(vendor);
-};
-
-const updateVendor = async (req, res) => {
-    const { id } = req.params;
-    const { name, gst_number, contact_person } = req.body;
-    const vendor = await prisma.vendor.update({
-        where: { id: parseInt(id) },
-        data: { name, gst_number, contact_person }
-    });
-    await invalidateCache('vendors:all');
-    res.json(vendor);
-};
-
-const deleteVendor = async (req, res) => {
-    const { id } = req.params;
-    await prisma.vendor.delete({ where: { id: parseInt(id) } });
-    await invalidateCache('vendors:all');
-    res.json({ message: 'Vendor deleted successfully' });
-};
-
-// ==========================================
-// Cost Centres
-// ==========================================
-
-const getCostCentres = async (req, res) => {
-    const costCentres = await getWithCache('costCentres:all', () =>
-        prisma.costCentre.findMany({ orderBy: { code: 'asc' } })
-    );
-    res.json(costCentres);
-};
-
-const createCostCentre = async (req, res) => {
-    const { code, description } = req.body;
-    const costCentre = await prisma.costCentre.create({
-        data: { code, description }
-    });
-    await invalidateCache('costCentres:all');
-    res.status(201).json(costCentre);
-};
-
-const updateCostCentre = async (req, res) => {
-    const { id } = req.params;
-    const { code, description } = req.body;
-    const costCentre = await prisma.costCentre.update({
-        where: { id: parseInt(id) },
-        data: { code, description }
-    });
-    await invalidateCache('costCentres:all');
-    res.json(costCentre);
-};
-
-const deleteCostCentre = async (req, res) => {
-    const { id } = req.params;
-    await prisma.costCentre.delete({ where: { id: parseInt(id) } });
-    await invalidateCache('costCentres:all');
-    res.json({ message: 'Cost Centre deleted successfully' });
-};
-
-// ==========================================
-// Other Entities (Simple Implementations)
-// ==========================================
-
-// Helper for simple entity CRUD
-const createEntityHandlers = (modelName, cacheKey) => ({
-    getAll: async (req, res) => {
-        const data = await getWithCache(cacheKey, () =>
-            prisma[modelName].findMany({ orderBy: { name: 'asc' } })
-        );
-        res.json(data);
-    },
-    create: async (req, res) => {
-        const { name } = req.body;
-        const item = await prisma[modelName].create({ data: { name } });
-        await invalidateCache(cacheKey);
-        res.status(201).json(item);
-    },
-    update: async (req, res) => {
-        const { id } = req.params;
-        const { name } = req.body;
-        const item = await prisma[modelName].update({
-            where: { id: parseInt(id) },
-            data: { name }
-        });
-        await invalidateCache(cacheKey);
-        res.json(item);
-    },
-    delete: async (req, res) => {
-        const { id } = req.params;
-        await prisma[modelName].delete({ where: { id: parseInt(id) } });
-        await invalidateCache(cacheKey);
-        res.json({ message: 'Deleted successfully' });
-    }
-});
-
-// Create handlers for simple entities
-const poHandlers = createEntityHandlers('pOEntity', 'poEntities:all');
-const serviceHandlers = createEntityHandlers('serviceType', 'serviceTypes:all');
-const allocHandlers = createEntityHandlers('allocationBasis', 'allocBases:all');
 
 module.exports = {
-    getTowers, createTower, updateTower, deleteTower,
-    getBudgetHeads, createBudgetHead, updateBudgetHead, deleteBudgetHead,
-    getVendors, createVendor, updateVendor, deleteVendor,
-    getCostCentres, createCostCentre, updateCostCentre, deleteCostCentre,
-
-    getPOEntities: poHandlers.getAll,
-    createPOEntity: poHandlers.create,
-    updatePOEntity: poHandlers.update,
-    deletePOEntity: poHandlers.delete,
-
-    getServiceTypes: serviceHandlers.getAll,
-    createServiceType: serviceHandlers.create,
-    updateServiceType: serviceHandlers.update,
-    deleteServiceType: serviceHandlers.delete,
-
-    getAllocationBases: allocHandlers.getAll,
-    createAllocationBasis: allocHandlers.create,
-    updateAllocationBasis: allocHandlers.update,
-    deleteAllocationBasis: allocHandlers.delete
+    getEntities, createEntity,
+    getServices, createService,
+    getPOEntities, createPOEntity,
+    getBudgetHeads, createBudgetHead,
+    getTowers, createTower,
+    getAllocationTypes, createAllocationType,
+    getAllocationBases, createAllocationBasis
 };

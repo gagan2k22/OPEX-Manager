@@ -40,16 +40,16 @@ const ImportHistory = () => {
             field: 'createdAt',
             headerName: 'Date',
             width: 180,
-            valueFormatter: (params) => new Date(params.value).toLocaleString()
+            valueFormatter: (value) => new Date(value).toLocaleString()
         },
         {
-            field: 'importType',
+            field: 'type',
             headerName: 'Type',
-            width: 120,
+            width: 160,
             renderCell: (params) => (
                 <Chip
-                    label={params.value === 'budgets' ? 'Budget' : 'Actuals'}
-                    color={params.value === 'budgets' ? 'primary' : 'secondary'}
+                    label={params.value?.replace('_', ' ') || 'Unknown'}
+                    color={params.value?.includes('MASTER') ? 'primary' : 'secondary'}
                     size="small"
                     variant="outlined"
                 />
@@ -67,7 +67,7 @@ const ImportHistory = () => {
             valueGetter: (params) => params.row.user?.name || 'Unknown'
         },
         {
-            field: 'rowsTotal',
+            field: 'totalRows',
             headerName: 'Rows',
             width: 100,
             type: 'number',
@@ -75,7 +75,7 @@ const ImportHistory = () => {
             headerAlign: 'center'
         },
         {
-            field: 'rowsAccepted',
+            field: 'acceptedRows',
             headerName: 'Accepted',
             width: 100,
             type: 'number',
@@ -84,7 +84,7 @@ const ImportHistory = () => {
             cellClassName: 'success-cell'
         },
         {
-            field: 'rowsRejected',
+            field: 'rejectedRows',
             headerName: 'Rejected',
             width: 100,
             type: 'number',

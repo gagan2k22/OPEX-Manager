@@ -4,25 +4,24 @@ class ReportsService {
     /**
      * Get dashboard summary metrics
      */
-    async getDashboardSummary(fiscalYearId) {
-        // Default to FY25 if not specified (or handle dynamic current FY)
-        // For now, we'll aggregate across all data if no FY, or filter by FY relations
+    async getDashboardSummary(fy = 'FY25') {
+        const stats = await prisma.fYActual.aggregate({
+            where: { financial_year: fy },
+            _sum: {
+                fy_budget: true,
+                fy_actuals: true
+            }
+        });
 
-        const [totalBudget, totalActuals, poTotal] = await Promise.all([
-            prisma.lineItem.aggregate({
-                _sum: { totalBudget: true }
-            }),
-            prisma.actual.aggregate({
-                _sum: { amount: true } // Should use convertedAmount in real app
-            }),
-            prisma.pO.aggregate({
-                _sum: { poValue: true } // Should use commonCurrencyValue
-            })
-        ]);
+        const procStats = await prisma.procurementDetail.aggregate({
+            _sum: {
+                po_value: true
+            }
+        });
 
-        const budget = totalBudget._sum.totalBudget || 0;
-        const actuals = totalActuals._sum.amount || 0;
-        const committed = poTotal._sum.poValue || 0;
+        const budget = stats._sum.fy_budget || 0;
+        const actuals = stats._sum.fy_actuals || 0;
+        const committed = procStats._sum.po_value || 0;
 
         return {
             budget,
@@ -36,48 +35,65 @@ class ReportsService {
     /**
      * Get Tower-wise budget vs actuals
      */
-    async getTowerWiseReport() {
-        const towers = await prisma.tower.findMany({
+    async getTowerWiseReport(fy = 'FY25') {
+        const services = await prisma.serviceMaster.findMany({
             include: {
-                lineItems: {
-                    include: {
-                        actuals: true
-                    }
+                fy_actuals: {
+                    where: { financial_year: fy }
                 }
             }
         });
 
-        return towers.map(tower => {
-            const budget = tower.lineItems.reduce((sum, item) => sum + parseFloat(item.totalBudget || 0), 0);
-            const actuals = tower.lineItems.reduce((sum, item) => {
-                return sum + item.actuals.reduce((aSum, act) => aSum + parseFloat(act.amount || 0), 0);
-            }, 0);
+        const towerMap = {};
 
-            return {
-                name: tower.name,
-                budget,
-                actuals,
-                variance: budget - actuals
-            };
+        services.forEach(s => {
+            const tower = s.tower || 'Unassigned';
+            const fyData = s.fy_actuals[0] || { fy_budget: 0, fy_actuals: 0 };
+
+            if (!towerMap[tower]) {
+                towerMap[tower] = { budget: 0, actuals: 0 };
+            }
+            towerMap[tower].budget += fyData.fy_budget;
+            towerMap[tower].actuals += fyData.fy_actuals;
         });
+
+        return Object.entries(towerMap).map(([name, data]) => ({
+            name,
+            budget: data.budget,
+            actuals: data.actuals,
+            variance: data.budget - data.actuals
+        }));
     }
 
     /**
      * Get Vendor-wise spend
      */
-    async getVendorWiseReport() {
-        const vendors = await prisma.vendor.findMany({
+    async getVendorWiseReport(fy = 'FY25') {
+        const services = await prisma.serviceMaster.findMany({
             include: {
-                actuals: true
+                fy_actuals: {
+                    where: { financial_year: fy }
+                }
             }
         });
 
-        const data = vendors.map(vendor => ({
-            name: vendor.name,
-            spend: vendor.actuals.reduce((sum, act) => sum + parseFloat(act.amount || 0), 0)
+        const vendorMap = {};
+
+        services.forEach(s => {
+            const vendor = s.vendor || 'Unknown Vendor';
+            const fyData = s.fy_actuals[0] || { fy_actuals: 0 };
+
+            if (!vendorMap[vendor]) {
+                vendorMap[vendor] = 0;
+            }
+            vendorMap[vendor] += fyData.fy_actuals;
+        });
+
+        const data = Object.entries(vendorMap).map(([name, spend]) => ({
+            name,
+            spend
         }));
 
-        // Return top 10 vendors
         return data.sort((a, b) => b.spend - a.spend).slice(0, 10);
     }
 
@@ -85,26 +101,25 @@ class ReportsService {
      * Get Monthly Trend
      */
     async getMonthlyTrend() {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-        // This is a simplified aggregation. In a real scenario, we'd group by actual date.
-        // Here we'll fetch all actuals and aggregate in JS for simplicity given the schema structure.
-        const actuals = await prisma.actual.findMany();
-
-        const trend = {};
-        months.forEach(m => trend[m] = 0);
-
-        actuals.forEach(act => {
-            if (act.month && trend[act.month] !== undefined) {
-                trend[act.month] += parseFloat(act.amount || 0);
+        // Aggregate amount by month from MonthlyEntityActual
+        const monthlyData = await prisma.monthlyEntityActual.groupBy({
+            by: ['month_no'],
+            _sum: {
+                amount: true
+            },
+            orderBy: {
+                month_no: 'asc'
             }
         });
 
-        return Object.keys(trend).map(month => ({
-            month,
-            amount: trend[month]
+        const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+
+        return monthlyData.map(d => ({
+            month: months[d.month_no - 1] || `Month ${d.month_no}`,
+            amount: d._sum.amount || 0
         }));
     }
 }
 
 module.exports = new ReportsService();
+

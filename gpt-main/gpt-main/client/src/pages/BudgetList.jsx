@@ -1,25 +1,16 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Box, Typography, Paper, CircularProgress, Button, Dialog, DialogTitle,
-    DialogContent, DialogActions, Grid, TextField, MenuItem, Snackbar, Alert
+    DialogContent, DialogActions, Grid, TextField, MenuItem, Snackbar, Alert,
+    Chip, IconButton, Drawer, Divider
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { Add, FileDownload, Upload } from '@mui/icons-material';
+import {
+    Visibility, Edit, FileDownload, ListAlt,
+    DoubleArrow, ArrowForwardIos, FileUpload
+} from '@mui/icons-material';
 import { pageContainerStyles, pageHeaderStyles, pageTitleStyles } from '../styles/commonStyles';
 import api from '../utils/api';
-import ImportModal from '../components/ImportModal';
-import ExportDialog from '../components/ExportDialog';
-import * as XLSX from 'xlsx';
-
-const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-    }).replace(/ /g, '-');
-};
 
 const formatCurrency = (amount) => {
     if (amount === undefined || amount === null) return '-';
@@ -30,75 +21,111 @@ const formatCurrency = (amount) => {
     }).format(amount);
 };
 
-const BudgetList = () => {
-    const [budgets, setBudgets] = useState([]);
-    const [rowCount, setRowCount] = useState(0);
+const OpexTracker = () => {
+    const [data, setData] = useState([]);
+    const [totalCount, setTotalCount] = useState(0);
+    const [loading, setLoading] = useState(true);
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
-        pageSize: 25,
+        pageSize: 50,
     });
-    const [loading, setLoading] = useState(true);
-    const [openDialog, setOpenDialog] = useState(false);
-    const [openImportModal, setOpenImportModal] = useState(false);
-    const [openExportDialog, setOpenExportDialog] = useState(false);
+    const [selectedService, setSelectedService] = useState(null);
+    const [splits, setSplits] = useState([]);
+    const [splitsLoading, setSplitsLoading] = useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-    const [vendors, setVendors] = useState([]);
-    const [formData, setFormData] = useState({ uid: '', vendor_id: '' });
-    const [columnVisibilityModel, setColumnVisibilityModel] = useState(() => {
-        const saved = localStorage.getItem('budgetListColumnVisibility');
-        return saved ? JSON.parse(saved) : {};
-    });
+    const [importing, setImporting] = useState(false);
 
-    useEffect(() => {
-        fetchBudgets();
-        fetchMasterData();
-    }, [paginationModel]);
+    // Master data for dropdowns
+    const [budgetHeads, setBudgetHeads] = useState([]);
+    const [towers, setTowers] = useState([]);
+    const [poEntities, setPOEntities] = useState([]);
+    const [allocationTypes, setAllocationTypes] = useState([]);
+    const [allocationBases, setAllocationBases] = useState([]);
 
-    const fetchBudgets = async () => {
-        setLoading(true);
+    const handleImport = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        setImporting(true);
         try {
-            const { page, pageSize } = paginationModel;
-            const response = await api.get(`/budgets/tracker?page=${page}&pageSize=${pageSize}`);
-            // Check if response has rows/totalRowCount structure (new server logic) or is just array (fallback)
-            if (response.rows && typeof response.totalRowCount === 'number') {
-                setBudgets(response.rows);
-                setRowCount(response.totalRowCount);
-            } else {
-                setBudgets(response);
-                setRowCount(response.length);
-            }
+            const resp = await api.post('/imports/xls', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            showSnackbar(`Migrated ${resp.details.recordsMigrated} records and ${resp.details.entitiesDetected} entities!`, 'success');
+            fetchTrackerData();
         } catch (error) {
-            console.error('Error fetching budgets:', error);
-            showSnackbar('Error fetching budget data', 'error');
+            showSnackbar('Migration failed: ' + (error.message || 'Check logs'), 'error');
         } finally {
-            setLoading(false);
+            setImporting(false);
         }
     };
 
+    const [sortModel, setSortModel] = useState([]);
+    const [searchText, setSearchText] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchText);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchText]);
+
+    useEffect(() => {
+        fetchTrackerData();
+        fetchMasterData();
+    }, [paginationModel, sortModel, debouncedSearch]);
+
     const fetchMasterData = async () => {
         try {
-            const data = await api.get('/master/vendors');
-            setVendors(data);
+            const [headsResp, towersResp, poEntitiesResp, allocTypesResp, allocBasesResp] = await Promise.all([
+                api.get('/master/budget-heads'),
+                api.get('/master/towers'),
+                api.get('/master/po-entities'),
+                api.get('/master/allocation-types'),
+                api.get('/master/allocation-bases')
+            ]);
+            setBudgetHeads(headsResp.map(h => h.head_name));
+            setTowers(towersResp.map(t => t.tower_name));
+            setPOEntities(poEntitiesResp.map(e => e.entity_name));
+            setAllocationTypes(allocTypesResp.map(t => t.type_name));
+            setAllocationBases(allocBasesResp.map(b => b.basis_name));
         } catch (error) {
             console.error('Error fetching master data:', error);
         }
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+    const fetchTrackerData = async () => {
+        setLoading(true);
+        try {
+            const sortParam = sortModel.length > 0 ? `&sortModel=${JSON.stringify(sortModel)}` : '';
+            const searchParam = debouncedSearch ? `&search=${debouncedSearch}` : '';
+            const result = await api.get(`/budgets/tracker?page=${paginationModel.page}&pageSize=${paginationModel.pageSize}${sortParam}${searchParam}`);
+            setData(result.rows || []);
+            setTotalCount(result.totalCount || 0);
+        } catch (error) {
+            console.error('Error fetching tracker:', error);
+            showSnackbar('Error fetching tracker data', 'error');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleSubmit = async () => {
+    const handleViewSplits = async (service) => {
+        setSelectedService(service);
+        setDrawerOpen(true);
+        setSplitsLoading(true);
         try {
-            await api.post('/budgets', formData);
-            showSnackbar('Line item added successfully', 'success');
-            setOpenDialog(false);
-            setFormData({ uid: '', vendor_id: '' });
-            fetchBudgets();
+            const result = await api.get(`/budgets/splits/${service.id}`);
+            setSplits(result);
         } catch (error) {
-            console.error('Error adding line item:', error);
-            showSnackbar('Error adding line item', 'error');
+            showSnackbar('Error fetching splits', 'error');
+        } finally {
+            setSplitsLoading(false);
         }
     };
 
@@ -106,264 +133,296 @@ const BudgetList = () => {
         setSnackbar({ open: true, message, severity });
     };
 
-    const handleExport = async (format) => {
-        try {
-            if (format === 'xlsx') {
-                // Use backend export for better formatting and full data
-                const response = await api.get('/budgets/export?template=upload', { responseType: 'blob' });
-                const url = window.URL.createObjectURL(new Blob([response]));
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', 'budget_export.xlsx');
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-            } else {
-                // Export Current Page Only
-                const exportData = budgets.map(b => ({
-                    'FY': b.fiscal_year_name || 'FY25',
-                    'UID': b.uid,
-                    'Vendor': b.vendor_name,
-                    'Service Description': b.service_description,
-                    'Contract': b.contract_id,
-                    'Start Date': formatDate(b.service_start_date),
-                    'End Date': formatDate(b.service_end_date),
-                    'Budget Head': b.budget_head_name,
-                    'Tower': b.tower_name,
-                    'Budget': b.fy25_budget
-                }));
-                const ws = XLSX.utils.json_to_sheet(exportData);
-                const csv = XLSX.utils.sheet_to_csv(ws);
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.setAttribute('href', url);
-                link.setAttribute('download', 'budget_export_page.csv');
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                showSnackbar('Exported current page to CSV', 'success');
-            }
-        } catch (error) {
-            console.error('Export error:', error);
-            showSnackbar('Error exporting data', 'error');
-        }
-    };
-
-    const handleColumnVisibilityChange = useCallback((newModel) => {
-        setColumnVisibilityModel(newModel);
-        localStorage.setItem('budgetListColumnVisibility', JSON.stringify(newModel));
-    }, []);
-
-    const processRowUpdate = async (newRow, oldRow) => {
-        try {
-            // Only send changed fields and ID
-            const payload = { ...newRow };
-            await api.put(`/budgets/line-items/${newRow.id}`, payload);
-            showSnackbar('Row updated successfully', 'success');
-            return newRow;
-        } catch (error) {
-            console.error('Update error:', error);
-            showSnackbar('Error updating row: ' + (error.message || 'Unknown error'), 'error');
-            return oldRow; // Revert change on error
-        }
-    };
-
-    const handleProcessRowUpdateError = (error) => {
-        showSnackbar('Error processing row update', 'error');
-        console.error('Process row update error:', error);
-    };
-
-    const customColumns = useMemo(() => {
-        const fields = new Set();
-        budgets.forEach(row => {
-            if (row.customFields) {
-                Object.keys(row.customFields).forEach(key => fields.add(key));
-            }
+    const formatDate = (dateString) => {
+        if (!dateString) return '-';
+        return new Date(dateString).toLocaleDateString('en-GB', {
+            day: '2-digit', month: 'short', year: 'numeric'
         });
-        return Array.from(fields).map(field => ({
-            field: `custom_${field}`,
-            headerName: field, // Display name matches Excel header
-            width: 150,
-            editable: true,
-            valueGetter: (value, row) => row.customFields?.[field]
-        }));
-    }, [budgets]);
+    };
 
-    const columns = useMemo(() => [
-        { field: 'fiscal_year_name', headerName: 'FY', width: 90, valueGetter: (value, row) => row?.fiscal_year_name || 'FY25' },
-        { field: 'uid', headerName: 'UID', width: 150, editable: true },
-        { field: 'parent_uid', headerName: 'Parent UID', width: 150, editable: true },
-        { field: 'vendor_name', headerName: 'Vendor', width: 180 }, // Not editable inline yet due to complexity
-        { field: 'service_description', headerName: 'Service Description', width: 250, editable: true },
-        { field: 'contract_id', headerName: 'Contract', width: 120, editable: true },
-        { field: 'service_start_date', headerName: 'Service Start Date', width: 130, valueFormatter: (value) => formatDate(value), type: 'date', valueGetter: (value) => value ? new Date(value) : null, editable: true },
-        { field: 'service_end_date', headerName: 'Service End Date', width: 130, valueFormatter: (value) => formatDate(value), type: 'date', valueGetter: (value) => value ? new Date(value) : null, editable: true },
-        { field: 'renewal_date', headerName: 'Renewal Date', width: 130, valueFormatter: (value) => formatDate(value), type: 'date', valueGetter: (value) => value ? new Date(value) : null, editable: true },
-        { field: 'budget_head_name', headerName: 'Budget Head', width: 150 },
-        { field: 'tower_name', headerName: 'Tower', width: 120 },
-        { field: 'po_entity_name', headerName: 'PO Entity', width: 120 },
-        { field: 'allocation_type', headerName: 'Allocation Type', width: 150, editable: true },
-        { field: 'allocation_basis_name', headerName: 'Allocation Basis', width: 150 },
-        { field: 'initiative_type', headerName: 'Initiative Type', width: 150, editable: true },
-        { field: 'service_type_name', headerName: 'Service Type', width: 150 },
-        { field: 'priority', headerName: 'Priority', width: 120, editable: true },
-        { field: 'cost_optimization_lever', headerName: 'Cost Opt. Lever', width: 180, editable: true },
-        ...customColumns,
+    const columns = [
+        { field: 'fy_year', headerName: 'FY Year', width: 90 },
+        { field: 'uid', headerName: 'UID', width: 120, cellClassName: 'uid-cell', editable: true },
+        { field: 'parent_uid', headerName: 'Parent UID', width: 120, editable: true },
+        { field: 'vendor', headerName: 'Vendor', width: 150, editable: true },
+        { field: 'description', headerName: 'Service Description', width: 220, editable: true },
         {
-            field: 'fy25_budget',
-            headerName: 'FY25 Budget',
-            width: 140,
-            type: 'number',
-            valueFormatter: (value) => {
-                if (value == null) return '-';
-                return formatCurrency(value);
-            }
+            field: 'service_start_date',
+            headerName: 'Service Start Date',
+            width: 130,
+            valueFormatter: (v) => formatDate(v),
+            editable: true,
+            type: 'date',
+            valueGetter: (v) => v ? new Date(v) : null
         },
         {
-            field: 'total_actual',
-            headerName: 'Actual',
-            width: 140,
-            type: 'number',
-            valueFormatter: (value) => {
-                if (value == null) return '-';
-                return formatCurrency(value);
-            }
+            field: 'service_end_date',
+            headerName: 'Service End Date',
+            width: 130,
+            valueFormatter: (v) => formatDate(v),
+            editable: true,
+            type: 'date',
+            valueGetter: (v) => v ? new Date(v) : null
         },
         {
-            field: 'variance',
-            headerName: 'Variance',
-            width: 140,
-            type: 'number',
+            field: 'renewal_month',
+            headerName: 'Renewal Month',
+            width: 130,
+            valueFormatter: (v) => formatDate(v),
+            editable: false,
             valueGetter: (value, row) => {
-                const budget = row?.fy25_budget || 0;
-                const actual = row?.total_actual || 0;
-                return budget - actual;
-            },
-            valueFormatter: (value) => {
-                if (value == null) return '-';
-                return formatCurrency(value);
-            },
-            cellClassName: (params) => {
-                if (params.value < 0) return 'variance-negative';
-                return 'variance-positive';
+                if (row.service_start_date) {
+                    const startDate = new Date(row.service_start_date);
+                    const renewalDate = new Date(startDate);
+                    renewalDate.setDate(renewalDate.getDate() + 364);
+                    return renewalDate;
+                }
+                return null;
             }
+        },
+        {
+            field: 'budget_head',
+            headerName: 'Budget Head',
+            width: 180,
+            editable: true,
+            type: 'singleSelect',
+            valueOptions: budgetHeads
+        },
+        {
+            field: 'tower',
+            headerName: 'Tower',
+            width: 130,
+            editable: true,
+            type: 'singleSelect',
+            valueOptions: towers
+        },
+        {
+            field: 'contract',
+            headerName: 'Contract',
+            width: 100,
+            editable: true,
+            type: 'singleSelect',
+            valueOptions: ['Yes', 'No']
+        },
+        {
+            field: 'po_entity',
+            headerName: 'PO Entity',
+            width: 180,
+            editable: true,
+            type: 'singleSelect',
+            valueOptions: poEntities
+        },
+        {
+            field: 'allocation_type',
+            headerName: 'Allocation Type',
+            width: 130,
+            editable: true,
+            type: 'singleSelect',
+            valueOptions: allocationTypes
+        },
+        {
+            field: 'allocation_basis',
+            headerName: 'Allocation Basis',
+            width: 200,
+            editable: true,
+            type: 'singleSelect',
+            valueOptions: allocationBases
+        },
+        { field: 'initiative_type', headerName: 'Initiative Type', width: 130, editable: true },
+        { field: 'service_type', headerName: 'Service Type', width: 130, editable: true },
+        { field: 'priority', headerName: 'Priority', width: 100, editable: true },
+        {
+            field: 'fy_budget',
+            headerName: 'Budget',
+            width: 130,
+            type: 'number',
+            editable: true,
+            valueFormatter: (value) => formatCurrency(value),
+            cellClassName: 'bold-cell'
+        },
+        {
+            field: 'fy_actuals',
+            headerName: 'Actual',
+            width: 130,
+            type: 'number',
+            valueFormatter: (value) => formatCurrency(value),
+            cellClassName: 'actuals-cell'
+        },
+        { field: 'currency', headerName: 'Currency', width: 90, editable: true },
+        {
+            field: 'common_currency_value_inr',
+            headerName: 'Value In INR',
+            width: 140,
+            type: 'number',
+            editable: true,
+            valueFormatter: (value) => formatCurrency(value)
+        },
+        {
+            field: 'value_in_lac',
+            headerName: 'Value in Lakh',
+            width: 120,
+            type: 'number',
+            valueFormatter: (value) => value ? value.toFixed(2) : '-'
         },
         { field: 'remarks', headerName: 'Remarks', width: 200, editable: true },
-    ], [customColumns]);
+        {
+            field: 'actions',
+            headerName: 'Monthly Splits',
+            width: 140,
+            renderCell: (params) => (
+                <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<ListAlt />}
+                    onClick={() => handleViewSplits(params.row)}
+                    sx={{ fontSize: '10px', textTransform: 'none' }}
+                >
+                    View Splits
+                </Button>
+            )
+        }
+    ];
 
-    if (loading && budgets.length === 0) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-                <CircularProgress />
-            </Box>
-        );
-    }
+    const splitColumns = [
+        { field: 'entity_name', headerName: 'Entity', width: 180, valueGetter: (v, row) => row.entity?.entity_name },
+        { field: 'month_no', headerName: 'Month', width: 80, valueFormatter: (v) => `M${v}` },
+        {
+            field: 'amount',
+            headerName: 'Amount',
+            width: 130,
+            type: 'number',
+            editable: true,
+            valueFormatter: (v) => formatCurrency(v)
+        }
+    ];
 
     return (
         <Box sx={pageContainerStyles}>
             <Box sx={pageHeaderStyles}>
-                <Typography sx={pageTitleStyles}>Net Budget</Typography>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button variant="outlined" color="success" startIcon={<FileDownload />} onClick={() => setOpenExportDialog(true)}>
-                        Export
+                <Typography sx={pageTitleStyles}>Jubilant OPEX Tracker (Excel → DB Logic)</Typography>
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <TextField
+                        size="small"
+                        placeholder="Search..."
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                        sx={{ mr: 2, bgcolor: 'white', borderRadius: 1 }}
+                    />
+                    <Button
+                        variant="outlined"
+                        component="label"
+                        color="primary"
+                        startIcon={importing ? <CircularProgress size={20} /> : <FileUpload />}
+                        disabled={importing}
+                    >
+                        {importing ? 'Migrating...' : 'Import Master Excel'}
+                        <input type="file" hidden accept=".xlsx, .xls" onChange={handleImport} />
                     </Button>
-                    <Button variant="outlined" startIcon={<Upload />} onClick={() => setOpenImportModal(true)}>
-                        Upload Budget
+                    <Button variant="outlined" color="success" startIcon={<FileDownload />}>
+                        Export XLS
                     </Button>
-                    <Button variant="contained" startIcon={<Add />} onClick={() => setOpenDialog(true)}>
-                        Add Line Item
-                    </Button>
+                    <Chip label="Financial Year: FY25" color="secondary" variant="outlined" />
                 </Box>
             </Box>
 
-            <Paper elevation={0} sx={{ width: '100%', height: 600, border: '1px solid #d0d7de', borderRadius: '6px' }}>
+            <Paper elevation={0} sx={{ width: '100%', height: 'calc(100vh - 180px)', border: '1px solid #d0d7de', borderRadius: '8px' }}>
                 <DataGrid
-                    rows={budgets}
+                    rows={data}
                     columns={columns}
-                    getRowId={(row) => row.id || row.tempId || Math.random()}
-                    columnVisibilityModel={columnVisibilityModel}
-                    onColumnVisibilityModelChange={handleColumnVisibilityChange}
-                    processRowUpdate={processRowUpdate}
-                    onProcessRowUpdateError={handleProcessRowUpdateError}
-
-                    // Server-side Pagination
-                    rowCount={rowCount}
                     loading={loading}
+                    rowCount={totalCount}
                     pageSizeOptions={[25, 50, 100]}
                     paginationModel={paginationModel}
                     paginationMode="server"
                     onPaginationModelChange={setPaginationModel}
-
-                    checkboxSelection
-                    disableRowSelectionOnClick
+                    sortingMode="server"
+                    onSortModelChange={setSortModel}
                     density="compact"
                     slots={{ toolbar: GridToolbar }}
-                    sx={{
-                        fontSize: '9px',
-                        '& .MuiDataGrid-columnHeaders': {
-                            backgroundColor: '#f6f8fa',
-                            color: '#24292f',
-                            fontWeight: 'bold',
-                            fontSize: '9px',
-                        },
-                        '& .MuiDataGrid-cell': {
-                            borderRight: '1px solid #e0e0e0',
-                            fontSize: '9px',
-                        },
-                        '& .MuiDataGrid-row:hover': {
-                            backgroundColor: '#f5f5f5',
-                        },
-                        '& .variance-positive': {
-                            color: '#2e7d32',
-                            fontWeight: 'bold',
-                        },
-                        '& .variance-negative': {
-                            color: '#d32f2f',
-                            fontWeight: 'bold',
+                    processRowUpdate={async (newRow, oldRow) => {
+                        try {
+                            // Only send update if changed
+                            if (JSON.stringify(newRow) === JSON.stringify(oldRow)) return oldRow;
+
+                            await api.put(`/budgets/tracker/${newRow.id}`, newRow);
+                            showSnackbar('Record updated successfully', 'success');
+                            return newRow;
+                        } catch (error) {
+                            showSnackbar('Update failed: ' + (error.response?.data?.message || error.message), 'error');
+                            return oldRow;
                         }
+                    }}
+                    onProcessRowUpdateError={(error) => {
+                        showSnackbar('Error updating row: ' + error.message, 'error');
+                    }}
+                    sx={{
+                        fontSize: '11px',
+                        '& .uid-cell': { color: '#0969da', fontWeight: 600 },
+                        '& .bold-cell': { fontWeight: 700, bgcolor: '#f6f8fa' },
+                        '& .actuals-cell': { color: '#0969da', fontWeight: 600 },
+                        '& .positive-val': { color: '#1a7f37' },
+                        '& .negative-val': { color: '#cf222e' },
                     }}
                 />
             </Paper>
 
-            <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth>
-                <DialogTitle>Add New Line Item</DialogTitle>
-                <DialogContent dividers>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                            <TextField fullWidth size="small" label="UID" name="uid" value={formData.uid} onChange={handleInputChange} />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField fullWidth size="small" select label="Vendor" name="vendor_id" value={formData.vendor_id} onChange={handleInputChange}>
-                                {vendors.map(v => <MenuItem key={v.id} value={v.id}>{v.name}</MenuItem>)}
-                            </TextField>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="caption">Form simplified for stability. Use Edit for more details.</Typography>
-                        </Grid>
-                    </Grid>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-                    <Button onClick={handleSubmit} variant="contained">Add</Button>
-                </DialogActions>
-            </Dialog>
+            <Drawer
+                anchor="right"
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+                PaperProps={{ sx: { width: 600, p: 3 } }}
+            >
+                {selectedService && (
+                    <Box>
+                        <Typography variant="h6" gutterBottom>
+                            Monthly Entity Splits: {selectedService.uid}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" gutterBottom>
+                            {selectedService.vendor} | {selectedService.service}
+                        </Typography>
+                        <Box sx={{ my: 2, p: 2, bgcolor: '#f6f8fa', borderRadius: 1, display: 'flex', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography variant="caption" display="block">FY Budget</Typography>
+                                <Typography variant="subtitle1" fontWeight="bold">{formatCurrency(selectedService.fy_budget)}</Typography>
+                            </Box>
+                            <Box sx={{ textAlign: 'right' }}>
+                                <Typography variant="caption" display="block">Calculated Actuals</Typography>
+                                <Typography variant="subtitle1" fontWeight="bold" color="primary">{formatCurrency(selectedService.fy_actuals)}</Typography>
+                            </Box>
+                        </Box>
 
-            <ImportModal
-                open={openImportModal}
-                onClose={() => setOpenImportModal(false)}
-                onSuccess={() => {
-                    fetchBudgets();
-                    showSnackbar('Budget imported successfully', 'success');
-                }}
-            />
+                        <Divider sx={{ my: 2 }} />
 
-            <ExportDialog
-                open={openExportDialog}
-                onClose={() => setOpenExportDialog(false)}
-                onExport={handleExport}
-            />
+                        <Box sx={{ height: 500 }}>
+                            <DataGrid
+                                rows={splits}
+                                columns={splitColumns}
+                                loading={splitsLoading}
+                                density="compact"
+                                processRowUpdate={async (newRow) => {
+                                    try {
+                                        await api.post('/budgets/splits/update', {
+                                            service_id: selectedService.id,
+                                            entity_id: newRow.entity_id,
+                                            month_no: newRow.month_no,
+                                            amount: newRow.amount
+                                        });
+                                        fetchTrackerData(); // Refresh main table to see new FY total
+                                        return newRow;
+                                    } catch (e) {
+                                        showSnackbar('Update failed', 'error');
+                                        throw e;
+                                    }
+                                }}
+                            />
+                        </Box>
+
+                        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button variant="contained" onClick={() => setDrawerOpen(false)}>Done</Button>
+                        </Box>
+                    </Box>
+                )}
+            </Drawer>
 
             <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}>
                 <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
@@ -372,4 +431,4 @@ const BudgetList = () => {
     );
 };
 
-export default BudgetList;
+export default OpexTracker;

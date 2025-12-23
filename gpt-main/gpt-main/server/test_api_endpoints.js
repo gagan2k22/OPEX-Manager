@@ -38,11 +38,11 @@ function logTest(testName, passed, error = null) {
 async function testServerConnection() {
     log('\n=== Testing Server Connection ===', colors.cyan);
     try {
-        const response = await axios.get(`${BASE_URL}/`);
-        logTest('Server is running', response.status === 200);
+        const response = await axios.get(`${BASE_URL}/health`);
+        logTest('Server Health Check', response.status === 200);
         return true;
     } catch (error) {
-        logTest('Server is running', false, error.message);
+        logTest('Server Health Check', false, error.message);
         return false;
     }
 }
@@ -50,11 +50,10 @@ async function testServerConnection() {
 async function testAuthEndpoints() {
     log('\n=== Testing Auth Endpoints ===', colors.cyan);
 
-    // Test login endpoint
     try {
         const response = await axios.post(`${BASE_URL}/api/auth/login`, {
             email: 'admin@example.com',
-            password: 'admin123'
+            password: 'password123'
         });
         logTest('POST /api/auth/login', response.status === 200 && response.data.token);
         return response.data.token;
@@ -64,11 +63,12 @@ async function testAuthEndpoints() {
     }
 }
 
-async function testGetEndpoint(name, url, token) {
+async function testGetEndpoint(name, url, token, checkType = 'array') {
     try {
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
         const response = await axios.get(`${BASE_URL}${url}`, { headers });
-        logTest(`GET ${url}`, response.status === 200 && Array.isArray(response.data));
+        const isValid = checkType === 'array' ? Array.isArray(response.data) : (typeof response.data === 'object');
+        logTest(`GET ${url}`, response.status === 200 && isValid);
     } catch (error) {
         logTest(`GET ${url}`, false, error.response?.data?.message || error.message);
     }
@@ -76,47 +76,24 @@ async function testGetEndpoint(name, url, token) {
 
 async function testMasterDataEndpoints(token) {
     log('\n=== Testing Master Data Endpoints ===', colors.cyan);
-    await testGetEndpoint('Towers', '/api/master/towers', token);
-    await testGetEndpoint('Budget Heads', '/api/master/budget-heads', token);
-    await testGetEndpoint('Vendors', '/api/master/vendors', token);
-    await testGetEndpoint('Cost Centres', '/api/master/cost-centres', token);
-    await testGetEndpoint('PO Entities', '/api/master/po-entities', token);
-    await testGetEndpoint('Service Types', '/api/master/service-types', token);
-    await testGetEndpoint('Allocation Bases', '/api/master/allocation-bases', token);
+    await testGetEndpoint('Entities', '/api/master/entities', token);
+    await testGetEndpoint('Services', '/api/master/services', token);
 }
 
 async function testBudgetEndpoints(token) {
-    log('\n=== Testing Budget Endpoints ===', colors.cyan);
-    // Note: /api/budgets/tracker must be verified directly if /api/budgets root isn't array
-    // Checking route structure: router.get('/', getBudgets) returns array.
-    await testGetEndpoint('Budgets', '/api/budgets', token);
-    await testGetEndpoint('Budget Tracker', '/api/budgets/tracker', token);
+    log('\n=== Testing Tracker Endpoints ===', colors.cyan);
+    await testGetEndpoint('Tracker Data', '/api/budgets/tracker', token, 'object');
+    await testGetEndpoint('Net Budget Tracker', '/api/budgets/net-tracker', token, 'object');
 }
 
-async function testLineItemEndpoints(token) {
-    log('\n=== Testing Line Item Endpoints ===', colors.cyan);
-    await testGetEndpoint('Line Items', '/api/line-items', token);
-}
-
-async function testPOEndpoints(token) {
-    log('\n=== Testing PO Endpoints ===', colors.cyan);
-    await testGetEndpoint('POs', '/api/pos', token);
-}
-
-async function testActualsEndpoints(token) {
-    log('\n=== Testing Actuals Endpoints ===', colors.cyan);
-    await testGetEndpoint('Actuals', '/api/actuals', token);
-}
-
-async function testFiscalYearEndpoints(token) {
-    log('\n=== Testing Fiscal Year Endpoints ===', colors.cyan);
-    await testGetEndpoint('Fiscal Years', '/api/fiscal-years', token);
-    await testGetEndpoint('Active Fiscal Year', '/api/fiscal-years/active', token);
+async function testReportEndpoints(token) {
+    log('\n=== Testing Report Endpoints ===', colors.cyan);
+    await testGetEndpoint('Dashboard Stats', '/api/reports/dashboard', token, 'object');
 }
 
 async function generateReport() {
     log('\n' + '='.repeat(60), colors.magenta);
-    log('API TEST REPORT', colors.magenta);
+    log('API TEST REPORT (Unified Model)', colors.magenta);
     log('='.repeat(60), colors.magenta);
 
     log(`\nTotal Tests: ${totalTests}`, colors.blue);
@@ -138,7 +115,7 @@ async function generateReport() {
 }
 
 async function runAllTests() {
-    log('Starting API Test Suite...', colors.cyan);
+    log('Starting Unified API Test Suite...', colors.cyan);
     log('Timestamp: ' + new Date().toISOString(), colors.blue);
 
     const serverRunning = await testServerConnection();
@@ -148,10 +125,7 @@ async function runAllTests() {
     if (token) {
         await testMasterDataEndpoints(token);
         await testBudgetEndpoints(token);
-        await testLineItemEndpoints(token);
-        await testPOEndpoints(token);
-        await testActualsEndpoints(token);
-        await testFiscalYearEndpoints(token);
+        await testReportEndpoints(token);
     } else {
         log('Skipping authenticated tests due to login failure', colors.red);
     }
@@ -164,3 +138,4 @@ runAllTests().catch(error => {
     console.error('Fatal error:', error);
     process.exit(1);
 });
+

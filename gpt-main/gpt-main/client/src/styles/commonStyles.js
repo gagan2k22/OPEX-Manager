@@ -1,8 +1,8 @@
-// Jubilant Theme - Common Styles
+// Jubilant Theme - Common Styles using CSS Variables
 
 export const pageContainerStyles = {
     p: 3,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: 'var(--bg-color, #F8FAFC)',
     minHeight: 'calc(100vh - 64px)',
 };
 
@@ -16,11 +16,11 @@ export const pageHeaderStyles = {
 };
 
 export const pageTitleStyles = {
-    fontFamily: '"Inter", sans-serif',
+    fontFamily: 'var(--font-family-base, "Inter", sans-serif)',
     fontWeight: 600,
-    fontSize: '24px',
+    fontSize: '1.7rem',
     lineHeight: 1.4,
-    color: '#003399',
+    color: 'var(--primary-color, #003399)',
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
 };
@@ -42,26 +42,26 @@ export const cardStyles = {
 };
 
 export const buttonPrimaryStyles = {
-    backgroundColor: '#003399',
+    backgroundColor: 'var(--primary-color, #003399)',
     color: '#FFFFFF',
     fontWeight: 500,
     textTransform: 'uppercase',
     '&:hover': {
-        backgroundColor: '#1A73E8',
+        filter: 'brightness(1.1)',
         transform: 'translateY(-1px)',
-        boxShadow: '0 4px 12px rgba(0, 51, 153, 0.3)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
     },
 };
 
 export const buttonSecondaryStyles = {
-    backgroundColor: '#78BE20',
+    backgroundColor: 'var(--secondary-color, #78BE20)',
     color: '#FFFFFF',
     fontWeight: 500,
     textTransform: 'uppercase',
     '&:hover': {
-        backgroundColor: '#A3E635',
+        filter: 'brightness(1.1)',
         transform: 'translateY(-1px)',
-        boxShadow: '0 4px 12px rgba(120, 190, 32, 0.3)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
     },
 };
 
@@ -94,10 +94,10 @@ export const statusChipStyles = {
 };
 
 export const tableHeaderStyles = {
-    backgroundColor: '#003399',
+    backgroundColor: 'var(--primary-color, #003399)',
     color: '#FFFFFF',
     fontWeight: 600,
-    fontSize: '14px',
+    fontSize: 'var(--font-size-base, 14px)',
     borderRight: '1px solid rgba(255, 255, 255, 0.1)',
     '&:last-child': {
         borderRight: 'none',
@@ -106,7 +106,7 @@ export const tableHeaderStyles = {
 
 export const tableRowStyles = {
     '&:hover': {
-        backgroundColor: 'rgba(26, 115, 232, 0.08)',
+        backgroundColor: 'rgba(0, 51, 153, 0.08)',
     },
     '&:nth-of-type(even)': {
         backgroundColor: '#F8FAFC',
@@ -117,19 +117,17 @@ export const dataGridStyles = {
     border: '1px solid #E5E7EB',
     borderRadius: 2,
     '& .MuiDataGrid-columnHeaders': {
-        backgroundColor: '#003399',
+        backgroundColor: 'var(--primary-color, #003399)',
         color: '#FFFFFF',
         fontWeight: 600,
-        fontSize: '14px',
+        fontSize: 'var(--font-size-base, 14px)',
     },
     '& .MuiDataGrid-cell': {
         borderRight: '1px solid #E5E7EB',
+        fontSize: 'var(--font-size-base, 14px)',
     },
     '& .MuiDataGrid-row:hover': {
-        backgroundColor: 'rgba(26, 115, 232, 0.08)',
-    },
-    '& .MuiDataGrid-row:nth-of-type(even)': {
-        backgroundColor: '#F8FAFC',
+        backgroundColor: 'rgba(0, 51, 153, 0.05)',
     },
 };
 
@@ -139,17 +137,17 @@ export const formFieldStyles = {
             borderColor: '#9CA3AF',
         },
         '&:hover fieldset': {
-            borderColor: '#003399',
+            borderColor: 'var(--primary-color, #003399)',
         },
         '&.Mui-focused fieldset': {
-            borderColor: '#003399',
+            borderColor: 'var(--primary-color, #003399)',
             borderWidth: '2px',
         },
     },
     '& .MuiInputLabel-root': {
         color: '#374151',
         '&.Mui-focused': {
-            color: '#003399',
+            color: 'var(--primary-color, #003399)',
         },
     },
 };
@@ -186,7 +184,7 @@ export const metricCardStyles = {
     transition: 'all 0.3s ease',
     '&:hover': {
         transform: 'translateY(-4px)',
-        boxShadow: '0 8px 16px rgba(0, 51, 153, 0.15)',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
     },
 };
 
@@ -197,3 +195,4 @@ export const numericTextStyles = {
     lineHeight: 1.4,
     color: '#1F2937',
 };
+

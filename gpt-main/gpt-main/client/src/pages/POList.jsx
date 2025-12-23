@@ -14,6 +14,11 @@ import ExportDialog from '../components/ExportDialog';
 
 const POList = () => {
     const [pos, setPOs] = useState([]);
+    const [rowCount, setRowCount] = useState(0);
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 25,
+    });
     const [loading, setLoading] = useState(true);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
     const navigate = useNavigate();
@@ -22,16 +27,13 @@ const POList = () => {
     const [availableFiscalYears, setAvailableFiscalYears] = useState(['FY25', 'FY26']);
     const [openExportDialog, setOpenExportDialog] = useState(false);
 
-    useEffect(() => {
-        fetchPOs();
-        fetchFiscalYears();
-    }, []);
-
     const fetchPOs = async () => {
+        setLoading(true);
         try {
-            const data = await api.get('/pos?limit=1000');
-            const posData = data.data || data;
-            setPOs(posData);
+            const { page, pageSize } = paginationModel;
+            const response = await api.get(`/pos?page=${page + 1}&limit=${pageSize}`);
+            setPOs(response.data || []);
+            setRowCount(response.total || 0);
         } catch (error) {
             console.error('Error fetching POs:', error);
             showSnackbar('Error fetching purchase orders', 'error');
@@ -39,6 +41,14 @@ const POList = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchPOs();
+    }, [paginationModel]);
+
+    useEffect(() => {
+        fetchFiscalYears();
+    }, []);
 
     const fetchFiscalYears = async () => {
         try {
@@ -335,10 +345,15 @@ const POList = () => {
                     getRowId={(row) => row.id}
                     processRowUpdate={processRowUpdate}
                     onProcessRowUpdateError={handleProcessRowUpdateError}
-                    initialState={{
-                        pagination: { paginationModel: { pageSize: 25 } },
-                    }}
+
+                    // Server-side Pagination
+                    rowCount={rowCount}
+                    loading={loading}
                     pageSizeOptions={[25, 50, 100]}
+                    paginationModel={paginationModel}
+                    paginationMode="server"
+                    onPaginationModelChange={setPaginationModel}
+
                     checkboxSelection
                     disableRowSelectionOnClick
                     density="compact"

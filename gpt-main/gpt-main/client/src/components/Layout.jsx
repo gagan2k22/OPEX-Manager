@@ -4,13 +4,11 @@ import {
     AppBar,
     Toolbar,
     Typography,
-    Tabs,
-    Tab,
+    Button,
     IconButton,
     Avatar,
     Menu,
     MenuItem,
-    Button,
     Divider,
     useTheme,
     useMediaQuery
@@ -25,7 +23,9 @@ import {
     Person,
     ArrowDropDown,
     Security as SecurityIcon,
-    Storage
+    Storage,
+    ListAlt,
+    TrendingUp
 } from '@mui/icons-material';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -37,75 +37,104 @@ const Layout = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const { logout, user } = useAuth();
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [settingsAnchorEl, setSettingsAnchorEl] = useState(null);
 
-    const handleMenu = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+    // Menu Anchors
+    const [budgetsAnchorEl, setBudgetsAnchorEl] = useState(null);
+    const [actualsAnchorEl, setActualsAnchorEl] = useState(null);
+    const [masterDataAnchorEl, setMasterDataAnchorEl] = useState(null);
+    const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleLogout = () => {
-        handleClose();
-        logout();
-    };
-
-    const handleSettingsClick = (event) => {
-        setSettingsAnchorEl(event.currentTarget);
-    };
-
-    const handleSettingsClose = () => {
-        setSettingsAnchorEl(null);
-    };
-
-    const handleSettingsNavigate = (path) => {
+    // Menu Handlers
+    const handleMenuOpen = (setter) => (event) => setter(event.currentTarget);
+    const handleMenuClose = (setter) => () => setter(null);
+    const handleNavigate = (path, setter) => {
         navigate(path);
-        handleSettingsClose();
+        if (setter) setter(null);
     };
 
-    // Main navigation tabs
-    const mainTabs = [
-        { label: 'Dashboard', path: '/', icon: <DashboardIcon sx={{ mr: 1 }} /> },
-        { label: 'Budgets', path: '/budgets', icon: <AccountBalance sx={{ mr: 1 }} /> },
-        { label: 'Purchase Orders', path: '/pos', icon: <ShoppingCart sx={{ mr: 1 }} /> },
-        { label: 'Actuals', path: '/actuals', icon: <BarChart sx={{ mr: 1 }} /> },
-        { label: 'Actual BOA', path: '/actual-boa', icon: <BarChart sx={{ mr: 1 }} /> },
-        { label: 'Budget BOA', path: '/budget-boa', icon: <AccountBalance sx={{ mr: 1 }} /> },
-        { label: 'Import History', path: '/imports', icon: <Storage sx={{ mr: 1 }} /> },
+    const isActive = (path) => location.pathname === path;
+    const isParentActive = (paths) => paths.includes(location.pathname);
+
+    // Navigation Items
+    const navItems = [
+        {
+            label: 'Dashboard',
+            path: '/',
+            icon: <DashboardIcon />,
+            type: 'link'
+        },
+        {
+            label: 'Budgets',
+            icon: <AccountBalance />,
+            type: 'dropdown',
+            anchor: budgetsAnchorEl,
+            setAnchor: setBudgetsAnchorEl,
+            children: [
+                { label: 'Budget', path: '/tracker' },
+                { label: 'Net Budget', path: '/net-budget' },
+                { label: 'Allocation Base', path: '/allocation-base' }
+            ]
+        },
+        {
+            label: 'Actuals',
+            icon: <TrendingUp />,
+            type: 'dropdown',
+            anchor: actualsAnchorEl,
+            setAnchor: setActualsAnchorEl,
+            children: [
+                { label: 'Actual', path: '/actuals' },
+                { label: 'Net Actual', path: '/net-actual' }
+            ]
+        },
+        {
+            label: 'Purchase Order',
+            path: '/pos',
+            icon: <ShoppingCart />,
+            type: 'link'
+        },
+        {
+            label: 'Master Data',
+            icon: <Storage />,
+            type: 'dropdown',
+            anchor: masterDataAnchorEl,
+            setAnchor: setMasterDataAnchorEl,
+            children: [
+                { label: 'Master Data', path: '/master-data', icon: <Storage /> },
+                { label: 'Import History', path: '/imports', icon: <ListAlt /> },
+                { label: 'User Management', path: '/users', icon: <SecurityIcon />, adminOnly: true }
+            ]
+        }
     ];
 
-    // Get current tab value
-    const getCurrentTab = () => {
-        const currentPath = location.pathname;
-        const tabIndex = mainTabs.findIndex(tab => tab.path === currentPath);
-        return tabIndex !== -1 ? tabIndex : false;
-    };
-
-    const handleTabChange = (event, newValue) => {
-        if (newValue !== false) {
-            navigate(mainTabs[newValue].path);
+    const getButtonStyle = (active) => ({
+        color: active ? '#FFD700' : '#B8C5D0',
+        fontWeight: active ? 700 : 600,
+        fontSize: '0.875rem',
+        minHeight: '64px', // Full height of navbar
+        px: 2,
+        borderRadius: 0,
+        borderBottom: active ? '3px solid #00D9FF' : '3px solid transparent',
+        background: active ? 'linear-gradient(180deg, rgba(255, 215, 0, 0) 0%, rgba(255, 215, 0, 0.1) 100%)' : 'transparent',
+        transition: 'all 0.3s ease',
+        '&:hover': {
+            backgroundColor: 'rgba(255, 215, 0, 0.1)',
+            color: '#FFD700',
         }
-    };
+    });
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-            {/* Top AppBar */}
             <AppBar
                 position="static"
                 elevation={0}
                 sx={{
-                    maxHeight: '64px',
-                    minHeight: '64px',
                     background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f1e 100%)',
                     borderBottom: '2px solid #FFD700',
                     boxShadow: '0 4px 20px rgba(255, 215, 0, 0.2)',
                 }}
             >
-                <Toolbar sx={{ justifyContent: 'space-between', minHeight: '64px !important', maxHeight: '64px', py: 0 }}>
-                    {/* Logo/Brand */}
+                <Toolbar sx={{ justifyContent: 'space-between', minHeight: '64px !important', py: 0 }}>
+                    {/* Logo */}
                     <Typography
                         variant="h6"
                         component="div"
@@ -121,174 +150,95 @@ const Layout = () => {
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             textShadow: '0 0 20px rgba(255, 215, 0, 0.3)',
-                            transition: 'all 0.3s ease',
-                            '&:hover': {
-                                transform: 'scale(1.05)',
-                                filter: 'brightness(1.2)',
-                            }
                         }}
                         onClick={() => navigate('/')}
                     >
                         OPEX MANAGER
                     </Typography>
 
-                    {/* Navigation Tabs - Hidden on mobile */}
+                    {/* Navigation */}
                     {!isMobile && (
-                        <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-                            <Tabs
-                                value={getCurrentTab()}
-                                onChange={handleTabChange}
-                                textColor="inherit"
-                                TabIndicatorProps={{
-                                    style: {
-                                        backgroundColor: '#00D9FF',
-                                        height: 3,
-                                        boxShadow: '0 0 10px rgba(0, 217, 255, 0.5)',
-                                    }
-                                }}
-                                sx={{
-                                    minHeight: '48px',
-                                    '& .MuiTab-root': {
-                                        color: '#B8C5D0',
-                                        fontWeight: 600,
-                                        minHeight: '48px',
-                                        maxHeight: '48px',
-                                        py: 0,
-                                        fontSize: '0.875rem',
-                                        transition: 'all 0.3s ease',
-                                        '&.Mui-selected': {
-                                            color: '#FFD700',
-                                            fontWeight: 700,
-                                            background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(0, 217, 255, 0.15) 100%)',
-                                        },
-                                        '&:hover': {
-                                            backgroundColor: 'rgba(255, 215, 0, 0.1)',
-                                            color: '#FFD700',
-                                            transform: 'translateY(-2px)',
-                                        }
-                                    }
-                                }}
-                            >
-                                {mainTabs.map((tab, index) => (
-                                    <Tab
-                                        key={index}
-                                        label={
-                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                {React.cloneElement(tab.icon, {
-                                                    sx: { mr: 0.5, fontSize: '1.1rem' }
+                        <Box sx={{ display: 'flex', alignItems: 'center', height: '64px' }}>
+                            {navItems.map((item, index) => {
+                                if (item.type === 'link') {
+                                    return (
+                                        <Button
+                                            key={index}
+                                            onClick={() => navigate(item.path)}
+                                            startIcon={item.icon}
+                                            sx={getButtonStyle(isActive(item.path))}
+                                        >
+                                            {item.label}
+                                        </Button>
+                                    );
+                                } else {
+                                    const childPaths = item.children.map(c => c.path);
+                                    return (
+                                        <Box key={index}>
+                                            <Button
+                                                onClick={handleMenuOpen(item.setAnchor)}
+                                                startIcon={item.icon}
+                                                endIcon={<ArrowDropDown />}
+                                                sx={getButtonStyle(isParentActive(childPaths))}
+                                            >
+                                                {item.label}
+                                            </Button>
+                                            <Menu
+                                                anchorEl={item.anchor}
+                                                open={Boolean(item.anchor)}
+                                                onClose={handleMenuClose(item.setAnchor)}
+                                            >
+                                                {item.children.map((child, cIdx) => {
+                                                    if (child.adminOnly && (!user || !user.roles?.includes('Admin'))) return null;
+                                                    return (
+                                                        <MenuItem
+                                                            key={cIdx}
+                                                            onClick={() => handleNavigate(child.path, item.setAnchor)}
+                                                            selected={isActive(child.path)}
+                                                        >
+                                                            {child.icon && <Box component="span" sx={{ mr: 1, display: 'flex' }}>{child.icon}</Box>}
+                                                            {child.label}
+                                                        </MenuItem>
+                                                    );
                                                 })}
-                                                {tab.label}
-                                            </Box>
-                                        }
-                                    />
-                                ))}
-                            </Tabs>
-
-                            {/* Settings Dropdown */}
-                            <Button
-                                color="inherit"
-                                onClick={handleSettingsClick}
-                                endIcon={<ArrowDropDown sx={{ fontSize: '1.1rem' }} />}
-                                startIcon={<SettingsIcon sx={{ fontSize: '1.1rem' }} />}
-                                sx={{
-                                    ml: 2,
-                                    color: '#B8C5D0',
-                                    fontWeight: 600,
-                                    fontSize: '0.875rem',
-                                    minHeight: '48px',
-                                    maxHeight: '48px',
-                                    py: 0,
-                                    px: 2,
-                                    transition: 'all 0.3s ease',
-                                    '&:hover': {
-                                        backgroundColor: 'rgba(255, 215, 0, 0.1)',
-                                        color: '#FFD700',
-                                        transform: 'translateY(-2px)',
-                                    },
-                                    ...(location.pathname === '/master-data' || location.pathname === '/users' ? {
-                                        color: '#FFD700',
-                                        fontWeight: 700,
-                                        background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(0, 217, 255, 0.15) 100%)',
-                                        borderBottom: '3px solid #00D9FF',
-                                    } : {}),
-                                    borderRadius: 0,
-                                }}
-                            >
-                                Settings
-                            </Button>
-                            <Menu
-                                anchorEl={settingsAnchorEl}
-                                open={Boolean(settingsAnchorEl)}
-                                onClose={handleSettingsClose}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'right',
-                                }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                            >
-                                <MenuItem
-                                    onClick={() => handleSettingsNavigate('/master-data')}
-                                    selected={location.pathname === '/master-data'}
-                                >
-                                    <Storage sx={{ mr: 2 }} />
-                                    Master Data
-                                </MenuItem>
-                                {user && user.roles && user.roles.includes('Admin') && (
-                                    <MenuItem
-                                        onClick={() => handleSettingsNavigate('/users')}
-                                        selected={location.pathname === '/users'}
-                                    >
-                                        <SecurityIcon sx={{ mr: 2 }} />
-                                        User Management
-                                    </MenuItem>
-                                )}
-                            </Menu>
+                                            </Menu>
+                                        </Box>
+                                    );
+                                }
+                            })}
                         </Box>
                     )}
 
                     {/* User Menu */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' }, fontSize: '0.875rem', color: '#E8F1F5', fontWeight: 500 }}>
+                        <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' }, color: '#E8F1F5', fontWeight: 500 }}>
                             {user?.username || 'User'}
                         </Typography>
                         <IconButton
                             size="small"
-                            onClick={handleMenu}
-                            color="inherit"
+                            onClick={handleMenuOpen(setUserMenuAnchorEl)}
                             sx={{
                                 p: 0.5,
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                    transform: 'scale(1.1) rotate(5deg)',
-                                }
+                                '&:hover': { transform: 'scale(1.1)' }
                             }}
                         >
-                            <Avatar sx={{ width: 32, height: 32, bgcolor: '#FFD700', color: '#1a1a2e', fontWeight: 700, boxShadow: '0 0 12px rgba(255, 215, 0, 0.5)' }}>
-                                <Person sx={{ fontSize: '1.1rem' }} />
+                            <Avatar sx={{ width: 32, height: 32, bgcolor: '#FFD700', color: '#1a1a2e', fontWeight: 700 }}>
+                                <Person fontSize="small" />
                             </Avatar>
                         </IconButton>
                         <Menu
-                            anchorEl={anchorEl}
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'right',
-                            }}
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
+                            anchorEl={userMenuAnchorEl}
+                            open={Boolean(userMenuAnchorEl)}
+                            onClose={handleMenuClose(setUserMenuAnchorEl)}
+                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                         >
                             <MenuItem disabled>
                                 <Person sx={{ mr: 2 }} />
                                 {user?.username}
                             </MenuItem>
                             <Divider />
-                            <MenuItem onClick={handleLogout}>
+                            <MenuItem onClick={() => { handleMenuClose(setUserMenuAnchorEl)(); logout(); }}>
                                 <Logout sx={{ mr: 2 }} />
                                 Logout
                             </MenuItem>
@@ -297,15 +247,8 @@ const Layout = () => {
                 </Toolbar>
             </AppBar>
 
-            {/* Main Content Area */}
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    overflow: 'auto',
-                    bgcolor: 'background.default',
-                }}
-            >
+            {/* Main Content */}
+            <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', bgcolor: 'background.default' }}>
                 <Outlet />
             </Box>
             <NenoHelper />
@@ -314,3 +257,4 @@ const Layout = () => {
 };
 
 export default Layout;
+

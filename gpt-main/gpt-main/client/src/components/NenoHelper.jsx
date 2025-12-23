@@ -1,39 +1,61 @@
 import React, { useState } from 'react';
 import { Box, Fab, Paper, Typography, TextField, IconButton, List, ListItem, ListItemText } from '@mui/material';
 import { SmartToy, Send, Close, Minimize } from '@mui/icons-material';
+import api from '../utils/api';
+import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 const NenoHelper = () => {
+    const navigate = useNavigate();
+    const { updateTheme, resetTheme } = useTheme();
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { id: 1, text: "Hi! I'm Neno, your budgeting assistant. How can I help you today?", isBot: true }
+        { id: 1, text: "Hi! I'm Neno, your budgeting copilot. I can even change the UI if you ask! How can I help you today?", isBot: true }
     ]);
     const [input, setInput] = useState('');
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!input.trim()) return;
 
         const userMsg = { id: Date.now(), text: input, isBot: false };
         setMessages(prev => [...prev, userMsg]);
         setInput('');
 
-        // Simple mock response logic
-        setTimeout(() => {
-            let botText = "I'm still learning intricacies of your budget data.";
-            const lowerInput = input.toLowerCase();
+        // Add a temporary "thinking" message
+        const thinkingId = Date.now() + 1;
+        setMessages(prev => [...prev, { id: thinkingId, text: "Let me check that for you...", isBot: true, isThinking: true }]);
 
-            if (lowerInput.includes('budget')) {
-                botText = "You can view and manage your budgets on the Budget Tracker page. Try filtering by Year or Vendor.";
-            } else if (lowerInput.includes('add')) {
-                botText = "To add a new item, click the 'Add Line Item' button on the Budget Tracker page.";
-            } else if (lowerInput.includes('export')) {
-                botText = "You can export your data to Excel using the Export button in the top right corner.";
-            } else if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
-                botText = "Hello there! Ready to optimize some OPEX?";
+        try {
+            const response = await api.post('/neno/chat', { message: input });
+
+            // Handle Actions
+            if (response.action) {
+                const { type, payload, path } = response.action;
+                if (type === 'NAVIGATE') {
+                    navigate(path);
+                } else if (type === 'THEME_UPDATE') {
+                    updateTheme(payload);
+                } else if (type === 'THEME_RESET') {
+                    resetTheme();
+                }
             }
 
-            setMessages(prev => [...prev, { id: Date.now() + 1, text: botText, isBot: true }]);
-        }, 1000);
+            // Remove the thinking message and add the real response
+            setMessages(prev => prev.filter(m => m.id !== thinkingId).concat({
+                id: Date.now() + 2,
+                text: response.text,
+                isBot: true
+            }));
+        } catch (error) {
+            console.error('Neno Error:', error);
+            setMessages(prev => prev.filter(m => m.id !== thinkingId).concat({
+                id: Date.now() + 2,
+                text: "I'm sorry, I'm having trouble connecting to my central brain right now. Please try again later.",
+                isBot: true
+            }));
+        }
     };
+
 
     if (!open) {
         return (

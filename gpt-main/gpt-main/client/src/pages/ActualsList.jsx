@@ -1,28 +1,13 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
-    Box, Typography, Table, TableBody, TableCell, TableContainer,
-    TableHead, TableRow, Paper, CircularProgress, Snackbar, Alert
+    Box, Typography, Paper, CircularProgress, Button, Dialog, DialogTitle,
+    DialogContent, DialogActions, Grid, TextField, MenuItem, Snackbar, Alert,
+    Chip, Divider
 } from '@mui/material';
-import { excelTableStyles } from '../styles/excelTableStyles';
-import ColumnFilter from '../components/ColumnFilter';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { Add, CheckCircle, Cancel, Receipt } from '@mui/icons-material';
 import { pageContainerStyles, pageHeaderStyles, pageTitleStyles } from '../styles/commonStyles';
 import api from '../utils/api';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { FileDownload, Upload } from '@mui/icons-material';
-import ActualsImportModal from '../components/ActualsImportModal';
-import ExportDialog from '../components/ExportDialog';
-import * as XLSX from 'xlsx';
-import { Button } from '@mui/material';
-
-const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-    }).replace(/ /g, '-');
-};
 
 const formatCurrency = (amount) => {
     if (amount === undefined || amount === null) return '-';
@@ -33,246 +18,210 @@ const formatCurrency = (amount) => {
     }).format(amount);
 };
 
-// ... (keep existing imports, except Table ones if unused)
-
-const ActualsList = () => {
-    const [actuals, setActuals] = useState([]);
+const ExpenseList = () => {
+    const [expenses, setExpenses] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-    const [openImportModal, setOpenImportModal] = useState(false);
-    const [openExportDialog, setOpenExportDialog] = useState(false);
-    const [columnVisibilityModel, setColumnVisibilityModel] = useState(() => {
-        const saved = localStorage.getItem('actualsListColumnVisibility');
-        return saved ? JSON.parse(saved) : {};
+    const [openDialog, setOpenDialog] = useState(false);
+    const [masters, setMasters] = useState({
+        fiscalYears: [],
+        costCenters: [],
+        expenseCategories: [],
+        vendors: []
     });
+    const [formData, setFormData] = useState({
+        fiscalYearId: '',
+        costCenterId: '',
+        expenseCategoryId: '',
+        vendorId: '',
+        invoiceNumber: '',
+        invoiceDate: '',
+        baseAmount: '',
+        gstPercent: ''
+    });
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
-    // filters state is optional with DataGrid built-in filters, but I'll keep the logic if I pass filtered rows, 
-    // OR BETTER: Use DataGrid's native filtering.
-    // The previous implementation had manual filters. DataGrid is powerful enough.
-    // I will pass 'actuals' directly to rows and let DataGrid handle filtering if the user wants.
-    // But to match the previous code that "pre-filtered" or used 'filters' state...
-    // Actually, I'll remove the manual filter inputs from the UI because DataGrid has a toolbar filter.
-    // So I can remove the 'filters' state and 'handleFilterChange' and 'filteredActuals'.
+    useEffect(() => {
+        fetchExpenses();
+        fetchMasterData();
+    }, []);
 
-    const fetchActuals = async () => {
+    const fetchExpenses = async () => {
+        setLoading(true);
         try {
-            const data = await api.get('/budgets/tracker');
-            setActuals(data);
+            const data = await api.get('/expenses');
+            setExpenses(data);
         } catch (error) {
-            console.error('Error fetching actuals:', error);
-            setSnackbar({ open: true, message: 'Error fetching actuals data', severity: 'error' });
+            console.error('Error fetching expenses:', error);
+            showSnackbar('Error fetching expenses', 'error');
         } finally {
             setLoading(false);
         }
     };
 
+    const fetchMasterData = async () => {
+        try {
+            const [years, centers, categories, vendors] = await Promise.all([
+                api.get('/master/fiscal-years'),
+                api.get('/master/cost-centers'),
+                api.get('/master/expense-categories'),
+                api.get('/master/vendors')
+            ]);
+            setMasters({ fiscalYears: years, costCenters: centers, expenseCategories: categories, vendors });
+        } catch (error) {
+            console.error('Error fetching master data:', error);
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    // Auto-populate GST % when category changes
     useEffect(() => {
-        fetchActuals();
-    }, []);
+        if (formData.expenseCategoryId) {
+            const category = masters.expenseCategories.find(c => c.id === formData.expenseCategoryId);
+            if (category) {
+                setFormData(prev => ({ ...prev, gstPercent: category.defaultGstPercent }));
+            }
+        }
+    }, [formData.expenseCategoryId, masters.expenseCategories]);
 
-    const handleExport = async (format) => {
+    const handleSubmit = async () => {
         try {
-            const exportData = actuals.map(a => ({
-                'FY': a.fiscal_year_name || 'FY25',
-                'UID': a.uid,
-                'Vendor': a.vendor_name,
-                'Description': a.service_description,
-                'Contract': a.contract_id,
-                'Start Date': formatDate(a.service_start_date),
-                'End Date': formatDate(a.service_end_date),
-                'Budget Head': a.budget_head_name,
-                'Tower': a.tower_name,
-                'Actuals': a.fy25_actuals
-            }));
-
-            const ws = XLSX.utils.json_to_sheet(exportData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Actuals');
-
-            const timestamp = new Date().toISOString().split('T')[0];
-            const extension = format === 'csv' ? 'csv' : 'xlsx';
-            const filename = `Actuals_Report_${timestamp}.${extension}`;
-
-            XLSX.writeFile(wb, filename, { bookType: format === 'csv' ? 'csv' : 'xlsx' });
-            setSnackbar({ open: true, message: `Data exported as ${format.toUpperCase()} successfully!`, severity: 'success' });
+            await api.post('/expenses', formData);
+            showSnackbar('Expense created and funds blocked successfully', 'success');
+            setOpenDialog(false);
+            fetchExpenses();
         } catch (error) {
-            console.error('Export error:', error);
-            setSnackbar({ open: true, message: 'Error exporting data', severity: 'error' });
+            showSnackbar(error.message || 'Error saving expense. Check budget available.', 'error');
         }
     };
 
-    const handleColumnVisibilityChange = useCallback((newModel) => {
-        setColumnVisibilityModel(newModel);
-        localStorage.setItem('actualsListColumnVisibility', JSON.stringify(newModel));
-    }, []);
-
-    const processRowUpdate = async (newRow, oldRow) => {
+    const handleStatusUpdate = async (id, status) => {
         try {
-            const payload = { ...newRow };
-            await api.put(`/budgets/line-items/${newRow.id}`, payload);
-            setSnackbar({ open: true, message: 'Row updated successfully', severity: 'success' });
-            return newRow;
+            await api.patch(`/expenses/${id}/status`, { status, remarks: `Processed by UI` });
+            showSnackbar(`Expense ${status} successfully`, 'success');
+            fetchExpenses();
         } catch (error) {
-            console.error('Update error:', error);
-            setSnackbar({ open: true, message: 'Error updating row: ' + (error.message || 'Unknown error'), severity: 'error' });
-            return oldRow;
+            showSnackbar(error.message, 'error');
         }
     };
 
-    const handleProcessRowUpdateError = (error) => {
-        setSnackbar({ open: true, message: 'Error processing row update', severity: 'error' });
-        console.error('Process row update error:', error);
+    const showSnackbar = (message, severity) => {
+        setSnackbar({ open: true, message, severity });
     };
 
-    const customColumns = useMemo(() => {
-        const fields = new Set();
-        actuals.forEach(row => {
-            if (row.customFields) {
-                Object.keys(row.customFields).forEach(key => fields.add(key));
-            }
-        });
-        return Array.from(fields).map(field => ({
-            field: `custom_${field}`,
-            headerName: field, // Display name matches Excel header
-            width: 150,
-            editable: true,
-            valueGetter: (value, row) => row.customFields?.[field]
-        }));
-    }, [actuals]);
-
-    // Define Columns
-    const columns = useMemo(() => [
-        { field: 'fiscal_year_name', headerName: 'FY', width: 90, valueGetter: (value, row) => row?.fiscal_year_name || 'FY25' },
-        { field: 'uid', headerName: 'UID', width: 150, editable: true },
-        { field: 'parent_uid', headerName: 'Parent UID', width: 150, editable: true },
-        { field: 'vendor_name', headerName: 'Vendor', width: 180 }, // Not editable inline yet
-        { field: 'service_description', headerName: 'Service Description', width: 250, editable: true },
-        { field: 'contract_id', headerName: 'Contract', width: 120, editable: true },
-        { field: 'service_start_date', headerName: 'Service Start Date', width: 130, valueFormatter: (value) => formatDate(value), type: 'date', valueGetter: (value) => value ? new Date(value) : null, editable: true },
-        { field: 'service_end_date', headerName: 'Service End Date', width: 130, valueFormatter: (value) => formatDate(value), type: 'date', valueGetter: (value) => value ? new Date(value) : null, editable: true },
-        { field: 'renewal_date', headerName: 'Renewal Date', width: 130, valueFormatter: (value) => formatDate(value), type: 'date', valueGetter: (value) => value ? new Date(value) : null, editable: true },
-        { field: 'budget_head_name', headerName: 'Budget Head', width: 150 },
-        { field: 'tower_name', headerName: 'Tower', width: 120 },
-        { field: 'po_entity_name', headerName: 'PO Entity', width: 120 },
-        { field: 'allocation_type', headerName: 'Allocation Type', width: 150, editable: true },
-        { field: 'allocation_basis_name', headerName: 'Allocation Basis', width: 150 },
-        { field: 'initiative_type', headerName: 'Initiative Type', width: 150, editable: true },
-        { field: 'service_type_name', headerName: 'Service Type', width: 150 },
-        { field: 'priority', headerName: 'Priority', width: 120, editable: true },
-        { field: 'cost_optimization_lever', headerName: 'Cost Opt. Lever', width: 180, editable: true },
-        ...customColumns,
+    const columns = [
+        { field: 'invoiceNumber', headerName: 'Invoice #', width: 130 },
+        { field: 'invoiceDate', headerName: 'Date', width: 110, valueFormatter: (value) => new Date(value).toLocaleDateString('en-GB') },
+        { field: 'vendor', headerName: 'Vendor', width: 180, valueGetter: (value, row) => row.vendor?.name },
+        { field: 'costCenter', headerName: 'Cost Center', width: 120, valueGetter: (value, row) => row.costCenter?.code },
+        { field: 'expenseCategory', headerName: 'Category', width: 150, valueGetter: (value, row) => row.expenseCategory?.name },
+        { field: 'totalAmount', headerName: 'Total Amount', width: 140, type: 'number', valueFormatter: (value) => formatCurrency(value) },
         {
-            field: 'fy25_budget',
-            headerName: 'FY25 Budget',
-            width: 140,
-            type: 'number',
-            valueFormatter: (value) => {
-                if (value == null) return '-';
-                return formatCurrency(value);
+            field: 'status',
+            headerName: 'Status',
+            width: 130,
+            renderCell: (params) => {
+                const status = params.value;
+                let color = 'default';
+                if (status === 'APPROVED') color = 'success';
+                if (status === 'REJECTED') color = 'error';
+                if (status === 'CREATED') color = 'primary';
+                return <Chip size="small" label={status} color={color} variant="filled" />;
             }
         },
         {
-            field: 'fy25_actuals',
-            headerName: 'FY 25 Actuals',
-            width: 140,
-            type: 'number',
-            valueFormatter: (value) => {
-                if (value == null) return '-';
-                return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
+            field: 'actions',
+            headerName: 'Actions',
+            width: 200,
+            renderCell: (params) => {
+                if (params.row.status !== 'CREATED') return null;
+                return (
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button size="small" variant="contained" color="success" onClick={() => handleStatusUpdate(params.row.id, 'APPROVED')} startIcon={<CheckCircle />}>Approve</Button>
+                        <Button size="small" variant="outlined" color="error" onClick={() => handleStatusUpdate(params.row.id, 'REJECTED')} startIcon={<Cancel />}>Reject</Button>
+                    </Box>
+                );
             }
-        },
-        {
-            field: 'variance',
-            headerName: 'Variance',
-            width: 140,
-            type: 'number',
-            valueGetter: (value, row) => {
-                const budget = row?.fy25_budget || 0;
-                const actual = row?.fy25_actuals || 0;
-                return budget - actual;
-            },
-            valueFormatter: (value) => {
-                if (value == null) return '-';
-                return formatCurrency(value);
-            },
-            cellClassName: (params) => {
-                if (params.value < 0) return 'variance-negative';
-                return 'variance-positive';
-            }
-        },
-        { field: 'remarks', headerName: 'Remarks', width: 200, editable: true },
-    ], []);
-
-    if (loading) return <Box sx={{ p: 4 }}><CircularProgress /></Box>;
+        }
+    ];
 
     return (
         <Box sx={pageContainerStyles}>
             <Box sx={pageHeaderStyles}>
-                <Typography sx={pageTitleStyles}>Net Actual</Typography>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button variant="outlined" color="success" startIcon={<FileDownload />} onClick={() => setOpenExportDialog(true)}>
-                        Export
-                    </Button>
-                    <Button variant="outlined" startIcon={<Upload />} onClick={() => setOpenImportModal(true)}>
-                        Upload Actuals
-                    </Button>
-                </Box>
+                <Typography sx={pageTitleStyles}>Expense & Invoice Tracker</Typography>
+                <Button variant="contained" startIcon={<Receipt />} onClick={() => setOpenDialog(true)}>
+                    Enter New Invoice
+                </Button>
             </Box>
 
-            <Paper elevation={0} sx={{ width: '100%', height: 600, border: '1px solid #d0d7de', borderRadius: '6px' }}>
+            <Paper elevation={0} sx={{ width: '100%', height: 'calc(100vh - 180px)', border: '1px solid #d0d7de', borderRadius: '8px' }}>
                 <DataGrid
-                    rows={actuals}
+                    rows={expenses}
                     columns={columns}
-                    getRowId={(row) => row.id || Math.random()}
-                    columnVisibilityModel={columnVisibilityModel}
-                    onColumnVisibilityModelChange={handleColumnVisibilityChange}
-                    processRowUpdate={processRowUpdate}
-                    onProcessRowUpdateError={handleProcessRowUpdateError}
-                    initialState={{
-                        pagination: { paginationModel: { pageSize: 25 } },
-                    }}
-                    pageSizeOptions={[25, 50, 100]}
-                    checkboxSelection
-                    disableRowSelectionOnClick
+                    loading={loading}
                     density="compact"
                     slots={{ toolbar: GridToolbar }}
-                    sx={{
-                        fontSize: '9px',
-                        '& .MuiDataGrid-columnHeaders': {
-                            backgroundColor: '#f6f8fa',
-                            color: '#24292f',
-                            fontWeight: 'bold',
-                            fontSize: '9px',
-                        },
-                        '& .MuiDataGrid-cell': {
-                            fontSize: '9px',
-                        },
-                        '& .variance-positive': {
-                            color: '#2e7d32',
-                            fontWeight: 'bold',
-                        },
-                        '& .variance-negative': {
-                            color: '#d32f2f',
-                            fontWeight: 'bold',
-                        }
-                    }}
+                    sx={{ fontSize: '11px', '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f6f8fa' } }}
                 />
             </Paper>
 
-            <ActualsImportModal
-                open={openImportModal}
-                onClose={() => setOpenImportModal(false)}
-                onSuccess={() => {
-                    fetchActuals();
-                    setSnackbar({ open: true, message: 'Actuals imported successfully', severity: 'success' });
-                }}
-            />
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth>
+                <DialogTitle>New Expense Entry (Hard Enforcement)</DialogTitle>
+                <DialogContent dividers>
+                    <Grid container spacing={3} sx={{ mt: 1 }}>
+                        <Grid item xs={12} sm={6}>
+                            <TextField fullWidth label="Invoice Number" name="invoiceNumber" value={formData.invoiceNumber} onChange={handleInputChange} />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField fullWidth type="date" label="Invoice Date" name="invoiceDate" value={formData.invoiceDate} onChange={handleInputChange} InputLabelProps={{ shrink: true }} />
+                        </Grid>
 
-            <ExportDialog
-                open={openExportDialog}
-                onClose={() => setOpenExportDialog(false)}
-                onExport={handleExport}
-            />
+                        <Grid item xs={12} sm={6}>
+                            <TextField fullWidth select label="Vendor" name="vendorId" value={formData.vendorId} onChange={handleInputChange}>
+                                {masters.vendors.map(v => <MenuItem key={v.id} value={v.id}>{v.name} ({v.gstin || 'No GST'})</MenuItem>)}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField fullWidth select label="Financial Year" name="fiscalYearId" value={formData.fiscalYearId} onChange={handleInputChange}>
+                                {masters.fiscalYears.map(fy => <MenuItem key={fy.id} value={fy.id}>{fy.name}</MenuItem>)}
+                            </TextField>
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField fullWidth select label="Cost Center" name="costCenterId" value={formData.costCenterId} onChange={handleInputChange}>
+                                {masters.costCenters.map(cc => <MenuItem key={cc.id} value={cc.id}>{cc.code} - {cc.name}</MenuItem>)}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField fullWidth select label="Expense Category" name="expenseCategoryId" value={formData.expenseCategoryId} onChange={handleInputChange}>
+                                {masters.expenseCategories.map(ec => <MenuItem key={ec.id} value={ec.id}>{ec.name} ({ec.nature})</MenuItem>)}
+                            </TextField>
+                        </Grid>
+
+                        <Grid item xs={12}><Divider>Financial Totals</Divider></Grid>
+
+                        <Grid item xs={12} sm={4}>
+                            <TextField fullWidth type="number" label="Base Amount" name="baseAmount" value={formData.baseAmount} onChange={handleInputChange} />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField fullWidth type="number" label="GST %" name="gstPercent" value={formData.gstPercent} onChange={handleInputChange} />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <Box sx={{ p: 2, bgcolor: '#f6f8fa', borderRadius: 1, border: '1px solid #d0d7de' }}>
+                                <Typography variant="caption" color="text.secondary">Total Amount (System Calculated)</Typography>
+                                <Typography variant="h6">{formatCurrency(parseFloat(formData.baseAmount || 0) * (1 + (parseFloat(formData.gstPercent || 0) / 100)))}</Typography>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, py: 2 }}>
+                    <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+                    <Button onClick={handleSubmit} variant="contained" disabled={!formData.baseAmount || !formData.costCenterId}>Submit Invoice</Button>
+                </DialogActions>
+            </Dialog>
 
             <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}>
                 <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
@@ -281,4 +230,4 @@ const ActualsList = () => {
     );
 };
 
-export default ActualsList;
+export default ExpenseList;

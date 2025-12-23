@@ -243,14 +243,28 @@ export const jubilantTheme = createTheme({
                 },
             },
         },
+        MuiTableCell: {
+            styleOverrides: {
+                root: {
+                    fontFamily: '"Roboto Mono", "Consolas", monospace',
+                },
+                head: {
+                    backgroundColor: '#1F2937 !important',
+                    color: '#FFFFFF !important',
+                    fontWeight: 600,
+                    fontSize: '14px',
+                },
+            },
+        },
         MuiTableHead: {
             styleOverrides: {
                 root: {
                     '& .MuiTableCell-head': {
-                        backgroundColor: '#003399',
-                        color: '#FFFFFF',
+                        backgroundColor: '#1F2937 !important',
+                        color: '#FFFFFF !important',
                         fontWeight: 600,
                         fontSize: '14px',
+                        fontFamily: '"Roboto Mono", "Consolas", monospace',
                     },
                 },
             },
@@ -273,13 +287,15 @@ export const jubilantTheme = createTheme({
                     border: '1px solid #E5E7EB',
                     borderRadius: 8,
                     '& .MuiDataGrid-columnHeaders': {
-                        backgroundColor: '#003399',
-                        color: '#FFFFFF',
+                        backgroundColor: '#1F2937 !important',
+                        color: '#FFFFFF !important',
                         fontWeight: 600,
                         fontSize: '14px',
+                        fontFamily: '"Roboto Mono", "Consolas", monospace',
                     },
                     '& .MuiDataGrid-cell': {
                         borderRight: '1px solid #E5E7EB',
+                        fontFamily: '"Roboto Mono", "Consolas", monospace',
                     },
                     '& .MuiDataGrid-row:hover': {
                         backgroundColor: 'rgba(26, 115, 232, 0.08)',
@@ -348,8 +364,8 @@ export const jubilantDarkTheme = createTheme({
             styleOverrides: {
                 root: {
                     '& .MuiTableCell-head': {
-                        backgroundColor: '#1A73E8',
-                        color: '#FFFFFF',
+                        backgroundColor: '#1F2937 !important',
+                        color: '#FFFFFF !important',
                         fontWeight: 600,
                         fontSize: '14px',
                     },
@@ -361,11 +377,17 @@ export const jubilantDarkTheme = createTheme({
                 root: {
                     border: '1px solid #334155',
                     '& .MuiDataGrid-columnHeaders': {
-                        backgroundColor: '#1A73E8',
-                        color: '#FFFFFF',
+                        backgroundColor: '#1F2937 !important',
+                        color: '#FFFFFF !important',
+                    },
+                    '& .MuiDataGrid-columnHeaders': {
+                        backgroundColor: '#1F2937 !important',
+                        color: '#FFFFFF !important',
+                        fontFamily: '"Roboto Mono", "Consolas", monospace',
                     },
                     '& .MuiDataGrid-cell': {
                         borderRight: '1px solid #334155',
+                        fontFamily: '"Roboto Mono", "Consolas", monospace',
                     },
                 },
             },

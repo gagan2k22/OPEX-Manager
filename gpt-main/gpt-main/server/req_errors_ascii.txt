@@ -1,0 +1,84 @@
+Testing requires...
+[dotenv@17.2.3] injecting env (5) from .env -- tip: ??????  suppress all logs with { quiet: true }
+config ok
+auth.routes ok
+user.routes ok
+node : Error in require: 
+Cannot find module 'redis'
+At line:1 char:12
++ cd server; node 
+test_requires.js > 
+req_errors.txt 2>&1
++            ~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (Error  
+   in requir... module 'r   
+ edis':String) [], Remot    
+eException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+Require stack:
+- C:\jpm\final project\gpt-m
+ain\gpt-main\server\src\util
+s\cache.js
+- C:\jpm\final project\gpt-m
+ain\gpt-main\server\src\cont
+rollers\masterData.controlle
+r.js
+- C:\jpm\final project\gpt-m
+ain\gpt-main\server\src\rout
+es\masterData.routes.js
+- C:\jpm\final project\gpt-m
+ain\gpt-main\server\test_req
+uires.js
+Error: Cannot find module 
+'redis'
+Require stack:
+- C:\jpm\final project\gpt-m
+ain\gpt-main\server\src\util
+s\cache.js
+- C:\jpm\final project\gpt-m
+ain\gpt-main\server\src\cont
+rollers\masterData.controlle
+r.js
+- C:\jpm\final project\gpt-m
+ain\gpt-main\server\src\rout
+es\masterData.routes.js
+- C:\jpm\final project\gpt-m
+ain\gpt-main\server\test_req
+uires.js
+    at 
+Module._resolveFilename (nod
+e:internal/modules/cjs/loade
+r:1421:15)
+    at defaultResolveImpl (n
+ode:internal/modules/cjs/loa
+der:1059:19)
+    at 
+resolveForCJSWithHooks (node
+:internal/modules/cjs/loader
+:1064:22)
+    at Module._load (node:in
+ternal/modules/cjs/loader:12
+27:37)
+    at 
+TracingChannel.traceSync (no
+de:diagnostics_channel:328:1
+4)
+    at wrapModuleLoad (node:
+internal/modules/cjs/loader:
+245:24)
+    at Module.require (node:
+internal/modules/cjs/loader:
+1504:12)
+    at require (node:interna
+l/modules/helpers:152:16)
+    at Object.<anonymous> 
+(C:\jpm\final project\gpt-ma
+in\gpt-main\server\src\utils
+\cache.js:6:26)
+    at Module._compile (node
+:internal/modules/cjs/loader
+:1761:14)

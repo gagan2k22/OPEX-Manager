@@ -1,4 +1,5 @@
 const importHistoryService = require('../services/importHistory.service');
+const logger = require('../utils/logger');
 
 const getHistory = async (req, res) => {
     try {
@@ -6,8 +7,8 @@ const getHistory = async (req, res) => {
         const history = await importHistoryService.getImportHistory(req.user.id, isAdmin);
         res.json(history);
     } catch (error) {
-        console.error('Error fetching import history:', error);
-        res.status(500).json({ message: error.message });
+        logger.error('Get History Controller Error: %s', error.stack);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 

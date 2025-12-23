@@ -97,8 +97,8 @@ function formatErrorResponse(err, req) {
  * Log Error
  */
 function logError(err, req) {
+    const logger = require('../utils/logger');
     const errorLog = {
-        timestamp: new Date().toISOString(),
         message: err.message,
         statusCode: err.statusCode,
         method: req.method,
@@ -109,17 +109,10 @@ function logError(err, req) {
     };
 
     if (err.statusCode >= 500) {
-        console.error('❌ Server Error:', errorLog);
-    } else if (err.statusCode >= 400) {
-        console.warn('⚠️  Client Error:', errorLog);
+        logger.error('API Error (Internal): %o', errorLog);
     } else {
-        console.log('ℹ️  Error:', errorLog);
+        logger.warn('API Warning (Client): %o', errorLog);
     }
-
-    // TODO: Send to external logging service in production
-    // if (config.isProduction) {
-    //   sendToLoggingService(errorLog);
-    // }
 }
 
 /**

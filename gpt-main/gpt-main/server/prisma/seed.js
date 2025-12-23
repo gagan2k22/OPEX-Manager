@@ -4,25 +4,9 @@ const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function main() {
-    console.log('Starting full database seeding...');
+    console.log('Starting Refactored XLS-to-DB Logic seeding...');
 
-    // 1. Seed Fiscal Years
-    const fiscalYears = [
-        { name: 'FY24', startDate: new Date('2023-04-01'), endDate: new Date('2024-03-31'), isActive: false },
-        { name: 'FY25', startDate: new Date('2024-04-01'), endDate: new Date('2025-03-31'), isActive: true },
-        { name: 'FY26', startDate: new Date('2025-04-01'), endDate: new Date('2026-03-31'), isActive: false },
-    ];
-
-    for (const fy of fiscalYears) {
-        await prisma.fiscalYear.upsert({
-            where: { name: fy.name },
-            update: {},
-            create: fy,
-        });
-    }
-    console.log('✓ Fiscal Years seeded');
-
-    // 2. Seed Roles
+    // 1. Seed Roles
     const roles = ['Admin', 'Editor', 'Viewer', 'Approver'];
     for (const roleName of roles) {
         await prisma.role.upsert({
@@ -33,140 +17,156 @@ async function main() {
     }
     console.log('✓ Roles seeded');
 
-    // 3. Seed Admin User
-    const adminEmail = 'admin@example.com';
-    const adminPassword = await bcrypt.hash('admin123', 12);
-
-    const adminUser = await prisma.user.upsert({
-        where: { email: adminEmail },
-        update: { password_hash: adminPassword }, // Update password to match known credential
+    // 2. Seed Admin User
+    const adminPassword = await bcrypt.hash('password123', 12);
+    await prisma.user.upsert({
+        where: { email: 'admin@example.com' },
+        update: { password_hash: adminPassword },
         create: {
-            name: 'Admin User',
-            email: adminEmail,
+            name: 'Jubilant Admin',
+            email: 'admin@example.com',
             password_hash: adminPassword,
             is_active: true,
             roles: {
                 create: {
-                    role: {
-                        connect: { name: 'Admin' }
-                    }
+                    role: { connect: { name: 'Admin' } }
                 }
             }
         },
     });
-    console.log('✓ Admin user seeded/updated');
+    console.log('✓ Admin user seeded');
 
-    // 4. Seed Towers
-    const towers = ['IT', 'HR', 'Finance', 'Operations', 'Marketing', 'Legal'];
-    for (const name of towers) {
-        // Towers don't have unique constraint on name in schema, so manual check
-        const exists = await prisma.tower.findFirst({ where: { name } });
-        if (!exists) {
-            await prisma.tower.create({ data: { name } });
-        }
-    }
-    console.log('✓ Towers seeded');
-
-    // 5. Seed Budget Heads
-    // Helper to get tower ID
-    const getTowerId = async (name) => {
-        const t = await prisma.tower.findFirst({ where: { name } });
-        return t ? t.id : null;
-    };
-
-    const budgetHeads = [
-        { name: 'Software Licenses', tower: 'IT' },
-        { name: 'Hardware Maintenance', tower: 'IT' },
-        { name: 'Cloud Services', tower: 'IT' },
-        { name: 'Professional Services', tower: 'IT' },
-        { name: 'Employee Training', tower: 'HR' },
-        { name: 'Recruitment', tower: 'HR' },
-        { name: 'Office Supplies', tower: 'Operations' },
-        { name: 'Audit Fees', tower: 'Finance' }
+    // 3. Seed EntityMaster (4️⃣)
+    const entities = [
+        'JPM Corporate', 'JPHI Corporate', 'Biosys - Bengaluru', 'Biosys - Noida', 'Enpro'
     ];
-
-    for (const bh of budgetHeads) {
-        const towerId = await getTowerId(bh.tower);
-        if (towerId) {
-            const exists = await prisma.budgetHead.findFirst({ where: { name: bh.name, tower_id: towerId } });
-            if (!exists) {
-                await prisma.budgetHead.create({
-                    data: { name: bh.name, tower_id: towerId }
-                });
-            }
-        }
-    }
-    console.log('✓ Budget Heads seeded');
-
-    // 6. Seed Vendors
-    const vendors = [
-        { name: 'Microsoft', gst: '27AAAAA0000A1Z5' },
-        { name: 'AWS', gst: '29BBBBB0000B1Z5' },
-        { name: 'Google', gst: '07CCCCC0000C1Z5' },
-        { name: 'Oracle', gst: '' },
-        { name: 'Dell', gst: '' },
-        { name: 'Zoom', gst: '' },
-        { name: 'Salesforce', gst: '' }
-    ];
-    for (const v of vendors) {
-        const exists = await prisma.vendor.findFirst({ where: { name: v.name } });
-        if (!exists) {
-            await prisma.vendor.create({
-                data: { name: v.name, gst_number: v.gst }
-            });
-        }
-    }
-    console.log('✓ Vendors seeded');
-
-    // 7. Seed Cost Centres
-    const costCentres = [
-        { code: 'CC001', description: 'Headquarters' },
-        { code: 'CC002', description: 'R&D Bangalore' },
-        { code: 'CC003', description: 'Sales Mumbai' },
-        { code: 'CC004', description: 'Support Pune' }
-    ];
-    for (const cc of costCentres) {
-        const exists = await prisma.costCentre.findUnique({ where: { code: cc.code } });
-        if (!exists) {
-            await prisma.costCentre.create({ data: cc });
-        }
-    }
-    console.log('✓ Cost Centres seeded');
-
-    // 8. Seed PO Entities
-    const poEntities = ['JPMC India', 'JPMC US', 'JPMC UK', 'JPMC Singapore'];
-    for (const name of poEntities) {
-        await prisma.pOEntity.upsert({
-            where: { name },
+    for (const name of entities) {
+        await prisma.entityMaster.upsert({
+            where: { entity_name: name },
             update: {},
-            create: { name }
+            create: { entity_name: name }
         });
     }
-    console.log('✓ PO Entities seeded');
+    console.log('✓ Entity Master seeded');
 
-    // 9. Seed Service Types
-    const serviceTypes = ['Shared Service', 'Dedicated Service', 'Consulting', 'Managed Service'];
-    for (const name of serviceTypes) {
-        await prisma.serviceType.upsert({
-            where: { name },
-            update: {},
-            create: { name }
-        });
-    }
-    console.log('✓ Service Types seeded');
+    // 4. Seed ServiceMaster (1️⃣)
+    const s1 = await prisma.serviceMaster.create({
+        data: {
+            uid: 'UID-2025-EL-001',
+            parent_uid: null,
+            vendor: 'Tata Power',
+            vendor_service: 'Tata Power / Electricity',
+            service: 'Electricity',
+            service_description: 'Utility Electricity for COE-A',
+            contract: 'CONT-2025-01',
+            service_start_date: new Date('2025-04-01'),
+            service_end_date: new Date('2026-03-31'),
+            budget_head: 'Electricity',
+            tower: 'Shared Utilities',
+            priority: 'High',
+            initiative_type: 'Existing',
+            service_type: 'Dedicated',
+            allocation_type: 'Dedicated',
+            cost_optimization_lever: 'Energy Efficiency',
+            remarks: 'Priority utility contract'
+        }
+    });
 
-    // 10. Seed Allocation Bases
-    const allocationBases = ['Headcount', 'Revenue', 'Usage', 'Fixed %', 'Square Footage'];
-    for (const name of allocationBases) {
-        await prisma.allocationBasis.upsert({
-            where: { name },
-            update: {},
-            create: { name }
-        });
-    }
-    console.log('✓ Allocation Bases seeded');
+    const s2 = await prisma.serviceMaster.create({
+        data: {
+            uid: 'UID-2025-SW-002',
+            parent_uid: null,
+            vendor: 'Microsoft',
+            vendor_service: 'Microsoft / Licenses',
+            service: 'Software Subscription',
+            service_description: 'Office 365 Licenses',
+            contract: 'CONT-2025-02',
+            service_start_date: new Date('2025-04-01'),
+            service_end_date: new Date('2026-03-31'),
+            budget_head: 'Software',
+            tower: 'IT shared services',
+            priority: 'Medium',
+            initiative_type: 'Existing',
+            service_type: 'Shared',
+            allocation_type: 'Shared',
+            cost_optimization_lever: 'Seat Management',
+            remarks: 'Global IT contract'
+        }
+    });
+    console.log('✓ Service Master seeded');
 
-    console.log('Seeding completed successfully.');
+    // 5. Seed ProcurementDetails (2️⃣)
+    await prisma.procurementDetail.create({
+        data: {
+            service_id: s1.id,
+            entity: 'JPM Corporate',
+            pr_number: 'PR-1001',
+            pr_date: new Date('2025-03-15'),
+            pr_amount: 1000000,
+            currency: 'INR',
+            po_number: 'PO-5001',
+            po_date: new Date('2025-03-20'),
+            po_value: 950000,
+            common_currency_value_inr: 950000,
+            value_in_lac: 9.5
+        }
+    });
+    console.log('✓ Procurement Details seeded');
+
+    // 6. Seed AllocationBasis (3️⃣)
+    await prisma.allocationBasis.create({
+        data: {
+            service_id: s2.id,
+            basis_of_allocation: 'Headcount',
+            allocation_basis: 'Employee Count per unit',
+            total_count: 500
+        }
+    });
+    console.log('✓ Allocation Basis seeded');
+
+    // 7. Seed FYActuals (5️⃣)
+    await prisma.fYActual.create({
+        data: {
+            service_id: s1.id,
+            financial_year: 'FY25',
+            fy_budget: 1200000,
+            fy_actuals: 0
+        }
+    });
+    await prisma.fYActual.create({
+        data: {
+            service_id: s2.id,
+            financial_year: 'FY25',
+            fy_budget: 600000,
+            fy_actuals: 0
+        }
+    });
+    console.log('✓ FY Actuals (Control Numbers) seeded');
+
+    // 8. Seed MonthlyEntityActuals (6️⃣)
+    const jpm = await prisma.entityMaster.findUnique({ where: { entity_name: 'JPM Corporate' } });
+    const jphi = await prisma.entityMaster.findUnique({ where: { entity_name: 'JPHI Corporate' } });
+
+    await prisma.monthlyEntityActual.create({
+        data: {
+            service_id: s1.id,
+            entity_id: jpm.id,
+            month_no: 4, // April
+            amount: 85000
+        }
+    });
+
+    await prisma.monthlyEntityActual.create({
+        data: {
+            service_id: s1.id,
+            entity_id: jphi.id,
+            month_no: 4, // April
+            amount: 15000
+        }
+    });
+    console.log('✓ Monthly Entity Actuals seeded');
+
+    console.log('Database seeded successfully with the EXACT EXCEL -> DB LOGIC FLOW.');
 }
 
 main()

@@ -1,10 +1,11 @@
 const prisma = require('../prisma');
+const logger = require('../utils/logger');
 
-class ImportHistoryService {
-    async getImportHistory(userId, isAdmin) {
+const getImportHistory = async (userId, isAdmin) => {
+    try {
         const where = isAdmin ? {} : { userId };
 
-        return await prisma.importJob.findMany({
+        return await prisma.importHistory.findMany({
             where,
             include: {
                 user: {
@@ -12,9 +13,14 @@ class ImportHistoryService {
                 }
             },
             orderBy: { createdAt: 'desc' },
-            take: 50
+            take: 100
         });
+    } catch (error) {
+        logger.error('Get Import History Service Error: %s', error.stack);
+        throw error;
     }
-}
+};
 
-module.exports = new ImportHistoryService();
+module.exports = {
+    getImportHistory
+};

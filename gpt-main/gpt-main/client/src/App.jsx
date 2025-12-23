@@ -9,60 +9,57 @@ import Loading from './components/common/Loading';
 // Pages
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import BudgetList from './pages/BudgetList';
-import BudgetMonthlyView from './pages/BudgetMonthlyView';
-import BudgetDetail from './pages/BudgetDetail';
-import POList from './pages/POList';
-import POForm from './pages/POForm';
-import ActualsList from './pages/ActualsList';
-import ImportHistory from './pages/ImportHistory';
+import OpexTracker from './pages/BudgetList'; // Re-using BudgetList as the main Tracker
 import MasterData from './pages/MasterData';
 import UserManagement from './pages/UserManagement';
-import ActualBOA from './pages/ActualBOA';
-import BudgetBOA from './pages/BudgetBOA';
+import ImportHistory from './pages/ImportHistory';
+import NetBudget from './pages/NetBudget';
+import AllocationBase from './pages/AllocationBase';
+import NetActual from './pages/NetActual';
+import ActualsList from './pages/ActualsList';
+import POList from './pages/POList';
 
 const ProtectedRoute = ({ children }) => {
     const { token, isLoading } = useAuth();
-
-    // You might want a loading spinner here while checking auth
-    if (isLoading) {
-        return <Loading fullScreen />;
-    }
-
+    if (isLoading) return <Loading fullScreen />;
     return token ? children : <Navigate to="/login" />;
 };
+
+import { ThemeProvider as AppThemeProvider } from './context/ThemeContext';
 
 function App() {
     return (
         <AppErrorBoundary>
             <AuthProvider>
-                <ThemeProvider theme={jubilantTheme}>
-                    <CssBaseline />
-                    <Router>
-                        <Routes>
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/" element={
-                                <ProtectedRoute>
-                                    <Layout />
-                                </ProtectedRoute>
-                            }>
-                                <Route index element={<Dashboard />} />
-                                <Route path="budgets" element={<BudgetList />} />
-                                <Route path="budgets/monthly" element={<BudgetMonthlyView />} />
-                                <Route path="budgets/:uid" element={<BudgetDetail />} />
-                                <Route path="pos" element={<POList />} />
-                                <Route path="pos/new" element={<POForm />} />
-                                <Route path="pos/:id/edit" element={<POForm />} />
-                                <Route path="actuals" element={<ActualsList />} />
-                                <Route path="imports" element={<ImportHistory />} />
-                                <Route path="master-data" element={<MasterData />} />
-                                <Route path="users" element={<UserManagement />} />
-                                <Route path="actual-boa" element={<ActualBOA />} />
-                                <Route path="budget-boa" element={<BudgetBOA />} />
-                            </Route>
-                        </Routes>
-                    </Router>
-                </ThemeProvider>
+                <AppThemeProvider>
+                    <ThemeProvider theme={jubilantTheme}>
+                        <CssBaseline />
+                        <Router>
+                            <Routes>
+                                <Route path="/login" element={<Login />} />
+                                <Route path="/" element={
+                                    <ProtectedRoute>
+                                        <Layout />
+                                    </ProtectedRoute>
+                                }>
+                                    <Route index element={<Dashboard />} />
+                                    <Route path="tracker" element={<OpexTracker />} />
+                                    <Route path="master-data" element={<MasterData />} />
+                                    <Route path="users" element={<UserManagement />} />
+                                    <Route path="imports" element={<ImportHistory />} />
+                                    <Route path="net-budget" element={<NetBudget />} />
+                                    <Route path="allocation-base" element={<AllocationBase />} />
+                                    <Route path="actuals" element={<ActualsList />} />
+                                    <Route path="net-actual" element={<NetActual />} />
+                                    <Route path="pos" element={<POList />} />
+                                    {/* Redirect legacy paths to new unified tracker */}
+                                    <Route path="budgets" element={<Navigate to="/tracker" replace />} />
+                                    <Route path="actuals" element={<Navigate to="/tracker" replace />} />
+                                </Route>
+                            </Routes>
+                        </Router>
+                    </ThemeProvider>
+                </AppThemeProvider>
             </AuthProvider>
         </AppErrorBoundary>
     );

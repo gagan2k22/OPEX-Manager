@@ -87,24 +87,16 @@ try {
     app.use('/api/auth', require('./routes/auth.routes'));
     app.use('/api/users', require('./routes/user.routes'));
 
-    // Core Modules
+    // Core Business Modules (XLS Tracker Driven)
     app.use('/api/master', require('./routes/masterData.routes'));
     app.use('/api/budgets', require('./routes/budget.routes'));
-    app.use('/api/pos', require('./routes/po.routes'));
-    app.use('/api/actuals', require('./routes/actuals.routes'));
-    app.use('/api/actuals', require('./routes/actualsImport.routes'));
 
-    // Helper Modules
-    app.use('/api/line-items', require('./routes/lineItem.routes'));
-    app.use('/api/fiscal-years', require('./routes/fiscalYear.routes'));
-    app.use('/api/currency-rates', require('./routes/currencyRate.routes'));
-
-    // Reports & Analytics
+    // System & Utility
     app.use('/api/reports', require('./routes/reports.routes'));
+    app.use('/api/currency-rates', require('./routes/currencyRate.routes'));
+    app.use('/api/imports', require('./routes/import.routes'));
     app.use('/api/imports', require('./routes/importHistory.routes'));
-    app.use('/api/actual-boa', require('./routes/actualBOA.routes'));
-    app.use('/api/budget-boa', require('./routes/budgetBOA.routes'));
-    app.use('/api/budget-detail', require('./routes/budgetDetail.routes'));
+    app.use('/api/neno', require('./routes/neno.routes'));
 
 } catch (error) {
     logger.error('Failed to load routes: %s', error.message);
@@ -164,8 +156,18 @@ app.use(errorHandler);
 if (require.main === module) {
     const PORT = config.server.port;
 
-    const server = app.listen(PORT, () => {
+    const server = app.listen(PORT, async () => {
         logger.info(`Server running in ${config.env} mode on port ${PORT}`);
+
+        // 🛡️ Production Startup Check: Database Heartbeat
+        try {
+            const db = require('./prisma');
+            await db.$queryRaw`SELECT 1`;
+            logger.info('Database connection verified successfully.');
+        } catch (dbError) {
+            logger.error('FATAL: Could not connect to database on startup! %s', dbError.stack);
+            process.exit(1);
+        }
 
         // Initialize Cron Jobs
         try {

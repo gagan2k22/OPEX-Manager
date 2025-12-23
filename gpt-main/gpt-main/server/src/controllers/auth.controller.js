@@ -61,8 +61,8 @@ const register = async (req, res) => {
             userId: user.id
         });
     } catch (error) {
-        console.error('Registration error:', error.message);
-        // Don't expose internal error details
+        const logger = require('../utils/logger');
+        logger.error('Registration error: %s', error.stack);
         res.status(500).json({ message: 'Registration failed. Please try again.' });
     }
 };
@@ -70,6 +70,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        const logger = require('../utils/logger');
 
         // Input validation
         if (!email || !password) {
@@ -90,17 +91,20 @@ const login = async (req, res) => {
 
         // Generic error message to prevent user enumeration
         if (!user) {
+            logger.warn('Login failed: User not found (%s)', email);
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
         // Check if user is active
         if (!user.is_active) {
+            logger.warn('Login failed: Account disabled (%s)', email);
             return res.status(401).json({ message: 'Account is disabled' });
         }
 
         // Verify password
         const isMatch = await bcrypt.compare(password, user.password_hash);
         if (!isMatch) {
+            logger.warn('Login failed: Wrong password (%s)', email);
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
@@ -126,11 +130,13 @@ const login = async (req, res) => {
             },
             process.env.JWT_SECRET,
             {
-                expiresIn: '8h', // Reduced from 1d for better security
+                expiresIn: '8h',
                 issuer: 'opex-system',
                 audience: 'opex-client'
             }
         );
+
+        logger.info('User logged in successfully (%s)', email);
 
         // Return token and safe user data
         res.json({
@@ -143,8 +149,8 @@ const login = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Login error:', error.message);
-        // Don't expose internal error details
+        const logger = require('../utils/logger');
+        logger.error('Login error: %s', error.stack);
         res.status(500).json({ message: 'Login failed. Please try again.' });
     }
 };

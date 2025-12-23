@@ -1,139 +1,66 @@
-const bcrypt = require('bcryptjs');
+const userService = require('../services/user.service');
 const prisma = require('../prisma');
+const logger = require('../utils/logger');
 const { getPermissionsForRoles } = require('../middleware/permission.middleware');
 
 /**
- * Get all users with their roles
+ * User Controller
+ * Routes traffic to User Service with proper error handling and logging
  */
+
 const getAllUsers = async (req, res) => {
     try {
-        const users = await prisma.user.findMany({
-            include: {
-                roles: {
-                    include: {
-                        role: true
-                    }
-                }
-            },
-            orderBy: {
-                created_at: 'desc'
-            }
-        });
+        const users = await userService.listUsers();
 
-        // Format response
-        const formattedUsers = users.map(user => ({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            is_active: user.is_active,
-            roles: user.roles.map(ur => ur.role.name),
-            permissions: getPermissionsForRoles(user.roles.map(ur => ur.role.name))
+        // Add permissions to response
+        const enhancedUsers = users.map(u => ({
+            ...u,
+            permissions: getPermissionsForRoles(u.roles)
         }));
 
-        res.json(formattedUsers);
+        res.json(enhancedUsers);
     } catch (error) {
-        console.error('Error fetching users:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        logger.error('Get All Users Controller Error: %s', error.stack);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
-/**
- * Get user by ID
- */
-const getUserById = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        const user = await prisma.user.findUnique({
-            where: { id: parseInt(id) },
-            include: {
-                roles: {
-                    include: {
-                        role: true
-                    }
-                }
-            }
-        });
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        const roleNames = user.roles.map(ur => ur.role.name);
-
-        res.json({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            is_active: user.is_active,
-            roles: roleNames,
-            permissions: getPermissionsForRoles(roleNames)
-        });
-    } catch (error) {
-        console.error('Error fetching user:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-};
-
-/**
- * Create new user
- */
 const createUser = async (req, res) => {
     try {
-        const { name, email, password, roles, is_active } = req.body;
-
-        // Validate required fields
-        if (!name || !email || !password) {
-            return res.status(400).json({
-                message: 'Name, email, and password are required'
-            });
-        }
-
-        // Check if user already exists
-        const existingUser = await prisma.user.findUnique({
-            where: { email }
-        });
-
-        if (existingUser) {
-            return res.status(400).json({
-                message: 'User with this email already exists'
-            });
-        }
-
-        // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create user with roles
-        const user = await prisma.user.create({
-            data: {
-                name,
-                email,
-                password_hash: hashedPassword,
-                is_active: is_active !== undefined ? is_active : true,
-                roles: {
-                    create: (roles || ['Viewer']).map(roleName => ({
-                        role: {
-                            connectOrCreate: {
-                                where: { name: roleName },
-                                create: { name: roleName }
-                            }
-                        }
-                    }))
-                }
-            },
-            include: {
-                roles: {
-                    include: {
-                        role: true
-                    }
-                }
-            }
-        });
-
+        const user = await userService.createUser(req.body);
         const roleNames = user.roles.map(ur => ur.role.name);
+
+        logger.info('Admin created user: %s (By: %s)', user.email, req.user.email);
 
         res.status(201).json({
             message: 'User created successfully',
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                roles: roleNames,
+                permissions: getPermissionsForRoles(roleNames)
+            }
+        });
+    } catch (error) {
+        if (error.statusCode === 400) {
+            return res.status(400).json({ message: error.message });
+        }
+        logger.error('Create User Controller Error: %s', error.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await userService.updateUser(id, req.body);
+        const roleNames = user.roles.map(ur => ur.role.name);
+
+        logger.info('User updated: %s (By: %s)', user.email, req.user.email);
+
+        res.json({
+            message: 'User updated successfully',
             user: {
                 id: user.id,
                 name: user.name,
@@ -144,206 +71,81 @@ const createUser = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error creating user:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        if (error.statusCode < 500) {
+            return res.status(error.statusCode).json({ message: error.message });
+        }
+        logger.error('Update User Controller Error: %s', error.stack);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
-/**
- * Update user
- */
-const updateUser = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name, email, password, roles, is_active } = req.body;
-
-        // Check if user exists
-        const existingUser = await prisma.user.findUnique({
-            where: { id: parseInt(id) }
-        });
-
-        if (!existingUser) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Prepare update data
-        const updateData = {};
-
-        if (name) updateData.name = name;
-        if (email) updateData.email = email;
-        if (is_active !== undefined) updateData.is_active = is_active;
-
-        if (password) {
-            updateData.password_hash = await bcrypt.hash(password, 10);
-        }
-
-        // Update user
-        const user = await prisma.user.update({
-            where: { id: parseInt(id) },
-            data: updateData,
-            include: {
-                roles: {
-                    include: {
-                        role: true
-                    }
-                }
-            }
-        });
-
-        // Update roles if provided
-        if (roles && Array.isArray(roles)) {
-            // Delete existing roles
-            await prisma.userRole.deleteMany({
-                where: { user_id: parseInt(id) }
-            });
-
-            // Create new roles
-            await prisma.userRole.createMany({
-                data: roles.map(roleName => ({
-                    user_id: parseInt(id),
-                    role_id: undefined // Will be handled by connectOrCreate
-                }))
-            });
-
-            // Alternative: Use nested create
-            for (const roleName of roles) {
-                const role = await prisma.role.upsert({
-                    where: { name: roleName },
-                    update: {},
-                    create: { name: roleName }
-                });
-
-                await prisma.userRole.upsert({
-                    where: {
-                        user_id_role_id: {
-                            user_id: parseInt(id),
-                            role_id: role.id
-                        }
-                    },
-                    update: {},
-                    create: {
-                        user_id: parseInt(id),
-                        role_id: role.id
-                    }
-                });
-            }
-        }
-
-        // Fetch updated user with roles
-        const updatedUser = await prisma.user.findUnique({
-            where: { id: parseInt(id) },
-            include: {
-                roles: {
-                    include: {
-                        role: true
-                    }
-                }
-            }
-        });
-
-        const roleNames = updatedUser.roles.map(ur => ur.role.name);
-
-        res.json({
-            message: 'User updated successfully',
-            user: {
-                id: updatedUser.id,
-                name: updatedUser.name,
-                email: updatedUser.email,
-                is_active: updatedUser.is_active,
-                roles: roleNames,
-                permissions: getPermissionsForRoles(roleNames)
-            }
-        });
-    } catch (error) {
-        console.error('Error updating user:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-};
-
-/**
- * Delete user
- */
 const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
+        await userService.deleteUser(id, req.user.id);
 
-        // Check if user exists
-        const user = await prisma.user.findUnique({
-            where: { id: parseInt(id) }
-        });
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Prevent deleting yourself
-        if (req.user && req.user.id === parseInt(id)) {
-            return res.status(400).json({
-                message: 'Cannot delete your own account'
-            });
-        }
-
-        // Delete user roles first
-        await prisma.userRole.deleteMany({
-            where: { user_id: parseInt(id) }
-        });
-
-        // Delete user
-        await prisma.user.delete({
-            where: { id: parseInt(id) }
-        });
-
+        logger.warn('User deleted: ID %s (By: %s)', id, req.user.email);
         res.json({ message: 'User deleted successfully' });
     } catch (error) {
-        console.error('Error deleting user:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        if (error.statusCode < 500) {
+            return res.status(error.statusCode).json({ message: error.message });
+        }
+        logger.error('Delete User Controller Error: %s', error.stack);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
-/**
- * Get all available roles
- */
-const getAllRoles = async (req, res) => {
+const getUserById = async (req, res) => {
     try {
-        const roles = await prisma.role.findMany({
-            orderBy: {
-                name: 'asc'
-            }
+        const { id } = req.params;
+        const user = await prisma.user.findUnique({
+            where: { id: parseInt(id) },
+            include: { roles: { include: { role: true } } }
         });
 
-        res.json(roles);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        const roleNames = user.roles.map(ur => ur.role.name);
+        res.json({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            is_active: user.is_active,
+            roles: roleNames,
+            permissions: getPermissionsForRoles(roleNames)
+        });
     } catch (error) {
-        console.error('Error fetching roles:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        logger.error('Get User By ID Controller Error: %s', error.stack);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
-/**
- * Get permission matrix
- */
+const getAllRoles = async (req, res) => {
+    try {
+        const roles = await prisma.role.findMany({ orderBy: { name: 'asc' } });
+        res.json(roles);
+    } catch (error) {
+        logger.error('Get All Roles Controller Error: %s', error.stack);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 const getPermissionMatrix = async (req, res) => {
     try {
         const { PERMISSIONS } = require('../middleware/permission.middleware');
-
-        // Transform permissions into a more readable format
         const matrix = {};
-
-        for (const [permission, roles] of Object.entries(PERMISSIONS)) {
-            matrix[permission] = {
+        for (const [perm, roles] of Object.entries(PERMISSIONS)) {
+            matrix[perm] = {
                 Viewer: roles.includes('Viewer'),
                 Editor: roles.includes('Editor'),
                 Approver: roles.includes('Approver'),
                 Admin: roles.includes('Admin')
             };
         }
-
-        res.json({
-            permissions: PERMISSIONS,
-            matrix: matrix
-        });
+        res.json({ permissions: PERMISSIONS, matrix });
     } catch (error) {
-        console.error('Error fetching permission matrix:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        logger.error('Get Permission Matrix Controller Error: %s', error.stack);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 

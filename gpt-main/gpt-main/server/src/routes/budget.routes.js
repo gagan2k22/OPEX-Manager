@@ -1,33 +1,17 @@
 const express = require('express');
-const { authenticate } = require('../middleware/auth');
-const { checkPermission } = require('../middleware/permission.middleware');
-const { getBudgets, createBudget, updateBudget, getBudgetTracker, updateLineItem } = require('../controllers/budget.controller');
-
-const multer = require('multer');
-const { importBudgets } = require('../controllers/budgetImportController');
-const { exportBudgets } = require('../controllers/budgetExportController');
-
-const upload = multer({ storage: multer.memoryStorage() });
-
 const router = express.Router();
-
-const { validate, validateId } = require('../middleware/validator');
+const xlsTrackerController = require('../controllers/xlsTracker.controller');
+const { authenticate, restrictTo } = require('../middleware/auth');
 
 router.use(authenticate);
 
-// View budgets - All authenticated users
-router.get('/tracker', checkPermission('VIEW_DASHBOARDS'), getBudgetTracker);
-router.get('/', checkPermission('VIEW_DASHBOARDS'), getBudgets);
+// Main Tracker View (Combined Service + FY Data)
+router.get('/tracker', xlsTrackerController.getTrackerData);
+router.put('/tracker/:id', xlsTrackerController.updateTrackerRow);
+router.get('/net-tracker', xlsTrackerController.getNetBudgetTracker);
 
-// Export budgets
-router.get('/export', checkPermission('VIEW_DASHBOARDS'), exportBudgets);
-
-// Import budgets
-router.post('/import', checkPermission('EDIT_BUDGET_BOA'), upload.single('file'), importBudgets);
-
-// Create/Edit budget - Editor, Approver, Admin
-router.post('/', checkPermission('EDIT_BUDGET_BOA'), validate('createBudget'), createBudget);
-router.put('/:id', checkPermission('EDIT_BUDGET_BOA'), validateId(), validate('updateBudget'), updateBudget);
-router.put('/line-items/:id', checkPermission('EDIT_BUDGET_BOA'), validateId(), updateLineItem);
+// Monthly Entity Splits
+router.get('/splits/:serviceId', xlsTrackerController.getEntitySplits);
+router.post('/splits/update', restrictTo('Admin', 'Editor'), xlsTrackerController.updateMonthlyActual);
 
 module.exports = router;
