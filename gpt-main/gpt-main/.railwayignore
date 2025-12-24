@@ -1,0 +1,12 @@
+node_modules/
+*.log
+.env.local
+.env.development
+dist/
+build/
+.git/
+*.md
+*.bat
+test_*.js
+prisma/dev.db
+prisma/dev.db-journal

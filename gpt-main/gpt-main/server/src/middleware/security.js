@@ -29,7 +29,14 @@ const corsOptions = {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
 
-        if (config.cors.origin === '*' || config.cors.origin.split(',').includes(origin)) {
+        // In development, allow all origins
+        if (config.server.env === 'development') {
+            return callback(null, true);
+        }
+
+        // In production, check against allowed origins
+        const allowedOrigins = config.cors.origin.split(',').map(o => o.trim());
+        if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
