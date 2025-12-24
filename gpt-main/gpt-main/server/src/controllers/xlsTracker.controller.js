@@ -246,7 +246,8 @@ const updateMonthlyActual = async (req, res) => {
                 'MonthlyEntityActual',
                 result.id,
                 { year: 'FY25', month_no, service_id }, // Context
-                { amount }
+                { amount },
+                req.body.auditComment || 'Split Update'
             );
         }
 
@@ -267,20 +268,29 @@ const updateTrackerRow = async (req, res) => {
     try {
         const { id } = req.params;
         const data = req.body;
-        const fy = 'FY25'; // Default or from body if needed
+        const comment = data.auditComment || 'Direct Update';
+        const fy = 'FY25';
 
-        // Separate fields by table
+        // Fetch old state for auditing
+        const oldState = await prisma.serviceMaster.findUnique({
+            where: { id: parseInt(id) },
+            include: {
+                fy_actuals: { where: { financial_year: fy } },
+                procurement_details: true,
+                allocation_bases: true
+            }
+        });
+
+        if (!oldState) return res.status(404).json({ message: 'Record not found' });
+
+        // Field mapping groups
         const serviceFields = [
             'uid', 'parent_uid', 'vendor', 'service', 'description',
             'service_start_date', 'service_end_date', 'renewal_date',
             'contract', 'tower', 'budget_head', 'allocation_type',
             'initiative_type', 'service_type', 'priority', 'remarks'
         ];
-
-        const procurementFields = [
-            'po_number', 'po_value', 'currency', 'common_currency_value_inr', 'po_entity'
-        ];
-
+        const procurementFields = ['po_number', 'po_value', 'currency', 'common_currency_value_inr', 'po_entity'];
         const fyFields = ['fy_budget'];
 
         const serviceUpdate = {};
@@ -293,7 +303,6 @@ const updateTrackerRow = async (req, res) => {
                     key === 'renewal_month' ? 'renewal_date' : key;
                 serviceUpdate[dbKey] = data[key];
             } else if (procurementFields.includes(key)) {
-                // Map frontend keys to DB keys if different
                 const dbKey = key === 'po_entity' ? 'entity' : key;
                 procurementUpdate[dbKey] = data[key];
             } else if (fyFields.includes(key)) {
@@ -301,78 +310,44 @@ const updateTrackerRow = async (req, res) => {
             }
         });
 
-        // Auto-calculate value_in_lac if INR value is updated
         if (procurementUpdate.common_currency_value_inr) {
             procurementUpdate.value_in_lac = parseFloat(procurementUpdate.common_currency_value_inr) / 100000;
         }
 
-        await prisma.$transaction(async (tx) => {
-            // Update Service Master
+        const result = await prisma.$transaction(async (tx) => {
             if (Object.keys(serviceUpdate).length > 0) {
-                await tx.serviceMaster.update({
-                    where: { id: parseInt(id) },
-                    data: serviceUpdate
-                });
+                await tx.serviceMaster.update({ where: { id: parseInt(id) }, data: serviceUpdate });
             }
-
-            // Update Allocation Basis (Special Case)
             if (data.allocation_basis !== undefined) {
-                const existingAlloc = await tx.allocationBasis.findFirst({ where: { service_id: parseInt(id) } });
-                if (existingAlloc) {
-                    await tx.allocationBasis.update({
-                        where: { id: existingAlloc.id },
-                        data: { basis_of_allocation: data.allocation_basis }
-                    });
-                } else {
-                    await tx.allocationBasis.create({
-                        data: {
-                            service_id: parseInt(id),
-                            basis_of_allocation: data.allocation_basis
-                        }
-                    });
-                }
+                const existing = await tx.allocationBasis.findFirst({ where: { service_id: parseInt(id) } });
+                if (existing) await tx.allocationBasis.update({ where: { id: existing.id }, data: { basis_of_allocation: data.allocation_basis } });
+                else await tx.allocationBasis.create({ data: { service_id: parseInt(id), basis_of_allocation: data.allocation_basis } });
             }
-
-            // Update Procurement using relation
             if (Object.keys(procurementUpdate).length > 0) {
-                // Check if exists
-                const existingProc = await tx.procurementDetail.findFirst({ where: { service_id: parseInt(id) } });
-                if (existingProc) {
-                    await tx.procurementDetail.update({
-                        where: { id: existingProc.id },
-                        data: procurementUpdate
-                    });
-                } else {
-                    await tx.procurementDetail.create({
-                        data: {
-                            service_id: parseInt(id),
-                            ...procurementUpdate
-                        }
-                    });
-                }
+                const existing = await tx.procurementDetail.findFirst({ where: { service_id: parseInt(id) } });
+                if (existing) await tx.procurementDetail.update({ where: { id: existing.id }, data: procurementUpdate });
+                else await tx.procurementDetail.create({ data: { service_id: parseInt(id), ...procurementUpdate } });
             }
-
-            // Update FY Budget
             if (Object.keys(fyUpdate).length > 0) {
-                const existingFy = await tx.fYActual.findUnique({
-                    where: { service_id_financial_year: { service_id: parseInt(id), financial_year: fy } }
-                });
-                if (existingFy) {
-                    await tx.fYActual.update({
-                        where: { id: existingFy.id },
-                        data: fyUpdate
-                    });
-                } else {
-                    await tx.fYActual.create({
-                        data: {
-                            service_id: parseInt(id),
-                            financial_year: fy,
-                            ...fyUpdate
-                        }
-                    });
-                }
+                const existing = await tx.fYActual.findUnique({ where: { service_id_financial_year: { service_id: parseInt(id), financial_year: fy } } });
+                if (existing) await tx.fYActual.update({ where: { id: existing.id }, data: fyUpdate });
+                else await tx.fYActual.create({ data: { service_id: parseInt(id), financial_year: fy, ...fyUpdate } });
             }
+            return true;
         });
+
+        // Audit Logging
+        if (req.user) {
+            await auditService.logAction(
+                req.user.id,
+                'UPDATE_TRACKER_ROW',
+                'ServiceMaster',
+                parseInt(id),
+                oldState,    // Detailed old state
+                data,        // The changes requested
+                comment      // Mandatory reason
+            );
+        }
 
         res.json({ message: 'Row updated successfully' });
     } catch (error) {

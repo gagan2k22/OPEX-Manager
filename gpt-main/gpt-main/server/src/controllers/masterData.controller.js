@@ -35,6 +35,26 @@ const createEntity = async (req, res) => {
     res.status(201).json(entity);
 };
 
+const updateEntity = async (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    const entity = await prisma.entityMaster.update({
+        where: { id: parseInt(id) },
+        data: { entity_name: name }
+    });
+    await invalidateCache('entities:all');
+    res.json(entity);
+};
+
+const deleteEntity = async (req, res) => {
+    const { id } = req.params;
+    await prisma.entityMaster.delete({
+        where: { id: parseInt(id) }
+    });
+    await invalidateCache('entities:all');
+    res.json({ message: 'Deleted successfully' });
+};
+
 // ==========================================
 // 1️⃣ Service Master (UIDs / Contracts)
 // ==========================================
@@ -60,6 +80,40 @@ const createService = async (req, res) => {
     res.status(201).json(service);
 };
 
+const updateService = async (req, res) => {
+    const { id } = req.params;
+    const {
+        uid, parent_uid, vendor, vendor_service, service, service_description,
+        contract, service_start_date, service_end_date, renewal_date,
+        budget_head, tower, priority, initiative_type, service_type,
+        allocation_type, cost_optimization_lever, remarks
+    } = req.body;
+
+    const updatedService = await prisma.serviceMaster.update({
+        where: { id: parseInt(id) },
+        data: {
+            uid, parent_uid, vendor, vendor_service, service, service_description,
+            contract,
+            service_start_date: service_start_date ? new Date(service_start_date) : null,
+            service_end_date: service_end_date ? new Date(service_end_date) : null,
+            renewal_date: renewal_date ? new Date(renewal_date) : null,
+            budget_head, tower, priority, initiative_type, service_type,
+            allocation_type, cost_optimization_lever, remarks
+        }
+    });
+    await invalidateCache('services:all');
+    res.json(updatedService);
+};
+
+const deleteService = async (req, res) => {
+    const { id } = req.params;
+    await prisma.serviceMaster.delete({
+        where: { id: parseInt(id) }
+    });
+    await invalidateCache('services:all');
+    res.json({ message: 'Deleted successfully' });
+};
+
 // ==========================================
 // 5️⃣ PO Entity Master
 // ==========================================
@@ -77,6 +131,26 @@ const createPOEntity = async (req, res) => {
     });
     await invalidateCache('po_entities:all');
     res.status(201).json(entity);
+};
+
+const updatePOEntity = async (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    const entity = await prisma.pOEntityMaster.update({
+        where: { id: parseInt(id) },
+        data: { entity_name: name }
+    });
+    await invalidateCache('po_entities:all');
+    res.json(entity);
+};
+
+const deletePOEntity = async (req, res) => {
+    const { id } = req.params;
+    await prisma.pOEntityMaster.delete({
+        where: { id: parseInt(id) }
+    });
+    await invalidateCache('po_entities:all');
+    res.json({ message: 'Deleted successfully' });
 };
 
 // ==========================================
@@ -98,6 +172,26 @@ const createBudgetHead = async (req, res) => {
     res.status(201).json(head);
 };
 
+const updateBudgetHead = async (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    const head = await prisma.budgetHeadMaster.update({
+        where: { id: parseInt(id) },
+        data: { head_name: name }
+    });
+    await invalidateCache('budget_heads:all');
+    res.json(head);
+};
+
+const deleteBudgetHead = async (req, res) => {
+    const { id } = req.params;
+    await prisma.budgetHeadMaster.delete({
+        where: { id: parseInt(id) }
+    });
+    await invalidateCache('budget_heads:all');
+    res.json({ message: 'Deleted successfully' });
+};
+
 // ==========================================
 // 7️⃣ Tower Master
 // ==========================================
@@ -115,6 +209,26 @@ const createTower = async (req, res) => {
     });
     await invalidateCache('towers:all');
     res.status(201).json(tower);
+};
+
+const updateTower = async (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    const tower = await prisma.towerMaster.update({
+        where: { id: parseInt(id) },
+        data: { tower_name: name }
+    });
+    await invalidateCache('towers:all');
+    res.json(tower);
+};
+
+const deleteTower = async (req, res) => {
+    const { id } = req.params;
+    await prisma.towerMaster.delete({
+        where: { id: parseInt(id) }
+    });
+    await invalidateCache('towers:all');
+    res.json({ message: 'Deleted successfully' });
 };
 
 // ==========================================
@@ -136,6 +250,26 @@ const createAllocationType = async (req, res) => {
     res.status(201).json(type);
 };
 
+const updateAllocationType = async (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    const type = await prisma.allocationTypeMaster.update({
+        where: { id: parseInt(id) },
+        data: { type_name: name }
+    });
+    await invalidateCache('allocation_types:all');
+    res.json(type);
+};
+
+const deleteAllocationType = async (req, res) => {
+    const { id } = req.params;
+    await prisma.allocationTypeMaster.delete({
+        where: { id: parseInt(id) }
+    });
+    await invalidateCache('allocation_types:all');
+    res.json({ message: 'Deleted successfully' });
+};
+
 // ==========================================
 // 9️⃣ Allocation Basis Master
 // ==========================================
@@ -155,12 +289,32 @@ const createAllocationBasis = async (req, res) => {
     res.status(201).json(basis);
 };
 
+const updateAllocationBasis = async (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    const basis = await prisma.allocationBasisMaster.update({
+        where: { id: parseInt(id) },
+        data: { basis_name: name }
+    });
+    await invalidateCache('allocation_bases:all');
+    res.json(basis);
+};
+
+const deleteAllocationBasis = async (req, res) => {
+    const { id } = req.params;
+    await prisma.allocationBasisMaster.delete({
+        where: { id: parseInt(id) }
+    });
+    await invalidateCache('allocation_bases:all');
+    res.json({ message: 'Deleted successfully' });
+};
+
 module.exports = {
-    getEntities, createEntity,
-    getServices, createService,
-    getPOEntities, createPOEntity,
-    getBudgetHeads, createBudgetHead,
-    getTowers, createTower,
-    getAllocationTypes, createAllocationType,
-    getAllocationBases, createAllocationBasis
+    getEntities, createEntity, updateEntity, deleteEntity,
+    getServices, createService, updateService, deleteService,
+    getPOEntities, createPOEntity, updatePOEntity, deletePOEntity,
+    getBudgetHeads, createBudgetHead, updateBudgetHead, deleteBudgetHead,
+    getTowers, createTower, updateTower, deleteTower,
+    getAllocationTypes, createAllocationType, updateAllocationType, deleteAllocationType,
+    getAllocationBases, createAllocationBasis, updateAllocationBasis, deleteAllocationBasis
 };

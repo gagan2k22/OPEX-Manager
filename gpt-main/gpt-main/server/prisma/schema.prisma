@@ -176,6 +176,7 @@ model AuditLog {
   action     String
   oldValue   String?  // JSON string
   newValue   String?  // JSON string
+  comment    String?  // MANDATORY REASON FOR CHANGE
   userId     Int
   createdAt  DateTime @default(now())
   

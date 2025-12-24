@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Box, Paper, Typography, Tabs, Tab, Button, Dialog, DialogTitle, DialogContent,
     DialogActions, Grid, TextField, Snackbar, Alert, IconButton
 } from '@mui/material';
 import { DataGrid, GridToolbar, GridActionsCellItem } from '@mui/x-data-grid';
-import { Edit, Add, CorporateFare, MiscellaneousServices } from '@mui/icons-material';
+import { Edit, Add, CorporateFare, MiscellaneousServices, Delete } from '@mui/icons-material';
 import api from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 import { pageContainerStyles, pageHeaderStyles, pageTitleStyles } from '../styles/commonStyles';
 
 const MasterData = () => {
@@ -15,6 +16,8 @@ const MasterData = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
     const [formData, setFormData] = useState({});
+    const { user } = useAuth();
+    const isAdmin = user?.roles?.includes('Admin');
 
     const tabsRows = [
         { label: 'Receiving Entities', endpoint: '/master/entities', schema: 'entity', fieldName: 'entity_name' },
@@ -46,12 +49,31 @@ const MasterData = () => {
     const handleSave = async () => {
         try {
             const current = tabsRows[tab];
-            await api.post(current.endpoint, formData);
-            setSnackbar({ open: true, message: 'Saved successfully', severity: 'success' });
+            if (formData.id) {
+                // Update
+                await api.put(`${current.endpoint}/${formData.id}`, formData);
+                setSnackbar({ open: true, message: 'Updated successfully', severity: 'success' });
+            } else {
+                // Create
+                await api.post(current.endpoint, formData);
+                setSnackbar({ open: true, message: 'Created successfully', severity: 'success' });
+            }
             setOpenDialog(false);
             fetchData();
         } catch (error) {
-            setSnackbar({ open: true, message: error.message || 'Error saving', severity: 'error' });
+            setSnackbar({ open: true, message: error.response?.data?.message || error.message || 'Error saving', severity: 'error' });
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this record?')) return;
+        try {
+            const current = tabsRows[tab];
+            await api.delete(`${current.endpoint}/${id}`);
+            setSnackbar({ open: true, message: 'Deleted successfully', severity: 'success' });
+            fetchData();
+        } catch (error) {
+            setSnackbar({ open: true, message: error.response?.data?.message || 'Error deleting', severity: 'error' });
         }
     };
 
@@ -87,32 +109,44 @@ const MasterData = () => {
             { field: 'basis_name', headerName: 'Allocation Basis', flex: 1 },
             { field: 'id', headerName: 'ID', width: 100 }
         ] : []),
-        {
+        ...(isAdmin ? [{
             field: 'actions',
             type: 'actions',
-            headerName: 'Edit',
-            width: 80,
+            headerName: 'Actions',
+            width: 120,
             getActions: (params) => [
                 <GridActionsCellItem
-                    icon={<Edit />}
+                    icon={<Edit color="primary" />}
                     label="Edit"
-                    onClick={() => { setFormData(params.row); setOpenDialog(true); }}
+                    onClick={() => {
+                        const current = tabsRows[tab];
+                        const displayValue = current.fieldName ? params.row[current.fieldName] : '';
+                        setFormData({ ...params.row, name: displayValue });
+                        setOpenDialog(true);
+                    }}
+                />,
+                <GridActionsCellItem
+                    icon={<Delete color="error" />}
+                    label="Delete"
+                    onClick={() => handleDelete(params.row.id)}
                 />
             ]
-        }
+        }] : [])
     ];
 
     return (
         <Box sx={pageContainerStyles}>
             <Box sx={pageHeaderStyles}>
                 <Typography sx={pageTitleStyles}>Master Data (XLS Business Objects)</Typography>
-                <Button
-                    variant="contained"
-                    startIcon={<Add />}
-                    onClick={() => { setFormData({}); setOpenDialog(true); }}
-                >
-                    Add {tabsRows[tab].label.replace(' & UID Master', '').replace('Receiving ', '')}
-                </Button>
+                {isAdmin && (
+                    <Button
+                        variant="contained"
+                        startIcon={<Add />}
+                        onClick={() => { setFormData({}); setOpenDialog(true); }}
+                    >
+                        Add {tabsRows[tab].label.replace(' & UID Master', '').replace('Receiving ', '')}
+                    </Button>
+                )}
             </Box>
 
             <Paper elevation={0} sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>

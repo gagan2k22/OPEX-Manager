@@ -2,10 +2,11 @@ const reportsService = require('../services/reports.service');
 
 const getDashboardStats = async (req, res) => {
     try {
-        const summary = await reportsService.getDashboardSummary();
-        const towerWise = await reportsService.getTowerWiseReport();
-        const vendorWise = await reportsService.getVendorWiseReport();
-        const monthlyTrend = await reportsService.getMonthlyTrend();
+        const { entityId } = req.query;
+        const summary = await reportsService.getDashboardSummary('FY25', entityId);
+        const towerWise = await reportsService.getTowerWiseReport('FY25', entityId);
+        const vendorWise = await reportsService.getVendorWiseReport('FY25', entityId);
+        const monthlyTrend = await reportsService.getMonthlyTrend(entityId);
 
         res.json({
             summary,

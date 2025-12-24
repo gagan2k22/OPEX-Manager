@@ -40,8 +40,8 @@ const Layout = () => {
 
     // Menu Anchors
     const [budgetsAnchorEl, setBudgetsAnchorEl] = useState(null);
-    const [actualsAnchorEl, setActualsAnchorEl] = useState(null);
-    const [masterDataAnchorEl, setMasterDataAnchorEl] = useState(null);
+    const [reportsAnchorEl, setReportsAnchorEl] = useState(null);
+    const [adminAnchorEl, setAdminAnchorEl] = useState(null);
     const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
 
     // Menu Handlers
@@ -55,14 +55,9 @@ const Layout = () => {
     const isActive = (path) => location.pathname === path;
     const isParentActive = (paths) => paths.includes(location.pathname);
 
-    // Navigation Items
+    // Navigation Items (Corporate Structure)
     const navItems = [
-        {
-            label: 'Dashboard',
-            path: '/',
-            icon: <DashboardIcon />,
-            type: 'link'
-        },
+        { label: 'Dashboard', path: '/', icon: <DashboardIcon />, type: 'link' },
         {
             label: 'Budgets',
             icon: <AccountBalance />,
@@ -70,56 +65,55 @@ const Layout = () => {
             anchor: budgetsAnchorEl,
             setAnchor: setBudgetsAnchorEl,
             children: [
-                { label: 'Budget', path: '/tracker' },
-                { label: 'Net Budget', path: '/net-budget' },
-                { label: 'Allocation Base', path: '/allocation-base' }
+                { label: 'Monthly Tracker', path: '/tracker' },
+                { label: 'Annual Summary', path: '/net-budget' },
+                { label: 'Allocation Basis', path: '/allocation-base' }
             ]
         },
+        { label: 'Actuals', path: '/actuals', icon: <TrendingUp />, type: 'link' },
+        { label: 'Variance', path: '/variance', icon: <BarChart />, type: 'link' },
         {
-            label: 'Actuals',
-            icon: <TrendingUp />,
+            label: 'Reports',
+            icon: <ListAlt />,
             type: 'dropdown',
-            anchor: actualsAnchorEl,
-            setAnchor: setActualsAnchorEl,
+            anchor: reportsAnchorEl,
+            setAnchor: setReportsAnchorEl,
             children: [
-                { label: 'Actual', path: '/actuals' },
-                { label: 'Net Actual', path: '/net-actual' }
+                { label: 'MIS Report', path: '/reports/mis' },
+                { label: 'Cost Center View', path: '/reports/cost-center' },
+                { label: 'Vendor Analysis', path: '/reports/vendor' }
             ]
         },
+        { label: 'Audit Log', path: '/audit-log', icon: <Storage />, type: 'link' },
         {
-            label: 'Purchase Order',
-            path: '/pos',
-            icon: <ShoppingCart />,
-            type: 'link'
-        },
-        {
-            label: 'Master Data',
-            icon: <Storage />,
+            label: 'Admin',
+            icon: <SettingsIcon />,
             type: 'dropdown',
-            anchor: masterDataAnchorEl,
-            setAnchor: setMasterDataAnchorEl,
+            anchor: adminAnchorEl,
+            setAnchor: setAdminAnchorEl,
             children: [
-                { label: 'Master Data', path: '/master-data', icon: <Storage /> },
-                { label: 'Import History', path: '/imports', icon: <ListAlt /> },
-                { label: 'User Management', path: '/users', icon: <SecurityIcon />, adminOnly: true }
+                { label: 'Master Data', path: '/master-data' },
+                { label: 'Import History', path: '/imports' },
+                { label: 'User Management', path: '/users', adminOnly: true }
             ]
         }
     ];
 
     const getButtonStyle = (active) => ({
-        color: active ? '#FFD700' : '#B8C5D0',
-        fontWeight: active ? 700 : 600,
-        fontSize: '0.875rem',
-        minHeight: '64px', // Full height of navbar
+        color: active ? '#FFFFFF' : '#D1E3F5',
+        fontWeight: active ? 600 : 500,
+        fontSize: '11px',
+        minHeight: '40px', // Corporate compact header
         px: 2,
         borderRadius: 0,
-        borderBottom: active ? '3px solid #00D9FF' : '3px solid transparent',
-        background: active ? 'linear-gradient(180deg, rgba(255, 215, 0, 0) 0%, rgba(255, 215, 0, 0.1) 100%)' : 'transparent',
-        transition: 'all 0.3s ease',
+        backgroundColor: active ? 'rgba(255,255,255,0.1)' : 'transparent',
+        borderBottom: active ? '2px solid #FFFFFF' : '2px solid transparent',
+        transition: 'all 0.2s ease',
         '&:hover': {
-            backgroundColor: 'rgba(255, 215, 0, 0.1)',
-            color: '#FFD700',
-        }
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            color: '#FFFFFF',
+        },
+        '& .MuiButton-startIcon': { mr: 0.5, '& svg': { fontSize: '16px' } }
     });
 
     return (
@@ -128,28 +122,27 @@ const Layout = () => {
                 position="static"
                 elevation={0}
                 sx={{
-                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f1e 100%)',
-                    borderBottom: '2px solid #FFD700',
-                    boxShadow: '0 4px 20px rgba(255, 215, 0, 0.2)',
+                    backgroundColor: '#0A6ED1', // Corporate SAP Blue
+                    borderBottom: '1px solid rgba(255,255,255,0.1)',
+                    height: '40px',
+                    display: 'flex',
+                    justifyContent: 'center'
                 }}
             >
-                <Toolbar sx={{ justifyContent: 'space-between', minHeight: '64px !important', py: 0 }}>
+                <Toolbar sx={{ justifyContent: 'space-between', minHeight: '40px !important', px: 2 }}>
                     {/* Logo */}
                     <Typography
                         variant="h6"
                         component="div"
                         sx={{
-                            fontWeight: 800,
-                            letterSpacing: 1,
-                            mr: 4,
+                            fontWeight: 700,
+                            letterSpacing: 0.5,
+                            mr: 3,
                             display: 'flex',
                             alignItems: 'center',
                             cursor: 'pointer',
-                            fontSize: '1.4rem',
-                            background: 'linear-gradient(135deg, #FFD700 0%, #00D9FF 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            textShadow: '0 0 20px rgba(255, 215, 0, 0.3)',
+                            fontSize: '13px',
+                            color: '#FFFFFF',
                         }}
                         onClick={() => navigate('/')}
                     >
@@ -158,7 +151,7 @@ const Layout = () => {
 
                     {/* Navigation */}
                     {!isMobile && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', height: '64px' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', height: '40px' }}>
                             {navItems.map((item, index) => {
                                 if (item.type === 'link') {
                                     return (
@@ -187,6 +180,17 @@ const Layout = () => {
                                                 anchorEl={item.anchor}
                                                 open={Boolean(item.anchor)}
                                                 onClose={handleMenuClose(item.setAnchor)}
+                                                PaperProps={{
+                                                    sx: {
+                                                        mt: 0.5,
+                                                        minWidth: 160,
+                                                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                                        '& .MuiMenuItem-root': {
+                                                            fontSize: '11px',
+                                                            py: 1
+                                                        }
+                                                    }
+                                                }}
                                             >
                                                 {item.children.map((child, cIdx) => {
                                                     if (child.adminOnly && (!user || !user.roles?.includes('Admin'))) return null;
@@ -196,7 +200,6 @@ const Layout = () => {
                                                             onClick={() => handleNavigate(child.path, item.setAnchor)}
                                                             selected={isActive(child.path)}
                                                         >
-                                                            {child.icon && <Box component="span" sx={{ mr: 1, display: 'flex' }}>{child.icon}</Box>}
                                                             {child.label}
                                                         </MenuItem>
                                                     );
@@ -211,19 +214,16 @@ const Layout = () => {
 
                     {/* User Menu */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' }, color: '#E8F1F5', fontWeight: 500 }}>
-                            {user?.username || 'User'}
+                        <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' }, color: '#FFFFFF', fontWeight: 500, fontSize: '10px' }}>
+                            {user?.name || 'User'}
                         </Typography>
                         <IconButton
                             size="small"
                             onClick={handleMenuOpen(setUserMenuAnchorEl)}
-                            sx={{
-                                p: 0.5,
-                                '&:hover': { transform: 'scale(1.1)' }
-                            }}
+                            sx={{ p: 0.5, '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}
                         >
-                            <Avatar sx={{ width: 32, height: 32, bgcolor: '#FFD700', color: '#1a1a2e', fontWeight: 700 }}>
-                                <Person fontSize="small" />
+                            <Avatar sx={{ width: 24, height: 24, bgcolor: 'rgba(255,255,255,0.2)', color: '#FFFFFF', fontSize: '10px' }}>
+                                {user?.name?.charAt(0) || 'U'}
                             </Avatar>
                         </IconButton>
                         <Menu
@@ -233,13 +233,13 @@ const Layout = () => {
                             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                         >
-                            <MenuItem disabled>
-                                <Person sx={{ mr: 2 }} />
-                                {user?.username}
+                            <MenuItem disabled sx={{ fontSize: '11px' }}>
+                                <Person sx={{ mr: 1, fontSize: '16px' }} />
+                                {user?.email}
                             </MenuItem>
                             <Divider />
-                            <MenuItem onClick={() => { handleMenuClose(setUserMenuAnchorEl)(); logout(); }}>
-                                <Logout sx={{ mr: 2 }} />
+                            <MenuItem onClick={() => { handleMenuClose(setUserMenuAnchorEl)(); logout(); }} sx={{ fontSize: '11px' }}>
+                                <Logout sx={{ mr: 1, fontSize: '16px' }} />
                                 Logout
                             </MenuItem>
                         </Menu>

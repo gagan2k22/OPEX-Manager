@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Grid, Card, CardContent, Typography, Paper, CircularProgress } from '@mui/material';
-import { TrendingUp, TrendingDown, AccountBalance, ShoppingCart } from '@mui/icons-material';
+import { TrendingUp, TrendingDown, AccountBalance, ShoppingCart, Business } from '@mui/icons-material';
+import { FormControl, Select, MenuItem, InputLabel } from '@mui/material';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import api from '../utils/api';
 import {
@@ -22,14 +23,31 @@ const Dashboard = () => {
     const [towerData, setTowerData] = useState([]);
     const [vendorData, setVendorData] = useState([]);
     const [monthlyTrend, setMonthlyTrend] = useState([]);
+    const [entities, setEntities] = useState([]);
+    const [selectedEntity, setSelectedEntity] = useState('all');
+
+    useEffect(() => {
+        fetchEntities();
+    }, []);
 
     useEffect(() => {
         fetchDashboardData();
-    }, []);
+    }, [selectedEntity]);
+
+    const fetchEntities = async () => {
+        try {
+            const data = await api.get('/master/po-entities');
+            setEntities(data);
+        } catch (error) {
+            console.error('Error fetching entities:', error);
+        }
+    };
 
     const fetchDashboardData = async () => {
+        setLoading(true);
         try {
-            const data = await api.get('/reports/dashboard');
+            const query = selectedEntity !== 'all' ? `?entityId=${selectedEntity}` : '';
+            const data = await api.get(`/reports/dashboard${query}`);
             const { summary, towerWise, vendorWise, monthlyTrend } = data;
 
             setStats({
@@ -102,10 +120,32 @@ const Dashboard = () => {
 
     return (
         <Box sx={{ ...pageContainerStyles, ...pageTransitionStyles }}>
-            <Box sx={pageHeaderStyles}>
+            <Box sx={{ ...pageHeaderStyles, mb: 1 }}>
                 <Typography sx={pageTitleStyles}>
                     Dashboard Overview
                 </Typography>
+                <Box sx={{ minWidth: 200, display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Business sx={{ color: 'text.secondary', fontSize: 20 }} />
+                    <FormControl size="small" sx={{ width: 180 }}>
+                        <Select
+                            value={selectedEntity}
+                            onChange={(e) => setSelectedEntity(e.target.value)}
+                            sx={{
+                                fontSize: '11px',
+                                height: 32,
+                                bgcolor: 'white',
+                                '& .MuiSelect-select': { py: 0.5 }
+                            }}
+                        >
+                            <MenuItem value="all" sx={{ fontSize: '11px' }}>All Entities</MenuItem>
+                            {entities.map(e => (
+                                <MenuItem key={e.id} value={e.entity_name} sx={{ fontSize: '11px' }}>
+                                    {e.entity_name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
             </Box>
 
             {/* Stats Cards */}

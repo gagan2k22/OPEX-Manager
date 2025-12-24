@@ -6,7 +6,7 @@ const logger = require('../utils/logger');
  * Centralized logging for entity changes and system activities
  */
 
-const logAction = async (userId, action, entityType, entityId, oldValue = null, newValue = null) => {
+const logAction = async (userId, action, entityType, entityId, oldValue = null, newValue = null, comment = null) => {
     try {
         return await prisma.auditLog.create({
             data: {
@@ -15,7 +15,8 @@ const logAction = async (userId, action, entityType, entityId, oldValue = null, 
                 entityType,
                 entityId: parseInt(entityId),
                 oldValue: oldValue ? JSON.stringify(oldValue) : null,
-                newValue: newValue ? JSON.stringify(newValue) : null
+                newValue: newValue ? JSON.stringify(newValue) : null,
+                comment
             }
         });
     } catch (error) {

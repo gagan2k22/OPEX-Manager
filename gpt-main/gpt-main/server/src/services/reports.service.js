@@ -4,16 +4,25 @@ class ReportsService {
     /**
      * Get dashboard summary metrics
      */
-    async getDashboardSummary(fy = 'FY25') {
+    async getDashboardSummary(fy = 'FY25', entityName = null) {
+        const where = { financial_year: fy };
+        if (entityName && entityName !== 'all') {
+            where.po_entity = entityName;
+        }
+
         const stats = await prisma.fYActual.aggregate({
-            where: { financial_year: fy },
+            where,
             _sum: {
                 fy_budget: true,
                 fy_actuals: true
             }
         });
 
+        // For committed spend, we look at PO Values
+        // This is tricky for entity-specific as POs are associated with services
+        const procWhere = entityName && entityName !== 'all' ? { entity: entityName } : {};
         const procStats = await prisma.procurementDetail.aggregate({
+            where: procWhere,
             _sum: {
                 po_value: true
             }
@@ -35,11 +44,24 @@ class ReportsService {
     /**
      * Get Tower-wise budget vs actuals
      */
-    async getTowerWiseReport(fy = 'FY25') {
+    async getTowerWiseReport(fy = 'FY25', entityName = null) {
+        const where = {
+            fy_actuals: {
+                some: {
+                    financial_year: fy,
+                    ...(entityName && entityName !== 'all' ? { po_entity: entityName } : {})
+                }
+            }
+        };
+
         const services = await prisma.serviceMaster.findMany({
+            where,
             include: {
                 fy_actuals: {
-                    where: { financial_year: fy }
+                    where: {
+                        financial_year: fy,
+                        ...(entityName && entityName !== 'all' ? { po_entity: entityName } : {})
+                    }
                 }
             }
         });
@@ -68,11 +90,24 @@ class ReportsService {
     /**
      * Get Vendor-wise spend
      */
-    async getVendorWiseReport(fy = 'FY25') {
+    async getVendorWiseReport(fy = 'FY25', entityName = null) {
+        const where = {
+            fy_actuals: {
+                some: {
+                    financial_year: fy,
+                    ...(entityName && entityName !== 'all' ? { po_entity: entityName } : {})
+                }
+            }
+        };
+
         const services = await prisma.serviceMaster.findMany({
+            where,
             include: {
                 fy_actuals: {
-                    where: { financial_year: fy }
+                    where: {
+                        financial_year: fy,
+                        ...(entityName && entityName !== 'all' ? { po_entity: entityName } : {})
+                    }
                 }
             }
         });
@@ -100,9 +135,23 @@ class ReportsService {
     /**
      * Get Monthly Trend
      */
-    async getMonthlyTrend() {
-        // Aggregate amount by month from MonthlyEntityActual
+    async getMonthlyTrend(entityName = null) {
+        let serviceIds = null;
+        if (entityName && entityName !== 'all') {
+            const services = await prisma.fYActual.findMany({
+                where: {
+                    financial_year: 'FY25',
+                    po_entity: entityName
+                },
+                select: { service_id: true }
+            });
+            serviceIds = services.map(s => s.service_id);
+        }
+
+        const where = serviceIds ? { service_id: { in: serviceIds } } : {};
+
         const monthlyData = await prisma.monthlyEntityActual.groupBy({
+            where,
             by: ['month_no'],
             _sum: {
                 amount: true
@@ -122,4 +171,3 @@ class ReportsService {
 }
 
 module.exports = new ReportsService();
-
