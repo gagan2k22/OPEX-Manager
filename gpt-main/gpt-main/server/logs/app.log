@@ -251,3 +251,6 @@
 {"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-24 08:52:42"}
 {"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-24 08:52:42"}
 {"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-24 08:52:42"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-24 08:56:15"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-24 08:56:15"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-24 08:56:15"}
