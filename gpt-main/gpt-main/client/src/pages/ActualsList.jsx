@@ -113,12 +113,13 @@ const ExpenseList = () => {
     };
 
     const columns = [
-        { field: 'invoiceNumber', headerName: 'Invoice #', width: 130 },
-        { field: 'invoiceDate', headerName: 'Date', width: 110, valueFormatter: (value) => new Date(value).toLocaleDateString('en-GB') },
+        { field: 'uid', headerName: 'UID', width: 120, valueGetter: (value, row) => row.uid || row.service?.uid },
+        { field: 'invoiceNumber', headerName: 'Invoice No', width: 130 },
+        { field: 'invoiceDate', headerName: 'Invoice Date', width: 110, valueFormatter: (value) => new Date(value).toLocaleDateString('en-GB') },
         { field: 'vendor', headerName: 'Vendor', width: 180, valueGetter: (value, row) => row.vendor?.name },
         { field: 'costCenter', headerName: 'Cost Center', width: 120, valueGetter: (value, row) => row.costCenter?.code },
         { field: 'expenseCategory', headerName: 'Category', width: 150, valueGetter: (value, row) => row.expenseCategory?.name },
-        { field: 'totalAmount', headerName: 'Total Amount', width: 140, type: 'number', valueFormatter: (value) => formatCurrency(value) },
+        { field: 'totalAmount', headerName: 'Amount', width: 140, type: 'number', valueFormatter: (value) => formatCurrency(value) },
         {
             field: 'status',
             headerName: 'Status',
@@ -151,9 +152,9 @@ const ExpenseList = () => {
     return (
         <Box sx={pageContainerStyles}>
             <Box sx={pageHeaderStyles}>
-                <Typography sx={pageTitleStyles}>Expense & Invoice Tracker</Typography>
+                <Typography sx={pageTitleStyles}>Actuals Management</Typography>
                 <Button variant="contained" startIcon={<Receipt />} onClick={() => setOpenDialog(true)}>
-                    Enter New Invoice
+                    Enter New Actual
                 </Button>
             </Box>
 

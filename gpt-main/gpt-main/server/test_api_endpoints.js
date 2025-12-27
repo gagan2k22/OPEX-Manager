@@ -78,6 +78,10 @@ async function testMasterDataEndpoints(token) {
     log('\n=== Testing Master Data Endpoints ===', colors.cyan);
     await testGetEndpoint('Entities', '/api/master/entities', token);
     await testGetEndpoint('Services', '/api/master/services', token);
+    await testGetEndpoint('Allocation Bases', '/api/master/allocation-bases', token);
+    await testGetEndpoint('Allocation Types', '/api/master/allocation-types', token);
+    await testGetEndpoint('Budget Heads', '/api/master/budget-heads', token);
+    await testGetEndpoint('Towers', '/api/master/towers', token);
 }
 
 async function testBudgetEndpoints(token) {

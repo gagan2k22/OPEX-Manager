@@ -1,6 +1,6 @@
 const prisma = require('../prisma');
 const cache = require('../utils/cache');
-const { NotFoundError } = require('../middleware/errorHandler');
+const { NotFoundError, BadRequestError } = require('../middleware/errorHandler');
 
 // Generic helper to get data with cache
 const getWithCache = async (key, fetchFn, ttl = 3600) => {
@@ -28,6 +28,8 @@ const getEntities = async (req, res) => {
 
 const createEntity = async (req, res) => {
     const { name } = req.body;
+    if (!name) throw new BadRequestError('Entity name is required');
+
     const entity = await prisma.entityMaster.create({
         data: { entity_name: name }
     });
@@ -38,6 +40,8 @@ const createEntity = async (req, res) => {
 const updateEntity = async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
+    if (!name) throw new BadRequestError('Entity name is required');
+
     const entity = await prisma.entityMaster.update({
         where: { id: parseInt(id) },
         data: { entity_name: name }
@@ -68,6 +72,8 @@ const getServices = async (req, res) => {
 
 const createService = async (req, res) => {
     const data = req.body;
+    if (!data.uid) throw new BadRequestError('Service UID is required');
+
     const service = await prisma.serviceMaster.create({
         data: {
             ...data,
@@ -82,23 +88,15 @@ const createService = async (req, res) => {
 
 const updateService = async (req, res) => {
     const { id } = req.params;
-    const {
-        uid, parent_uid, vendor, vendor_service, service, service_description,
-        contract, service_start_date, service_end_date, renewal_date,
-        budget_head, tower, priority, initiative_type, service_type,
-        allocation_type, cost_optimization_lever, remarks
-    } = req.body;
+    const data = req.body;
 
     const updatedService = await prisma.serviceMaster.update({
         where: { id: parseInt(id) },
         data: {
-            uid, parent_uid, vendor, vendor_service, service, service_description,
-            contract,
-            service_start_date: service_start_date ? new Date(service_start_date) : null,
-            service_end_date: service_end_date ? new Date(service_end_date) : null,
-            renewal_date: renewal_date ? new Date(renewal_date) : null,
-            budget_head, tower, priority, initiative_type, service_type,
-            allocation_type, cost_optimization_lever, remarks
+            ...data,
+            service_start_date: data.service_start_date ? new Date(data.service_start_date) : null,
+            service_end_date: data.service_end_date ? new Date(data.service_end_date) : null,
+            renewal_date: data.renewal_date ? new Date(data.renewal_date) : null,
         }
     });
     await invalidateCache('services:all');
@@ -120,12 +118,14 @@ const deleteService = async (req, res) => {
 const getPOEntities = async (req, res) => {
     const entities = await getWithCache('po_entities:all', () =>
         prisma.pOEntityMaster.findMany({ orderBy: { entity_name: 'asc' } })
-    ); // Prisma capitalizes first letter after prefix => pOEntityMaster
+    );
     res.json(entities);
 };
 
 const createPOEntity = async (req, res) => {
     const { name } = req.body;
+    if (!name) throw new BadRequestError('PO Entity name is required');
+
     const entity = await prisma.pOEntityMaster.create({
         data: { entity_name: name }
     });
@@ -136,6 +136,8 @@ const createPOEntity = async (req, res) => {
 const updatePOEntity = async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
+    if (!name) throw new BadRequestError('PO Entity name is required');
+
     const entity = await prisma.pOEntityMaster.update({
         where: { id: parseInt(id) },
         data: { entity_name: name }
@@ -165,6 +167,8 @@ const getBudgetHeads = async (req, res) => {
 
 const createBudgetHead = async (req, res) => {
     const { name } = req.body;
+    if (!name) throw new BadRequestError('Budget Head name is required');
+
     const head = await prisma.budgetHeadMaster.create({
         data: { head_name: name }
     });
@@ -175,6 +179,8 @@ const createBudgetHead = async (req, res) => {
 const updateBudgetHead = async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
+    if (!name) throw new BadRequestError('Budget Head name is required');
+
     const head = await prisma.budgetHeadMaster.update({
         where: { id: parseInt(id) },
         data: { head_name: name }
@@ -204,6 +210,8 @@ const getTowers = async (req, res) => {
 
 const createTower = async (req, res) => {
     const { name } = req.body;
+    if (!name) throw new BadRequestError('Tower name is required');
+
     const tower = await prisma.towerMaster.create({
         data: { tower_name: name }
     });
@@ -214,6 +222,8 @@ const createTower = async (req, res) => {
 const updateTower = async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
+    if (!name) throw new BadRequestError('Tower name is required');
+
     const tower = await prisma.towerMaster.update({
         where: { id: parseInt(id) },
         data: { tower_name: name }
@@ -243,6 +253,8 @@ const getAllocationTypes = async (req, res) => {
 
 const createAllocationType = async (req, res) => {
     const { name } = req.body;
+    if (!name) throw new BadRequestError('Allocation Type name is required');
+
     const type = await prisma.allocationTypeMaster.create({
         data: { type_name: name }
     });
@@ -253,6 +265,8 @@ const createAllocationType = async (req, res) => {
 const updateAllocationType = async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
+    if (!name) throw new BadRequestError('Allocation Type name is required');
+
     const type = await prisma.allocationTypeMaster.update({
         where: { id: parseInt(id) },
         data: { type_name: name }
@@ -282,6 +296,8 @@ const getAllocationBases = async (req, res) => {
 
 const createAllocationBasis = async (req, res) => {
     const { name } = req.body;
+    if (!name) throw new BadRequestError('Allocation Basis name is required');
+
     const basis = await prisma.allocationBasisMaster.create({
         data: { basis_name: name }
     });
@@ -292,6 +308,8 @@ const createAllocationBasis = async (req, res) => {
 const updateAllocationBasis = async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
+    if (!name) throw new BadRequestError('Allocation Basis name is required');
+
     const basis = await prisma.allocationBasisMaster.update({
         where: { id: parseInt(id) },
         data: { basis_name: name }
@@ -318,3 +336,4 @@ module.exports = {
     getAllocationTypes, createAllocationType, updateAllocationType, deleteAllocationType,
     getAllocationBases, createAllocationBasis, updateAllocationBasis, deleteAllocationBasis
 };
+

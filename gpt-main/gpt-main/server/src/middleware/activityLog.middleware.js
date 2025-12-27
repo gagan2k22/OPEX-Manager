@@ -1,24 +1,12 @@
 const prisma = require('../prisma');
 
-const activityLogger = async (req, res, next) => {
-    // Capture the original end function to log after response is sent
-    const originalEnd = res.end;
-    const startTime = Date.now();
-
-    // Store chunks to reconstruct response body if needed (optional, skipping for now to save memory)
-
-    res.end = async function (chunk, encoding) {
-        // Restore original end
-        res.end = originalEnd;
-        res.end(chunk, encoding);
-
-        // Only log non-GET requests or specific critical GETs if needed
-        // Logging everything for now as per "all the user activity log" request
-        // But usually we skip static files or health checks
+const activityLogger = (req, res, next) => {
+    res.on('finish', async () => {
+// Only log API requests
         if (req.url.startsWith('/api')) {
             try {
-                const userId = req.user ? req.user.id : null;
-                const username = req.user ? req.user.username || req.user.email : 'Anonymous';
+                const userId = req.user?.id || null;
+                const username = req.user?.name || req.user?.email || 'Anonymous';
 
                 // Don't log login attempts with passwords in details
                 let details = '';
@@ -39,12 +27,14 @@ const activityLogger = async (req, res, next) => {
                     }
                 });
             } catch (error) {
-                console.error('Error logging activity:', error);
+                // We use console.error here to avoid circular dependencies with logger
+                console.error('Error logging activity:', error.message);
             }
         }
-    };
+    });
 
     next();
 };
 
 module.exports = activityLogger;
+

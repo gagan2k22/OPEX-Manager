@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../prisma');
 const crypto = require('crypto');
+const cache = require('../utils/cache');
 
 // Security: Ensure JWT_SECRET is set
 if (!process.env.JWT_SECRET) {
@@ -77,13 +78,24 @@ const login = async (req, res) => {
             return res.status(400).json({ message: 'Email and password are required' });
         }
 
-        // Find user
+        // Find user with optimized select
         const user = await prisma.user.findUnique({
             where: { email },
-            include: {
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                password_hash: true,
+                is_active: true,
+                currentSessionId: true,
+                passwordChangedAt: true,
                 roles: {
-                    include: {
-                        role: true
+                    select: {
+                        role: {
+                            select: {
+                                name: true
+                            }
+                        }
                     }
                 }
             }
@@ -120,6 +132,9 @@ const login = async (req, res) => {
             data: { currentSessionId: sessionId }
         });
 
+        // Invalidate old session cache
+        await cache.invalidatePattern(`user:${user.id}:*`);
+
         // Generate JWT token including sessionId
         const token = jwt.sign(
             {
@@ -135,6 +150,21 @@ const login = async (req, res) => {
                 audience: 'opex-client'
             }
         );
+
+        // Prepare user data for cache and response
+        const userData = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            is_active: user.is_active,
+            currentSessionId: sessionId,
+            passwordChangedAt: user.passwordChangedAt,
+            roles: user.roles
+        };
+
+        // Pre-populate cache for immediate subsequent requests
+        const cacheKey = `user:${user.id}:${sessionId}`;
+        await cache.set(cacheKey, userData, 300);
 
         logger.info('User logged in successfully (%s)', email);
 

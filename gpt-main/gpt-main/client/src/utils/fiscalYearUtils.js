@@ -62,3 +62,13 @@ export const getFiscalMonthDisplay = (fiscalYear, fiscalMonth) => {
     const month = months[fiscalMonth - 1];
     return month ? month.displayLabel : '';
 };
+
+/**
+ * Get current fiscal year string (e.g., "FY25")
+ */
+export const getCurrentFiscalYear = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const fyStart = now.getMonth() >= 3 ? year : year - 1;
+    return `FY${String(fyStart).slice(-2)}`;
+};

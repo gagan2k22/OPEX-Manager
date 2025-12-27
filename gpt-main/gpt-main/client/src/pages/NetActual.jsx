@@ -1,15 +1,36 @@
 import React from 'react';
-import { Box, Typography, Paper } from '@mui/material';
+import { Box, Typography, Paper, Alert } from '@mui/material';
+import { Construction } from '@mui/icons-material';
 import { pageContainerStyles, pageHeaderStyles, pageTitleStyles } from '../styles/commonStyles';
 
 const NetActual = () => {
     return (
         <Box sx={pageContainerStyles}>
             <Box sx={pageHeaderStyles}>
-                <Typography sx={pageTitleStyles}>Net Actuals</Typography>
+                <Typography sx={pageTitleStyles}>Net Actual</Typography>
             </Box>
-            <Paper sx={{ p: 3, mt: 2 }}>
-                <Typography>Net Actuals Content (Coming Soon)</Typography>
+
+            <Paper
+                elevation={0}
+                sx={{
+                    p: 8,
+                    textAlign: 'center',
+                    border: '2px dashed #D1D5DB',
+                    borderRadius: 2,
+                    bgcolor: '#F9FAFB'
+                }}
+            >
+                <Construction sx={{ fontSize: 80, color: '#9CA3AF', mb: 2 }} />
+                <Typography variant="h5" sx={{ mb: 2, color: '#374151', fontWeight: 600 }}>
+                    Net Actual - Under Construction
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#6B7280', mb: 3 }}>
+                    This page is being configured with its own data structure.
+                </Typography>
+                <Alert severity="info" sx={{ maxWidth: 600, mx: 'auto' }}>
+                    <strong>Note:</strong> Each table will have its own data source.
+                    Some cells will be linked from other tables. Configuration in progress.
+                </Alert>
             </Paper>
         </Box>
     );

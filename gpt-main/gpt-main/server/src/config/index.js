@@ -18,6 +18,14 @@ const config = {
         apiVersion: process.env.API_VERSION || 'v1',
         appName: process.env.APP_NAME || 'OPEX Manager',
         appUrl: process.env.APP_URL || 'http://localhost:5173',
+        defaultFY: (() => {
+            const now = new Date();
+            const year = now.getFullYear();
+            // Corporate FY: April 1 to March 31
+            // If month is Jan(0), Feb(1), Mar(2), FY is (year-1)
+            const fyStart = now.getMonth() >= 3 ? year : year - 1;
+            return `FY${String(fyStart).slice(-2)}`;
+        })(),
     },
 
     // Database
@@ -112,7 +120,15 @@ const config = {
     performance: {
         compressionEnabled: process.env.COMPRESSION_ENABLED === 'true' || true,
         compressionLevel: parseInt(process.env.COMPRESSION_LEVEL, 10) || 6,
-        cacheEnabled: process.env.CACHE_ENABLED !== 'false',
+        maxPayloadSize: '50mb',
+        dbConnectionLimit: parseInt(process.env.DATABASE_CONNECTION_LIMIT, 10) || 10,
+    },
+
+    // Cache
+    cache: {
+        enabled: process.env.CACHE_ENABLED === 'true',
+        redisHost: process.env.REDIS_HOST || 'localhost',
+        redisPort: process.env.REDIS_PORT || 6379,
     },
 
     // Development

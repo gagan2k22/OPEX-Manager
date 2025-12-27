@@ -361,10 +361,24 @@ const UserManagement = () => {
                             headerName: 'Status',
                             width: 120,
                             renderCell: (params) => (
-                                <Chip
-                                    label={params.value ? 'Active' : 'Inactive'}
+                                <Switch
+                                    checked={params.value}
                                     size="small"
-                                    color={params.value ? 'success' : 'default'}
+                                    color="success"
+                                    disabled={params.row.roles && params.row.roles.includes('Admin')} // Disable for Admins
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Avoid row selection
+                                    }}
+                                    onChange={async (e) => {
+                                        const newValue = e.target.checked;
+                                        try {
+                                            await api.put(`/users/${params.row.id}`, { ...params.row, is_active: newValue });
+                                            fetchUsers();
+                                            showSnackbar(`User ${newValue ? 'Enabled' : 'Disabled'}`, 'success');
+                                        } catch (error) {
+                                            showSnackbar(error.response?.data?.message || 'Failed to update status', 'error');
+                                        }
+                                    }}
                                 />
                             )
                         },
@@ -373,27 +387,31 @@ const UserManagement = () => {
                             headerName: 'Actions',
                             width: 120,
                             type: 'actions',
-                            getActions: (params) => [
-                                <GridActionsCellItem
-                                    icon={
-                                        <Tooltip title="Edit">
-                                            <EditIcon />
-                                        </Tooltip>
-                                    }
-                                    label="Edit"
-                                    onClick={() => handleOpenDialog(params.row)}
-                                />,
-                                <GridActionsCellItem
-                                    icon={
-                                        <Tooltip title="Delete">
-                                            <DeleteIcon />
-                                        </Tooltip>
-                                    }
-                                    label="Delete"
-                                    onClick={() => handleDelete(params.row.id)}
-                                    showInMenu={false}
-                                />
-                            ]
+                            getActions: (params) => {
+                                const isAdminUser = params.row.roles && params.row.roles.includes('Admin');
+                                return [
+                                    <GridActionsCellItem
+                                        icon={
+                                            <Tooltip title="Edit">
+                                                <EditIcon />
+                                            </Tooltip>
+                                        }
+                                        label="Edit"
+                                        onClick={() => handleOpenDialog(params.row)}
+                                    />,
+                                    <GridActionsCellItem
+                                        icon={
+                                            <Tooltip title={isAdminUser ? "Cannot delete Admin" : "Delete"}>
+                                                <DeleteIcon color={isAdminUser ? "disabled" : "action"} />
+                                            </Tooltip>
+                                        }
+                                        label="Delete"
+                                        disabled={isAdminUser}
+                                        onClick={() => handleDelete(params.row.id)}
+                                        showInMenu={false}
+                                    />
+                                ];
+                            }
                         }
                     ]}
                     getRowId={(row) => row.id}

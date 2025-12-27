@@ -3,6 +3,15 @@ const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
+const getCurrentFY = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const fyStart = now.getMonth() >= 3 ? year : year - 1;
+    return `FY${String(fyStart).slice(-2)}`;
+};
+
+const currentFY = getCurrentFY();
+
 async function main() {
     console.log('Starting Refactored XLS-to-DB Logic seeding...');
 
@@ -128,7 +137,7 @@ async function main() {
     await prisma.fYActual.create({
         data: {
             service_id: s1.id,
-            financial_year: 'FY25',
+            financial_year: currentFY,
             fy_budget: 1200000,
             fy_actuals: 0
         }
@@ -136,7 +145,7 @@ async function main() {
     await prisma.fYActual.create({
         data: {
             service_id: s2.id,
-            financial_year: 'FY25',
+            financial_year: currentFY,
             fy_budget: 600000,
             fy_actuals: 0
         }

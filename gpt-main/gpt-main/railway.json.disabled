@@ -1,3 +1,7 @@
+# Railway Deployment - DISABLED
+# This configuration has been disabled for localhost-only development
+# To re-enable Railway deployment, rename this file back to railway.json
+
 {
     "$schema": "https://railway.app/railway.schema.json",
     "build": {

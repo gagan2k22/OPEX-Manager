@@ -1,4 +1,32 @@
-/* Enterprise-Safe Global Styles (Finance-Friendly) */
+:root {
+    /* Enterprise Design Tokens - Slate & Blue */
+    --color-slate-50: #f8fafc;
+    --color-slate-100: #f1f5f9;
+    --color-slate-200: #e2e8f0;
+    --color-slate-300: #cbd5e1;
+    --color-slate-400: #94a3b8;
+    --color-slate-500: #64748b;
+    --color-slate-600: #475569;
+    --color-slate-700: #334155;
+    --color-slate-800: #1e293b;
+    --color-slate-900: #0f172a;
+
+    --color-blue-50: #eff6ff;
+    --color-blue-100: #dbeafe;
+    --color-blue-200: #bfdbfe;
+    --color-blue-400: #60a5fa;
+    --color-blue-500: #3b82f6;
+    --color-blue-600: #2563eb;
+    --color-blue-700: #1d4ed8;
+
+    --color-emerald-500: #10b981;
+    --color-amber-500: #f59e0b;
+
+    --sidebar-width: 260px;
+    --header-height: 64px;
+    --font-heading: 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
 
 * {
     margin: 0;
@@ -7,12 +35,11 @@
 }
 
 body {
-    font-family: 'Inter', 'Roboto', 'Segoe UI', 'Helvetica Neue', sans-serif;
-    background-color: #F7F9FB;
-    color: #1C1F21;
+    font-family: var(--font-body);
+    background-color: var(--color-slate-50);
+    color: var(--color-slate-900);
     overflow-x: hidden;
-    font-size: 12px;
-    /* Base size for finance apps */
+    font-size: 14px;
 }
 
 /* Corporate Scrollbar */
@@ -22,105 +49,57 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: #F1F3F4;
+    background: var(--color-slate-100);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #C1C3C8;
+    background: var(--color-slate-300);
     border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #A0A4A8;
+    background: var(--color-slate-400);
 }
 
-/* Selection */
-::selection {
-    background: rgba(10, 110, 209, 0.2);
-    color: #0A6ED1;
-}
+/* Utility Classes matching User Design */
+.bg-slate-900 { background-color: var(--color-slate-900); }
+.text-white { color: #ffffff; }
+.text-blue-400 { color: var(--color-blue-400); }
+.border-slate-800 { border-color: var(--color-slate-800); }
+.bg-blue-600 { background-color: var(--color-blue-600); }
 
-/* Animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-.fade-in {
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-/* DataGrid Overrides for Ultra-High Density */
-.MuiDataGrid-root {
-    background-color: #FFFFFF !important;
-}
-
-.MuiDataGrid-cell {
-    font-size: 9px !important;
-    color: #1C1F21 !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-}
-
-.MuiDataGrid-columnHeaderTitle {
-    font-size: 10px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.2px !important;
-}
-
-/* Numeric alignment and monospaced font */
-.cell-numeric {
-    font-family: 'Roboto Mono', monospace !important;
-    text-align: right !important;
-    justify-content: flex-end !important;
-}
-
-/* Utility Classes */
-.bg-primary {
-    background-color: #0A6ED1 !important;
-    color: #FFFFFF !important;
-}
-
-.text-success {
-    color: #107E3E !important;
-}
-
-.text-error {
-    color: #BB0000 !important;
-}
-
-.text-warning {
-    color: #E9730C !important;
-}
-
-/* Dashboard Cards */
+/* Card System */
 .enterprise-card {
-    background: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 4px;
-    padding: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    background: #ffffff;
+    border: 1px solid var(--color-slate-200);
+    border-radius: 0.75rem; /* 12px */
+    padding: 1.5rem; /* 24px */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Layout */
-.main-viewport {
-    padding: 12px;
-    height: calc(100vh - 40px);
-    overflow: auto;
+.enterprise-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Form Styles */
-.MuiInputBase-root {
-    font-size: 11px !important;
+/* Typography Hierarchy */
+h1, h2, h3, .font-heading {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: -0.025em;
 }
 
-.MuiFormLabel-root {
-    font-size: 11px !important;
+.text-sm { font-size: 0.875rem; }
+.text-xs { font-size: 0.75rem; }
+.font-medium { font-weight: 500; }
+.font-bold { font-weight: 700; }
+
+/* DataGrid Custom Overrides */
+.MuiDataGrid-root {
+    border: 1px solid var(--color-slate-200) !important;
+    border-radius: 0.5rem !important;
+}
+
+.MuiDataGrid-columnHeader {
+    background-color: var(--color-slate-50) !important;
 }

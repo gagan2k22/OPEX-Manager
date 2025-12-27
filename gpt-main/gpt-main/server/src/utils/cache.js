@@ -1,29 +1,70 @@
-/**
- * Caching Service
- * Optimized In-Memory Cache (Redis removed for performance/size optimization)
- */
-
-const config = require('../config');
+const Redis = require('ioredis');
 const logger = require('./logger');
+const config = require('../config');
 
+/**
+ * Unified Caching Service
+ * Uses Redis if enabled and available, fallbacks to optimized In-Memory cache.
+ */
 class CacheService {
     constructor() {
+        this.enabled = config.cache?.enabled || false;
         this.memoryCache = new Map();
-        this.useRedis = false; // Forced false as dependency removed
-        this.client = null;
+        this.redis = null;
         this.isConnected = false;
+
+        if (this.enabled) {
+            try {
+                this.redis = new Redis({
+                    host: process.env.REDIS_HOST || 'localhost',
+                    port: process.env.REDIS_PORT || 6379,
+                    retryStrategy: (times) => {
+                        // Stop retrying after 3 attempts
+                        if (times > 3) {
+                            logger.warn('Redis connection failed after 3 attempts, using in-memory cache');
+                            return null;
+                        }
+                        const delay = Math.min(times * 100, 3000);
+                        return delay;
+                    },
+                    maxRetriesPerRequest: 2,
+                    lazyConnect: true, // Don't connect immediately
+                    enableOfflineQueue: false
+                });
+
+                this.redis.on('error', (err) => {
+                    logger.warn('Redis unavailable, using in-memory cache: %s', err.message);
+                    this.isConnected = false;
+                });
+
+                this.redis.on('connect', () => {
+                    logger.info('Connected to Redis for caching');
+                    this.isConnected = true;
+                });
+
+                // Try to connect but don't fail if it doesn't work
+                this.redis.connect().catch(err => {
+                    logger.warn('Could not connect to Redis, using in-memory cache: %s', err.message);
+                    this.isConnected = false;
+                });
+            } catch (err) {
+                logger.warn('Failed to initialize Redis, using in-memory cache: %s', err.message);
+                this.redis = null;
+                this.isConnected = false;
+            }
+        } else {
+            logger.info('Cache is disabled or using in-memory cache only');
+        }
     }
 
     /**
      * Get value from cache
-     * @param {string} key 
-     * @returns {Promise<any>}
      */
     async get(key) {
         try {
-            if (this.useRedis && this.isConnected) {
-                const value = await this.client.get(key);
-                return value ? JSON.parse(value) : null;
+            if (this.enabled && this.isConnected && this.redis) {
+                const data = await this.redis.get(key);
+                return data ? JSON.parse(data) : null;
             }
 
             // Memory Fallback
@@ -35,27 +76,21 @@ class CacheService {
                 }
                 return value;
             }
-
             return null;
-        } catch (err) {
-            logger.error('Cache Get Error:', err);
+        } catch (error) {
+            logger.error('Cache Get Error: %s', error.message);
             return null;
         }
     }
 
     /**
      * Set value in cache
-     * @param {string} key 
-     * @param {any} value 
-     * @param {number} ttlSeconds 
      */
     async set(key, value, ttlSeconds = 3600) {
         try {
-            if (this.useRedis && this.isConnected) {
-                await this.client.set(key, JSON.stringify(value), {
-                    EX: ttlSeconds
-                });
-                return;
+            if (this.enabled && this.isConnected && this.redis) {
+                await this.redis.set(key, JSON.stringify(value), 'EX', ttlSeconds);
+                return true;
             }
 
             // Memory Fallback
@@ -64,48 +99,69 @@ class CacheService {
                 expires: Date.now() + (ttlSeconds * 1000)
             });
 
-            // Basic cleanup if growing too large (simple LRU-ish prevention)
-            if (this.memoryCache.size > 1000) {
+            // TTL Cleanup prevention
+            if (this.memoryCache.size > 2000) {
                 const firstKey = this.memoryCache.keys().next().value;
                 this.memoryCache.delete(firstKey);
             }
-        } catch (err) {
-            logger.error('Cache Set Error:', err);
+            return true;
+        } catch (error) {
+            logger.error('Cache Set Error: %s', error.message);
+            return false;
         }
     }
 
     /**
-     * Delete value from cache
-     * @param {string} key 
+     * Delete from cache
      */
     async del(key) {
         try {
-            if (this.useRedis && this.isConnected) {
-                await this.client.del(key);
-                return;
+            if (this.enabled && this.isConnected && this.redis) {
+                await this.redis.del(key);
             }
             this.memoryCache.delete(key);
-        } catch (err) {
-            logger.error('Cache Del Error:', err);
+            return true;
+        } catch (error) {
+            logger.error('Cache Del Error: %s', error.message);
+            return false;
         }
     }
 
     /**
-     * Flush all cache
+     * Invalidate by pattern (e.g. "reports:*")
+     */
+    async invalidatePattern(pattern) {
+        try {
+            if (this.enabled && this.isConnected && this.redis) {
+                const keys = await this.redis.keys(pattern);
+                if (keys.length > 0) {
+                    await this.redis.del(...keys);
+                }
+            }
+
+            // For memory cache, we have to iterate
+            const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
+            for (const key of this.memoryCache.keys()) {
+                if (regex.test(key)) {
+                    this.memoryCache.delete(key);
+                }
+            }
+            return true;
+        } catch (error) {
+            logger.error('Cache Invalidate Error: %s', error.message);
+            return false;
+        }
+    }
+
+    /**
+     * Clear all
      */
     async flush() {
-        try {
-            if (this.useRedis && this.isConnected) {
-                await this.client.flushDb();
-                return;
-            }
-            this.memoryCache.clear();
-        } catch (err) {
-            logger.error('Cache Flush Error:', err);
+        if (this.enabled && this.isConnected && this.redis) {
+            await this.redis.flushdb();
         }
+        this.memoryCache.clear();
     }
 }
 
-const cacheService = new CacheService();
-
-module.exports = cacheService;
+module.exports = new CacheService();

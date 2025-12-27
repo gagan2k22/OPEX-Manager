@@ -69,8 +69,23 @@ const createUser = async (userData) => {
 const updateUser = async (id, updateData) => {
     const { name, email, password, roles, is_active } = updateData;
 
-    const existingUser = await prisma.user.findUnique({ where: { id: parseInt(id) } });
+    const existingUser = await prisma.user.findUnique({
+        where: { id: parseInt(id) },
+        include: { roles: { include: { role: true } } }
+    });
+
     if (!existingUser) throw new NotFoundError('User');
+
+    // PROTECT ADMIN: Cannot remove Admin role
+    const wasAdmin = existingUser.roles.some(r => r.role.name === 'Admin');
+    if (wasAdmin && roles && !roles.includes('Admin')) {
+        throw new ValidationError('Cannot remove Admin privileges from an Administrator.');
+    }
+
+    // PROTECT ADMIN: Cannot disable Admin account
+    if (wasAdmin && is_active === false) {
+        throw new ValidationError('Cannot disable an Administrator account.');
+    }
 
     const data = {};
     if (name) data.name = name;
@@ -122,10 +137,23 @@ const deleteUser = async (id, currentUserId) => {
         throw new ValidationError('Cannot delete your own account');
     }
 
+    const userToDelete = await prisma.user.findUnique({
+        where: { id: targetId },
+        include: { roles: { include: { role: true } } }
+    });
+
+    if (!userToDelete) throw new NotFoundError('User');
+
+    // PROTECT ADMIN: Cannot delete Admin
+    if (userToDelete.roles.some(r => r.role.name === 'Admin')) {
+        throw new ValidationError('Cannot delete an Administrator account.');
+    }
+
     return await prisma.$transaction(async (tx) => {
         await tx.userRole.deleteMany({ where: { user_id: targetId } });
         await tx.userActivityLog.deleteMany({ where: { user_id: targetId } });
         await tx.auditLog.deleteMany({ where: { user_id: targetId } });
+        await tx.importHistory.deleteMany({ where: { userId: targetId } }); // Cascade delete
         return await tx.user.delete({ where: { id: targetId } });
     });
 };

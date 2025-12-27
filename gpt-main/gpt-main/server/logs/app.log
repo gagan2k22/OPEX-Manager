@@ -254,3 +254,1154 @@
 {"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-24 08:56:15"}
 {"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-24 08:56:15"}
 {"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-24 08:56:15"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-25 00:51:06"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-25 00:57:25"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-25 00:57:25"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-25 00:57:25"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-25 01:09:29"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-25 01:22:55"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 17:19:01"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 17:19:01"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/towers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 17:19:01"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 17:19:01"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/allocation-types',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 17:19:01"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/allocation-bases',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 17:19:01"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 17:19:01"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 17:19:01"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/towers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 17:19:01"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 17:19:01"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/allocation-types',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 17:19:01"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/allocation-bases',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 17:19:01"}
+{"level":"info","message":"SIGINT received. Starting graceful shutdown...","service":"opex-api","timestamp":"2025-12-25 21:57:16"}
+{"level":"info","message":"HTTP server closed","service":"opex-api","timestamp":"2025-12-25 21:57:16"}
+{"level":"info","message":"SIGINT received. Starting graceful shutdown...","service":"opex-api","timestamp":"2025-12-25 21:57:16"}
+{"level":"info","message":"HTTP server closed","service":"opex-api","timestamp":"2025-12-25 21:57:16"}
+{"level":"info","message":"SIGINT received. Starting graceful shutdown...","service":"opex-api","timestamp":"2025-12-25 21:57:49"}
+{"level":"info","message":"HTTP server closed","service":"opex-api","timestamp":"2025-12-25 21:57:49"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-25 23:18:29"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-25 23:18:29"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-25 23:18:30"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-25 23:37:18"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-25 23:37:19"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-25 23:37:19"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-25 23:41:19"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-25 23:41:40"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Validation failed',\n  statusCode: 400,\n  method: 'POST',\n  url: '/api/auth/login',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-25 23:45:32"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-25 23:49:49"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 01:11:30"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 01:11:30"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 01:11:30"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:13:35"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:13:35"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:13:35"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:13:35"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-26 01:15:54"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 01:27:34"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 01:27:35"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 01:27:36"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:34:02"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/allocation-types',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:34:05"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/towers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:34:07"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:34:09"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/allocation-bases',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:34:09"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:34:10"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:34:10"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/towers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:34:17"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:34:17"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/allocation-bases',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:34:19"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/allocation-types',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:34:21"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 01:34:21"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 01:36:53"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 01:36:54"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 01:36:54"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 02:02:03"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 02:02:03"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 02:02:03"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 03:15:51"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 03:15:51"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 03:15:51"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 09:12:42"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 09:12:42"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 09:12:42"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 09:14:05"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 09:14:05"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 09:14:05"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 09:14:05"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-26 09:38:59"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 10:31:36"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 10:31:37"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 10:31:37"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 10:49:34"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 10:49:34"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 11:00:18"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 11:00:18"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 11:00:18"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 11:54:00"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 11:54:00"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 11:54:00"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:54:55"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:54:55"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:54:55"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:54:55"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:54:55"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:54:55"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:54:56"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:54:56"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:54:56"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:54:56"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:55:06"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:55:06"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:55:17"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:55:17"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:55:17"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:55:17"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:55:17"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:55:17"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:55:17"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:55:17"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:55:17"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 11:55:17"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 11:59:50"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 11:59:50"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 11:59:50"}
+{"level":"info","message":"Admin created user: gagan.sharma2@jubl.com (By: admin@example.com)","service":"opex-api","timestamp":"2025-12-26 11:59:53"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 12:09:23"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 12:09:23"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 12:09:23"}
+{"level":"info","message":"User updated: admin@example.com (By: admin@example.com)","service":"opex-api","timestamp":"2025-12-26 12:13:20"}
+{"level":"info","message":"User updated: admin@example.com (By: admin@example.com)","service":"opex-api","timestamp":"2025-12-26 12:13:24"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:15:59"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:15:59"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 12:16:57"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 12:16:57"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 12:16:57"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 12:19:14"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 12:19:14"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 12:19:14"}
+{"level":"info","message":"Admin created user: abc@gmail.com (By: admin@example.com)","service":"opex-api","timestamp":"2025-12-26 12:20:57"}
+{"level":"info","message":"User updated: abc@gmail.com (By: admin@example.com)","service":"opex-api","timestamp":"2025-12-26 12:21:02"}
+{"level":"info","message":"User updated: abc@gmail.com (By: admin@example.com)","service":"opex-api","timestamp":"2025-12-26 12:21:04"}
+{"level":"info","message":"User logged in successfully (abc@gmail.com)","service":"opex-api","timestamp":"2025-12-26 12:21:56"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 3,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:07"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 3,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:07"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 3,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 3,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 3,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 3,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 3,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 3,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 3,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 3,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:16"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:31"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:22:31"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 12:30:42"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 12:30:42"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 12:30:42"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 12:44:16"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 12:44:17"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 12:44:17"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 12:44:45"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 12:44:45"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 12:44:45"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 12:45:03"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 12:45:03"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 12:45:03"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 12:45:12"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 12:45:12"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 12:45:12"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 12:46:25"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 12:46:26"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 12:46:26"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 12:50:57"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 12:50:57"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 12:50:57"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:51:53"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:51:53"}
+{"level":"info","message":"Starting BOA Allocation import for file: Allocation Base.xlsx (User: admin@example.com)","service":"opex-api","timestamp":"2025-12-26 12:58:26"}
+{"level":"info","message":"Found 0 unique entities in Excel headers.","service":"opex-api","timestamp":"2025-12-26 12:58:26"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:59:11"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 12:59:11"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 13:11:50"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 13:11:50"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 13:11:50"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 13:12:58"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 13:12:58"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 13:12:59"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-26 13:13:30"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-26 13:13:30"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-26 13:13:30"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 23:07:07"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-26 23:07:07"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 00:12:15"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 00:12:15"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 00:12:15"}
+{"level":"error","message":"API Error (Internal): {\n  message: 'Not allowed by CORS',\n  statusCode: 500,\n  method: 'POST',\n  url: '/api/auth/login',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 00:15:10"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 00:17:24"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 00:17:24"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 00:17:25"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 01:40:31"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 01:40:31"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 01:40:31"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 01:40:37"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 01:42:54"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 01:42:54"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 01:42:55"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 01:43:03"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 01:44:18"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 01:44:18"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 01:44:18"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 02:04:11"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 02:04:11"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 02:04:11"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 02:13:24"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 02:13:24"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 02:13:24"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 02:19:46"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 02:19:46"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 02:19:46"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 02:30:40"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 02:30:40"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 02:30:40"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 02:34:57"}
+{"level":"info","message":"Starting BOA Allocation import for file: Allocation Base.xlsx (User: admin@example.com)","service":"opex-api","timestamp":"2025-12-27 02:35:16"}
+{"level":"info","message":"Found 0 unique entities in Excel headers.","service":"opex-api","timestamp":"2025-12-27 02:35:16"}
+{"level":"info","message":"Migrated batch ending at row 50","service":"opex-api","timestamp":"2025-12-27 02:35:21"}
+{"level":"info","message":"Starting BOA Allocation import for file: Allocation Base.xlsx (User: admin@example.com)","service":"opex-api","timestamp":"2025-12-27 02:35:44"}
+{"level":"info","message":"Found 0 unique entities in Excel headers.","service":"opex-api","timestamp":"2025-12-27 02:35:44"}
+{"level":"info","message":"Migrated batch ending at row 50","service":"opex-api","timestamp":"2025-12-27 02:35:49"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 02:42:42"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 02:42:42"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 02:42:42"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 02:42:54"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 02:42:54"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 02:42:54"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 02:43:20"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 02:43:20"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 02:43:20"}
+{"level":"info","message":"Starting BOA Allocation import for file: Allocation Base.xlsx (User: admin@example.com)","service":"opex-api","timestamp":"2025-12-27 02:45:46"}
+{"level":"info","message":"Found 0 unique entities in Excel headers.","service":"opex-api","timestamp":"2025-12-27 02:45:46"}
+{"level":"info","message":"Detected 0 monthly columns and 0 BOA allocation columns.","service":"opex-api","timestamp":"2025-12-27 02:45:46"}
+{"level":"info","message":"Migrated batch ending at row 50","service":"opex-api","timestamp":"2025-12-27 02:45:48"}
+{"level":"info","message":"Starting BOA Allocation import for file: Allocation Base.xlsx (User: admin@example.com)","service":"opex-api","timestamp":"2025-12-27 02:46:07"}
+{"level":"info","message":"Found 0 unique entities in Excel headers.","service":"opex-api","timestamp":"2025-12-27 02:46:07"}
+{"level":"info","message":"Detected 0 monthly columns and 0 BOA allocation columns.","service":"opex-api","timestamp":"2025-12-27 02:46:07"}
+{"level":"info","message":"Migrated batch ending at row 50","service":"opex-api","timestamp":"2025-12-27 02:46:09"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 02:49:58"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 02:49:58"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 02:49:58"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 02:50:08"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 02:50:08"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 02:50:08"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 02:50:26"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 02:50:26"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 02:50:26"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 02:55:54"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 02:55:54"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 02:55:54"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 03:14:59"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 03:14:59"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 03:14:59"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 03:15:57"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 03:15:57"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 03:15:57"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:28:27"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:28:27"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:28:27"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:28:27"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:28:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:28:48"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 09:28:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:28:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:28:48"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 09:28:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:28:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:28:48"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 09:28:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:28:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:28:48"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 09:28:48"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 09:29:41"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 09:29:41"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 09:29:50"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 09:29:50"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 09:29:51"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 09:29:51"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 09:30:33"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 09:30:35"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 09:30:37"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 09:54:00"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 09:54:00"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 09:54:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:54:01"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:54:01"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:54:01"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:54:01"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:54:01"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:54:01"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:54:01"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:54:01"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:54:07"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:54:07"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:54:07"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:54:07"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 09:54:17"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 09:54:17"}
+{"level":"info","message":"Starting BOA Allocation import for file: Allocation Base.xlsx (User: admin@example.com)","service":"opex-api","timestamp":"2025-12-27 09:54:17"}
+{"level":"info","message":"BOA Import: Found 25 columns in header row","service":"opex-api","timestamp":"2025-12-27 09:54:17"}
+{"level":"info","message":"BOA Import: Detected 21 entity columns","service":"opex-api","timestamp":"2025-12-27 09:54:17"}
+{"level":"info","message":"BOA Import: Processing 50 data rows","service":"opex-api","timestamp":"2025-12-27 09:54:18"}
+{"level":"info","message":"BOA Import Complete: 50 successful, 0 errors","service":"opex-api","timestamp":"2025-12-27 09:54:20"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 09:54:24"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 09:54:24"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:16:12"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:16:12"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:16:12"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:16:12"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 12:16:12"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:16:44"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:16:44"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 12:18:28"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 12:18:28"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 12:18:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:18:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:18:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:18:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:18:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:18:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:18:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:18:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:18:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:23:19"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:23:19"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:23:20"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:23:20"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 12:23:20"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:27:03"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:27:03"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:27:03"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:27:03"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:27:03"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:27:03"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:27:03"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:27:03"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 12:28:09"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 12:28:09"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 12:28:16"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 12:28:16"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 12:28:22"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 12:28:22"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 12:29:27"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 12:29:28"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 12:29:28"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:46"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 12:33:46"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 12:33:49"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:50"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:50"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:50"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:50"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:50"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:50"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:50"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:50"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:33:55"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:27"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:27"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:28"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:28"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 12:34:31"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:33"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:33"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 12:34:33"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 12:34:33"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:49"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:49"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:49"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:49"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:49"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:49"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:49"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:49"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:17:52"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:14"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 13:18:14"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:14"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:14"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:20"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:20"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 13:18:20"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:20"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:20"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/imports not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/imports',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 13:18:20"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:25"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:25"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:25"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:25"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:18:54"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:18:54"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:06"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:06"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:09"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:09"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:40"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 13:19:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:19:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:20:32"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:02"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:02"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:02"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:02"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:21:14"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:21:15"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:19"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:19"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:19"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:19"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:30"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:30"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:21:30"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:21:30"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:22:04"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:22:04"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:22:05"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:22:05"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:23:58"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:23:58"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:23:58"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:23:58"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:23:58"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:23:58"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:23:58"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:23:58"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:03"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:03"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:24:03"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:24:03"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:34"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:34"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:34"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:34"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:36"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:36"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:36"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:36"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:38"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:38"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:42"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:43"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:46"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:25:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:26:51"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:26:51"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:26:51"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:26:51"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 14:27:03"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 14:27:03"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:27:11"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:27:11"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:27:11"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:27:11"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 14:27:18"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 14:27:18"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:39:46"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:39:46"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:39:46"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:39:46"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/fiscal-years not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/cost-centers not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:40:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:11"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:11"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:11"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:11"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/expense-categories not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:40:11"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/master/vendors not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: 1,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:40:11"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:15"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:15"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:15"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:15"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:15"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:15"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:40:15"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:40:15"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:47:54"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:47:54"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:47:54"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:47:54"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 14:48:24"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 14:48:24"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 14:48:25"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 14:49:04"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 14:49:04"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 14:49:05"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 14:49:30"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 14:49:30"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 14:49:30"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 14:49:50"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 14:49:51"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 14:49:51"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:49:59"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:49:59"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:49:59"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:49:59"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:49:59"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 14:50:22"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 14:50:22"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 14:50:22"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:50:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:50:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:50:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:50:35"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:50:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:50:36"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:50:36"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:50:36"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 14:50:58"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 14:50:58"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 14:50:58"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:50:59"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:50:59"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:51:04"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:51:04"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:51:04"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:51:05"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:51:05"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/towers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:51:05"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:51:06"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:51:06"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:51:06"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:51:08"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:51:08"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/allocation-bases',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:51:08"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:51:08"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:51:08"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/allocation-types',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:51:08"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:51:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:51:10"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:51:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:51:16"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:51:16"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:51:16"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 14:51:49"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 14:51:49"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 14:51:49"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:52:01"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:52:01"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:52:02"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:52:02"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:52:02"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:52:14"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:52:14"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:52:14"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:52:14"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:52:14"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:52:14"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:52:33"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:52:33"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:52:33"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:52:33"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:52:33"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:52:33"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:53:05"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:53:05"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:53:05"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:53:05"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:53:05"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:53:05"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:53:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:53:52"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:53:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:53:52"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:53:52"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:53:52"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:53:54"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:53:54"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:53:54"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:53:56"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:53:56"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/towers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:53:56"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:53:56"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:53:56"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:53:56"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:53:57"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:53:57"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/allocation-types',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:53:57"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:53:58"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:53:58"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/allocation-bases',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:53:58"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:53:59"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:53:59"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/allocation-types',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:53:59"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:53:59"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:53:59"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:53:59"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:54:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:54:00"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/towers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:54:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:54:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:54:00"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:54:00"}
+{"level":"info","message":"Cache is disabled or using in-memory cache only","service":"opex-api","timestamp":"2025-12-27 14:54:57"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 14:54:58"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 14:54:59"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 14:54:59"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:56:23"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:56:23"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:56:26"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:56:26"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:56:26"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:56:27"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:56:27"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/towers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:56:27"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:56:28"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:56:28"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:56:28"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:56:31"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:56:31"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:56:31"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:56:31"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:56:31"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:56:31"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:56:33"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:56:33"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:56:33"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:56:34"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:56:34"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/towers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:56:34"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:56:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:56:35"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:56:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:56:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:56:35"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/allocation-types',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:56:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 14:56:36"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 14:56:36"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/allocation-bases',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 14:56:36"}
+{"level":"info","message":"Cache is disabled or using in-memory cache only","service":"opex-api","timestamp":"2025-12-27 15:14:03"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 15:14:05"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 15:14:05"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 15:14:05"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:50:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:50:48"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:50:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:50:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:50:48"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your token has expired! Please log in again.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:50:48"}
+{"level":"info","message":"Cache is disabled or using in-memory cache only","service":"opex-api","timestamp":"2025-12-27 21:51:58"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 21:51:59"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 21:51:59"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 21:51:59"}
+{"level":"info","message":"Cache is disabled or using in-memory cache only","service":"opex-api","timestamp":"2025-12-27 21:56:14"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 21:56:17"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 21:56:17"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 21:56:17"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:58:05"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:58:05"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:58:06"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:58:06"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /favicon.ico not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/favicon.ico',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:58:06"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:08"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 21:59:08"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 21:59:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:10"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:10"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:11"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:11"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:11"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:19"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:19"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:19"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:19"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:19"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:19"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:29"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 21:59:29"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'POST',\n  url: '/api/budgets/import-boa',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:29"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:39"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 21:59:39"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'POST',\n  url: '/api/budgets/import-boa',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:39"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:44"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:47"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:47"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:47"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:47"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:51"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:51"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:51"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 21:59:51"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 21:59:51"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 21:59:51"}
+{"level":"info","message":"Cache is disabled or using in-memory cache only","service":"opex-api","timestamp":"2025-12-27 22:01:27"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 22:01:29"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 22:01:29"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 22:01:29"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 22:03:06"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 22:03:06"}
+{"level":"info","message":"User logged in successfully (admin@example.com)","service":"opex-api","timestamp":"2025-12-27 22:03:08"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:03:08"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:03:08"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:03:08"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:03:08"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:03:08"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:03:08"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:03:08"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:03:08"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:03:08"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:03:08"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:03:08"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:03:11"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:03:11"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:03:11"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:03:11"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:03:11"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:03:11"}
+{"level":"info","message":"CORS check - Origin: http://localhost:5173, Env: development","service":"opex-api","timestamp":"2025-12-27 22:03:18"}
+{"level":"info","message":"CORS: Allowing http://localhost:5173 (development mode)","service":"opex-api","timestamp":"2025-12-27 22:03:18"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'POST',\n  url: '/api/budgets/import-boa',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:03:18"}
+{"level":"info","message":"Cache is disabled or using in-memory cache only","service":"opex-api","timestamp":"2025-12-27 22:04:35"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 22:04:37"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 22:04:37"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 22:04:37"}

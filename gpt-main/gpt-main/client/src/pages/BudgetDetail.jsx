@@ -24,6 +24,7 @@ import {
 } from '@mui/icons-material';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
+import { getCurrentFiscalYear } from '../utils/fiscalYearUtils';
 import { pageContainerStyles, pageHeaderStyles, pageTitleStyles, pageTransitionStyles } from '../styles/commonStyles';
 import BudgetDetailTabs from '../components/BudgetDetailTabs';
 import MonthlyVarianceChart from '../components/MonthlyVarianceChart';
@@ -107,7 +108,7 @@ const BudgetDetail = () => {
                         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                             <Chip label={lineItem.tower?.name || 'No Tower'} color="primary" variant="outlined" size="small" />
                             <Chip label={lineItem.budgetHead?.name || 'No Budget Head'} color="secondary" variant="outlined" size="small" />
-                            <Chip label={lineItem.fiscalYear?.name || 'FY25'} color="default" variant="outlined" size="small" />
+                            <Chip label={lineItem.fiscalYear?.name || getCurrentFiscalYear()} color="default" variant="outlined" size="small" />
                         </Box>
                     </Box>
 

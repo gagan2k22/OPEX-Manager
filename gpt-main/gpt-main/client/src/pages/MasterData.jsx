@@ -20,13 +20,12 @@ const MasterData = () => {
     const isAdmin = user?.roles?.includes('Admin');
 
     const tabsRows = [
-        { label: 'Receiving Entities', endpoint: '/master/entities', schema: 'entity', fieldName: 'entity_name' },
         { label: 'Service & UID Master', endpoint: '/master/services', schema: 'service', fieldName: null },
         { label: 'Budget Heads', endpoint: '/master/budget-heads', schema: 'budget_head', fieldName: 'head_name' },
         { label: 'Towers', endpoint: '/master/towers', schema: 'tower', fieldName: 'tower_name' },
         { label: 'PO Entities', endpoint: '/master/po-entities', schema: 'po_entity', fieldName: 'entity_name' },
         { label: 'Allocation Types', endpoint: '/master/allocation-types', schema: 'allocation_type', fieldName: 'type_name' },
-        { label: 'Allocation Bases', endpoint: '/master/allocation-bases', schema: 'allocation_basis', fieldName: 'basis_name' }
+        { label: 'Allocation Basis', endpoint: '/master/allocation-bases', schema: 'allocation_basis', fieldName: 'basis_name' }
     ];
 
     useEffect(() => {
@@ -79,33 +78,29 @@ const MasterData = () => {
 
     const columns = [
         ...(tab === 0 ? [
-            { field: 'entity_name', headerName: 'Entity Name', flex: 1 },
-            { field: 'id', headerName: 'Internal ID', width: 100 }
-        ] : []),
-        ...(tab === 1 ? [
             { field: 'uid', headerName: 'UID', width: 150 },
             { field: 'vendor', headerName: 'Vendor', width: 200 },
             { field: 'service', headerName: 'Service', width: 200 },
             { field: 'budget_head', headerName: 'Budget Head', width: 150 },
             { field: 'tower', headerName: 'Tower', width: 150 }
         ] : []),
-        ...(tab === 2 ? [
+        ...(tab === 1 ? [
             { field: 'head_name', headerName: 'Budget Head', flex: 1 },
             { field: 'id', headerName: 'ID', width: 100 }
         ] : []),
-        ...(tab === 3 ? [
+        ...(tab === 2 ? [
             { field: 'tower_name', headerName: 'Tower Name', flex: 1 },
             { field: 'id', headerName: 'ID', width: 100 }
         ] : []),
-        ...(tab === 4 ? [
+        ...(tab === 3 ? [
             { field: 'entity_name', headerName: 'PO Entity Name', flex: 1 },
             { field: 'id', headerName: 'ID', width: 100 }
         ] : []),
-        ...(tab === 5 ? [
+        ...(tab === 4 ? [
             { field: 'type_name', headerName: 'Allocation Type', flex: 1 },
             { field: 'id', headerName: 'ID', width: 100 }
         ] : []),
-        ...(tab === 6 ? [
+        ...(tab === 5 ? [
             { field: 'basis_name', headerName: 'Allocation Basis', flex: 1 },
             { field: 'id', headerName: 'ID', width: 100 }
         ] : []),
@@ -137,7 +132,7 @@ const MasterData = () => {
     return (
         <Box sx={pageContainerStyles}>
             <Box sx={pageHeaderStyles}>
-                <Typography sx={pageTitleStyles}>Master Data (XLS Business Objects)</Typography>
+                <Typography sx={pageTitleStyles}>Master Data</Typography>
                 {isAdmin && (
                     <Button
                         variant="contained"
@@ -171,16 +166,6 @@ const MasterData = () => {
                 <DialogContent dividers>
                     <Grid container spacing={2} sx={{ mt: 1 }}>
                         {tab === 0 && (
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Entity Name (e.g. JPM Corporate)"
-                                    value={formData.name || ''}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                />
-                            </Grid>
-                        )}
-                        {tab === 1 && (
                             <>
                                 <Grid item xs={12} sm={4}>
                                     <TextField fullWidth label="UID" value={formData.uid || ''} onChange={(e) => setFormData({ ...formData, uid: e.target.value })} />
@@ -202,15 +187,15 @@ const MasterData = () => {
                                 </Grid>
                             </>
                         )}
-                        {(tab === 2 || tab === 3 || tab === 4 || tab === 5 || tab === 6) && (
+                        {(tab === 1 || tab === 2 || tab === 3 || tab === 4 || tab === 5) && (
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
                                     label={
-                                        tab === 2 ? 'Budget Head Name' :
-                                            tab === 3 ? 'Tower Name' :
-                                                tab === 4 ? 'PO Entity Name' :
-                                                    tab === 5 ? 'Allocation Type Name' :
+                                        tab === 1 ? 'Budget Head Name' :
+                                            tab === 2 ? 'Tower Name' :
+                                                tab === 3 ? 'PO Entity Name' :
+                                                    tab === 4 ? 'Allocation Type Name' :
                                                         'Allocation Basis Name'
                                     }
                                     value={formData.name || ''}

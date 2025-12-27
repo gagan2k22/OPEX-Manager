@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import * as XLSX from 'xlsx';
 import { useIsAdmin } from '../hooks/usePermissions';
+import { getCurrentFiscalYear } from '../utils/fiscalYearUtils';
 import { pageContainerStyles, pageHeaderStyles, pageTitleStyles, pageTransitionStyles } from '../styles/commonStyles';
 import ExportDialog from '../components/ExportDialog';
 
@@ -23,8 +24,9 @@ const POList = () => {
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
     const navigate = useNavigate();
     const isAdmin = useIsAdmin();
-    const [selectedFiscalYears, setSelectedFiscalYears] = useState(['FY25', 'FY26']);
-    const [availableFiscalYears, setAvailableFiscalYears] = useState(['FY25', 'FY26']);
+    const currentFY = getCurrentFiscalYear();
+    const [selectedFiscalYears, setSelectedFiscalYears] = useState([currentFY]);
+    const [availableFiscalYears, setAvailableFiscalYears] = useState([currentFY]);
     const [openExportDialog, setOpenExportDialog] = useState(false);
 
     const fetchPOs = async () => {
@@ -202,7 +204,7 @@ const POList = () => {
         },
         {
             field: 'service_description',
-            headerName: 'Service',
+            headerName: 'Service Description',
             width: 200,
             valueGetter: (value, row) => row?.lineItems?.[0]?.description || '-'
         },
@@ -232,7 +234,7 @@ const POList = () => {
         },
         {
             field: 'commonCurrencyValue',
-            headerName: 'Common Currency Value (INR)',
+            headerName: 'Value in INR',
             width: 180,
             type: 'number',
             valueGetter: (value, row) => row?.commonCurrencyValue || row?.poValue,
@@ -290,7 +292,7 @@ const POList = () => {
         <Box sx={{ ...pageContainerStyles, ...pageTransitionStyles }}>
             <Box sx={pageHeaderStyles}>
                 <Typography sx={pageTitleStyles}>
-                    PO
+                    PO Tracker
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <Button

@@ -18,6 +18,7 @@ import AllocationBase from './pages/AllocationBase';
 import NetActual from './pages/NetActual';
 import ActualsList from './pages/ActualsList';
 import POList from './pages/POList';
+import Variance from './pages/Variance';
 
 const ProtectedRoute = ({ children }) => {
     const { token, isLoading } = useAuth();
@@ -47,14 +48,15 @@ function App() {
                                     <Route path="master-data" element={<MasterData />} />
                                     <Route path="users" element={<UserManagement />} />
                                     <Route path="imports" element={<ImportHistory />} />
+                                    <Route path="import-history" element={<Navigate to="/imports" replace />} />
                                     <Route path="net-budget" element={<NetBudget />} />
                                     <Route path="allocation-base" element={<AllocationBase />} />
                                     <Route path="actuals" element={<ActualsList />} />
                                     <Route path="net-actual" element={<NetActual />} />
+                                    <Route path="variance" element={<Variance />} />
                                     <Route path="pos" element={<POList />} />
-                                    {/* Redirect legacy paths to new unified tracker */}
+                                    {/* Redirect legacy paths to new unified tracker / tracker components */}
                                     <Route path="budgets" element={<Navigate to="/tracker" replace />} />
-                                    <Route path="actuals" element={<Navigate to="/tracker" replace />} />
                                 </Route>
                             </Routes>
                         </Router>

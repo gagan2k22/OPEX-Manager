@@ -4,6 +4,7 @@
  */
 
 const express = require('express');
+const helmet = require('helmet');
 require('express-async-errors'); // Must be imported before routes
 const compression = require('compression');
 const morgan = require('morgan');
@@ -31,6 +32,17 @@ const app = express();
 // ==========================================
 
 // Security Headers (Helmet)
+// Enable security headers
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+            "img-src": ["'self'", "data:", "https:"],
+            "script-src": ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+        },
+    },
+    crossOriginEmbedderPolicy: false, // For easier local development/loading some assets
+}));
 app.use(helmetConfig);
 
 // Cross-Origin Resource Sharing (CORS)
@@ -95,7 +107,7 @@ try {
     app.use('/api/reports', require('./routes/reports.routes'));
     app.use('/api/currency-rates', require('./routes/currencyRate.routes'));
     app.use('/api/imports', require('./routes/import.routes'));
-    app.use('/api/imports', require('./routes/importHistory.routes'));
+    app.use('/api/import-history', require('./routes/importHistory.routes'));
     app.use('/api/neno', require('./routes/neno.routes'));
 
 } catch (error) {

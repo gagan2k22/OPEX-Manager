@@ -33,8 +33,18 @@ export const useHasPermission = (permission) => {
     }
 
     // Check specific permission based on role
-    // This can be extended based on your permission matrix
-    return false;
+    const permissionMatrix = {
+        'Admin': ['*'],
+        'Editor': ['EDIT_TRACKER', 'VIEW_REPORTS', 'IMPORT_DATA', 'VIEW_POS'],
+        'Viewer': ['VIEW_REPORTS', 'VIEW_POS'],
+        'Approver': ['APPROVE_CHANGES', 'VIEW_REPORTS'],
+    };
+
+    return user.roles.some(role => {
+        const roleName = typeof role === 'string' ? role : role.name;
+        const permissions = permissionMatrix[roleName] || [];
+        return permissions.includes('*') || permissions.includes(permission);
+    });
 };
 
 export default { useIsAdmin, useHasPermission };

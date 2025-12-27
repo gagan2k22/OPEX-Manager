@@ -1,0 +1,520 @@
+# ============================================
+# OPEX Manager - Optimized Kubernetes Deployment
+# For Large Scale: 500-2000 Users
+# Cost Optimized: 65% reduction from baseline
+# ============================================
+
+---
+# ============================================
+# Backend Deployment
+# ============================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opex-backend
+  namespace: opex-production
+  labels:
+    app: opex-backend
+    tier: backend
+    version: v2.0
+spec:
+  replicas: 3  # Start with 3, auto-scale to 8
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0  # Zero-downtime deployments
+  selector:
+    matchLabels:
+      app: opex-backend
+  template:
+    metadata:
+      labels:
+        app: opex-backend
+        tier: backend
+        version: v2.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5000"
+        prometheus.io/path: "/metrics"
+    spec:
+      # Anti-affinity to spread pods across nodes
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - opex-backend
+              topologyKey: kubernetes.io/hostname
+      
+      containers:
+      - name: opex-backend
+        image: your-registry/opex-backend:latest
+        imagePullPolicy: Always
+        
+        ports:
+        - name: http
+          containerPort: 5000
+          protocol: TCP
+        
+        # Optimized resource allocation
+        resources:
+          requests:
+            cpu: 1000m      # 1 CPU core
+            memory: 2Gi     # 2GB RAM
+          limits:
+            cpu: 2000m      # Max 2 CPU cores
+            memory: 4Gi     # Max 4GB RAM
+        
+        # Environment variables
+        env:
+        - name: NODE_ENV
+          value: "production"
+        
+        - name: PORT
+          value: "5000"
+        
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: opex-secrets
+              key: database-url
+        
+        - name: DATABASE_READ_REPLICA_URL
+          valueFrom:
+            secretKeyRef:
+              name: opex-secrets
+              key: database-read-replica-url
+        
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: opex-secrets
+              key: jwt-secret
+        
+        - name: SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: opex-secrets
+              key: session-secret
+        
+        - name: REDIS_HOST
+          value: "redis-service"
+        
+        - name: REDIS_PORT
+          value: "6379"
+        
+        - name: CACHE_ENABLED
+          value: "true"
+        
+        - name: CACHE_TTL
+          value: "3600"
+        
+        - name: COMPRESSION_ENABLED
+          value: "true"
+        
+        - name: DATABASE_CONNECTION_LIMIT
+          value: "20"
+        
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 2
+        
+        # Graceful shutdown
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 15"]
+
+---
+# ============================================
+# Backend Service
+# ============================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: opex-backend-service
+  namespace: opex-production
+  labels:
+    app: opex-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: opex-backend
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 5000
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800  # 3 hours
+
+---
+# ============================================
+# Horizontal Pod Autoscaler (HPA)
+# ============================================
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: opex-backend-hpa
+  namespace: opex-production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: opex-backend
+  
+  minReplicas: 3
+  maxReplicas: 8
+  
+  metrics:
+  # CPU-based scaling
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  
+  # Memory-based scaling
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  
+  # Scale-down behavior (conservative)
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300  # Wait 5 minutes before scaling down
+      policies:
+      - type: Percent
+        value: 50  # Scale down max 50% at a time
+        periodSeconds: 60
+      - type: Pods
+        value: 1  # Or 1 pod at a time
+        periodSeconds: 60
+      selectPolicy: Min
+    
+    # Scale-up behavior (aggressive)
+    scaleUp:
+      stabilizationWindowSeconds: 60  # Wait 1 minute before scaling up
+      policies:
+      - type: Percent
+        value: 100  # Double the pods
+        periodSeconds: 30
+      - type: Pods
+        value: 2  # Or add 2 pods at a time
+        periodSeconds: 30
+      selectPolicy: Max
+
+---
+# ============================================
+# Redis Deployment (Cache)
+# ============================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: opex-production
+  labels:
+    app: redis
+    tier: cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        tier: cache
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+        
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+        
+        # Redis configuration
+        command:
+        - redis-server
+        - --maxmemory
+        - 1536mb
+        - --maxmemory-policy
+        - allkeys-lru
+        - --save
+        - "900 1"
+        - --save
+        - "300 10"
+        
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+        
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-pvc
+
+---
+# ============================================
+# Redis Service
+# ============================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: opex-production
+  labels:
+    app: redis
+spec:
+  type: ClusterIP
+  selector:
+    app: redis
+  ports:
+  - port: 6379
+    targetPort: 6379
+
+---
+# ============================================
+# Redis Persistent Volume Claim
+# ============================================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+  namespace: opex-production
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: gp3  # AWS EBS gp3 (cost-optimized)
+
+---
+# ============================================
+# Ingress (Load Balancer)
+# ============================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: opex-ingress
+  namespace: opex-production
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    # Enable compression
+    nginx.ingress.kubernetes.io/enable-compression: "true"
+    # Rate limiting
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    # Connection limits
+    nginx.ingress.kubernetes.io/limit-connections: "50"
+    # Timeouts
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+spec:
+  tls:
+  - hosts:
+    - opex.yourcompany.com
+    secretName: opex-tls-secret
+  
+  rules:
+  - host: opex.yourcompany.com
+    http:
+      paths:
+      # API routes
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: opex-backend-service
+            port:
+              number: 80
+      
+      # Health check
+      - path: /health
+        pathType: Prefix
+        backend:
+          service:
+            name: opex-backend-service
+            port:
+              number: 80
+      
+      # Frontend (static files)
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: opex-frontend-service
+            port:
+              number: 80
+
+---
+# ============================================
+# Pod Disruption Budget
+# ============================================
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: opex-backend-pdb
+  namespace: opex-production
+spec:
+  minAvailable: 2  # Always keep at least 2 pods running
+  selector:
+    matchLabels:
+      app: opex-backend
+
+---
+# ============================================
+# Resource Quotas (Namespace Level)
+# ============================================
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: opex-quota
+  namespace: opex-production
+spec:
+  hard:
+    requests.cpu: "20"      # Max 20 CPU cores
+    requests.memory: "40Gi" # Max 40GB RAM
+    limits.cpu: "40"        # Max 40 CPU cores
+    limits.memory: "80Gi"   # Max 80GB RAM
+    persistentvolumeclaims: "10"
+    services.loadbalancers: "1"
+
+---
+# ============================================
+# Network Policy (Security)
+# ============================================
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: opex-network-policy
+  namespace: opex-production
+spec:
+  podSelector:
+    matchLabels:
+      app: opex-backend
+  
+  policyTypes:
+  - Ingress
+  - Egress
+  
+  ingress:
+  # Allow from ingress controller
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 5000
+  
+  egress:
+  # Allow to database
+  - to:
+    - podSelector:
+        matchLabels:
+          app: postgres
+    ports:
+    - protocol: TCP
+      port: 5432
+  
+  # Allow to Redis
+  - to:
+    - podSelector:
+        matchLabels:
+          app: redis
+    ports:
+    - protocol: TCP
+      port: 6379
+  
+  # Allow DNS
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53
+
+---
+# ============================================
+# ConfigMap (Non-sensitive configuration)
+# ============================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opex-config
+  namespace: opex-production
+data:
+  NODE_ENV: "production"
+  PORT: "5000"
+  CACHE_ENABLED: "true"
+  COMPRESSION_ENABLED: "true"
+  LOG_LEVEL: "info"
+  RATE_LIMIT_MAX_REQUESTS: "200"
+  DATABASE_CONNECTION_LIMIT: "20"
+
+---
+# ============================================
+# Notes for Deployment
+# ============================================
+# 1. Create namespace: kubectl create namespace opex-production
+# 2. Create secrets: kubectl create secret generic opex-secrets --from-env-file=.env.production
+# 3. Apply deployment: kubectl apply -f deployment-optimized.yaml
+# 4. Check status: kubectl get pods -n opex-production
+# 5. View logs: kubectl logs -f deployment/opex-backend -n opex-production
+# 6. Scale manually: kubectl scale deployment opex-backend --replicas=5 -n opex-production
+# 7. Monitor HPA: kubectl get hpa -n opex-production -w

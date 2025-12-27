@@ -1,6 +1,11 @@
 const prisma = require('../prisma');
 const logger = require('../utils/logger');
 const auditService = require('../services/audit.service');
+const config = require('../config');
+const cache = require('../utils/cache');
+const { trackerUpdateSchema, monthlyActualUpdateSchema } = require('../utils/validations');
+const migrationService = require('../services/migration.service'); // Reuse existing service or new logic
+const boaAllocationService = require('../services/boaAllocation.service'); // BOA-specific import
 
 /**
  * XLS Tracker Controller
@@ -9,7 +14,25 @@ const auditService = require('../services/audit.service');
 
 const getTrackerData = async (req, res) => {
     try {
-        const { fy = 'FY25', page = 0, pageSize = 100, search = '', sortModel } = req.query;
+        const { fy = config.server.defaultFY, page = 0, pageSize = 100, search = '', sortModel } = req.query;
+
+        // Generate cache key based on query parameters
+        const cacheKey = `tracker:${fy}:${page}:${pageSize}:${search}:${sortModel || 'default'}`;
+
+        // Check cache first
+        const cachedData = await cache.get(cacheKey);
+        if (cachedData) {
+            logger.debug(`Cache HIT for tracker data: ${cacheKey}`);
+            return res.json(cachedData);
+        }
+
+        logger.debug(`Cache MISS for tracker data: ${cacheKey}`);
+
+        // Calculate previous 2 years
+        const currentYearNum = parseInt(fy.replace(/\D/g, ''));
+        const fyPrev1 = `FY${currentYearNum - 1}`;
+        const fyPrev2 = `FY${currentYearNum - 2}`;
+        const fyList = [fy, fyPrev1, fyPrev2];
         const skip = parseInt(page) * parseInt(pageSize);
         const take = parseInt(pageSize);
 
@@ -20,7 +43,8 @@ const getTrackerData = async (req, res) => {
                 { vendor: { contains: search } },
                 { service: { contains: search } },
                 { tower: { contains: search } },
-                { budget_head: { contains: search } }
+                { budget_head: { contains: search } },
+                { remarks: { contains: search } }
             ]
         } : {};
 
@@ -43,12 +67,51 @@ const getTrackerData = async (req, res) => {
                 where,
                 skip,
                 take,
-                include: {
+                select: {
+                    id: true,
+                    uid: true,
+                    parent_uid: true,
+                    vendor: true,
+                    service: true,
+                    service_description: true,
+                    service_start_date: true,
+                    service_end_date: true,
+                    renewal_date: true,
+                    budget_head: true,
+                    tower: true,
+                    contract: true,
+                    allocation_type: true,
+                    initiative_type: true,
+                    service_type: true,
+                    priority: true,
+                    remarks: true,
                     fy_actuals: {
-                        where: { financial_year: fy }
+                        where: { financial_year: { in: fyList } },
+                        select: {
+                            financial_year: true,
+                            fy_budget: true,
+                            fy_actuals: true
+                        }
                     },
-                    procurement_details: true,
-                    allocation_bases: true
+                    procurement_details: {
+                        select: {
+                            entity: true,
+                            pr_number: true,
+                            pr_date: true,
+                            pr_amount: true,
+                            currency: true,
+                            po_number: true,
+                            po_date: true,
+                            po_value: true,
+                            common_currency: true,
+                            common_currency_value_inr: true
+                        }
+                    },
+                    allocation_bases: {
+                        select: {
+                            basis_of_allocation: true
+                        }
+                    }
                 },
                 orderBy
             }),
@@ -57,7 +120,11 @@ const getTrackerData = async (req, res) => {
 
         // Flatten for frontend DataGrid consumption
         const rows = services.map(s => {
-            const fyData = s.fy_actuals[0] || {};
+            const fyDataCurrent = s.fy_actuals.find(f => f.financial_year === fy) || {};
+            const fyDataPrev1 = s.fy_actuals.find(f => f.financial_year === fyPrev1) || {};
+            const fyDataPrev2 = s.fy_actuals.find(f => f.financial_year === fyPrev2) || {};
+
+            const fyData = fyDataCurrent; // Keep existing reference for backward compatibility
             const proc = s.procurement_details[0] || {};
             const alloc = s.allocation_bases[0] || {};
 
@@ -75,7 +142,7 @@ const getTrackerData = async (req, res) => {
                 budget_head: s.budget_head,
                 tower: s.tower,
                 contract: s.contract,
-                po_entity: proc.entity, // Sourced from Procurement
+                po_entity: proc.entity || '', // Sourced from Procurement
                 allocation_type: s.allocation_type,
                 allocation_basis: alloc.basis_of_allocation, // Sourced from AllocationBasis
                 initiative_type: s.initiative_type,
@@ -85,20 +152,37 @@ const getTrackerData = async (req, res) => {
                 fy_budget: fyData.fy_budget || 0, // 'Budget'
                 fy_actuals: fyData.fy_actuals || 0, // 'Actual'
                 variance: (fyData.fy_budget || 0) - (fyData.fy_actuals || 0),
+
+                // Historical Data
+                [`budget_${fyPrev1}`]: fyDataPrev1.fy_budget || 0,
+                [`actuals_${fyPrev1}`]: fyDataPrev1.fy_actuals || 0,
+                [`budget_${fyPrev2}`]: fyDataPrev2.fy_budget || 0,
+                [`actuals_${fyPrev2}`]: fyDataPrev2.fy_actuals || 0,
+
                 // Procurement info
+                pr_number: proc.pr_number,
+                pr_date: proc.pr_date,
+                pr_amount: proc.pr_amount,
                 currency: proc.currency || 'INR',
                 po_number: proc.po_number,
+                po_date: proc.po_date,
                 po_value: proc.po_value,
+                po_currency: proc.common_currency || proc.currency || 'INR',
                 common_currency_value_inr: proc.common_currency_value_inr, // 'Value in INR'
                 value_in_lac: (proc.common_currency_value_inr || 0) / 100000, // 'Value in Lakh'
                 remarks: s.remarks
             };
         });
 
-        res.json({
+        const responseData = {
             rows,
             totalCount
-        });
+        };
+
+        // Cache the result for 2 minutes (120 seconds)
+        await cache.set(cacheKey, responseData, 120);
+
+        res.json(responseData);
     } catch (error) {
         logger.error('Get Tracker Data Error: %s', error.stack);
         res.status(500).json({ message: 'Error retrieving tracker data' });
@@ -111,7 +195,7 @@ const getTrackerData = async (req, res) => {
  */
 const getNetBudgetTracker = async (req, res) => {
     try {
-        const { page = 0, pageSize = 25, fy = 'FY25', search = '' } = req.query;
+        const { page = 0, pageSize = 25, fy = config.server.defaultFY, search = '', sortModel } = req.query;
         const skip = parseInt(page) * parseInt(pageSize);
         const take = parseInt(pageSize);
 
@@ -120,54 +204,81 @@ const getNetBudgetTracker = async (req, res) => {
                 { uid: { contains: search } },
                 { vendor: { contains: search } },
                 { service_description: { contains: search } },
-                { tower: { contains: search } }
+                { tower: { contains: search } },
+                { budget_head: { contains: search } },
+                { remarks: { contains: search } }
             ]
         } : {};
 
-        const [services, totalRowCount] = await Promise.all([
-            prisma.serviceMaster.findMany({
-                where,
-                skip,
-                take,
-                include: {
-                    fy_actuals: {
-                        where: { financial_year: fy }
-                    },
-                    procurement_details: true
-                },
-                orderBy: { uid: 'asc' }
-            }),
+        // Build orderBy
+        let orderBy = { uid: 'asc' };
+        if (sortModel) {
+            try {
+                const parsedSort = JSON.parse(sortModel);
+                if (parsedSort.length > 0) {
+                    orderBy = { [parsedSort[0].field]: parsedSort[0].sort };
+                }
+            } catch (e) { /* fallback */ }
+        }
+
+        const [entities, totalRowCount] = await Promise.all([
+            prisma.entityMaster.findMany({ orderBy: { entity_name: 'asc' } }),
             prisma.serviceMaster.count({ where })
         ]);
 
+        const services = await prisma.serviceMaster.findMany({
+            where,
+            skip,
+            take,
+            include: {
+                fy_actuals: {
+                    where: { financial_year: fy }
+                },
+                procurement_details: true,
+                monthly_actuals: {
+                    include: {
+                        entity: true
+                    }
+                }
+            },
+            orderBy
+        });
+
         const rows = services.map(s => {
             const fyData = s.fy_actuals[0] || { fy_budget: 0, fy_actuals: 0 };
-            const proc = s.procurement_details[0] || { po_value: 0 };
+            const proc = s.procurement_details[0] || { entity: '', po_value: 0 };
 
-            const totalBudget = fyData.fy_budget || 0;
-            const allocatedPO = proc.po_value || 0;
-            const consumedActuals = fyData.fy_actuals || 0;
-            const netAvailable = totalBudget - allocatedPO;
-            const utilizationPercentage = totalBudget > 0 ? (consumedActuals / totalBudget) * 100 : 0;
-
-            return {
+            const row = {
                 id: s.id,
                 uid: s.uid,
-                description: s.service_description || s.service,
-                vendor_name: s.vendor,
-                tower_name: s.tower,
-                budget_head_name: s.budget_head,
-                fiscal_year_name: fy,
-                total_budget: totalBudget,
-                allocated_po: allocatedPO,
-                consumed_actuals: consumedActuals,
-                net_available: netAvailable,
-                utilization_percentage: utilizationPercentage
+                vendor: s.vendor,
+                service_description: s.service_description || s.service,
+                service_start_date: s.service_start_date,
+                service_end_date: s.service_end_date,
+                renewal_date: s.renewal_date,
+                budget_head: s.budget_head,
+                tower: s.tower,
+                po_entity: proc.entity,
+                service_type: s.service_type,
+                initiative_type: s.initiative_type,
+                remarks: s.remarks,
+                total_budget: fyData.fy_budget || 0,
+                total_actuals: fyData.fy_actuals || 0,
+                // Add split data
+                ...s.monthly_actuals.reduce((acc, split) => {
+                    const monthKey = split.month_no.toString().padStart(2, '0');
+                    const key = `${monthKey} - ${split.entity.entity_name}`;
+                    acc[key] = split.amount;
+                    return acc;
+                }, {})
             };
+
+            return row;
         });
 
         res.json({
             rows,
+            entities: entities.map(e => e.entity_name),
             totalRowCount
         });
     } catch (error) {
@@ -225,7 +336,7 @@ const updateMonthlyActual = async (req, res) => {
                 where: {
                     service_id_financial_year: {
                         service_id: parseInt(service_id),
-                        financial_year: 'FY25'
+                        financial_year: config.server.defaultFY
                     }
                 },
                 data: { fy_actuals: totalActual._sum.amount || 0 }
@@ -245,7 +356,7 @@ const updateMonthlyActual = async (req, res) => {
                 'UPDATE_MONTHLY_ACTUAL',
                 'MonthlyEntityActual',
                 result.id,
-                { year: 'FY25', month_no, service_id }, // Context
+                { year: config.server.defaultFY, month_no, service_id }, // Context
                 { amount },
                 req.body.auditComment || 'Split Update'
             );
@@ -266,10 +377,10 @@ const updateMonthlyActual = async (req, res) => {
 
 const updateTrackerRow = async (req, res) => {
     try {
+        const validatedData = trackerUpdateSchema.parse(req.body);
         const { id } = req.params;
-        const data = req.body;
-        const comment = data.auditComment || 'Direct Update';
-        const fy = 'FY25';
+        const comment = validatedData.auditComment || 'Direct Update';
+        const fy = config.server.defaultFY;
 
         // Fetch old state for auditing
         const oldState = await prisma.serviceMaster.findUnique({
@@ -286,27 +397,43 @@ const updateTrackerRow = async (req, res) => {
         // Field mapping groups
         const serviceFields = [
             'uid', 'parent_uid', 'vendor', 'service', 'description',
-            'service_start_date', 'service_end_date', 'renewal_date',
+            'service_start_date', 'service_end_date', 'renewal_date', 'renewal_month',
             'contract', 'tower', 'budget_head', 'allocation_type',
             'initiative_type', 'service_type', 'priority', 'remarks'
         ];
-        const procurementFields = ['po_number', 'po_value', 'currency', 'common_currency_value_inr', 'po_entity'];
+        const procurementFields = [
+            'po_number', 'po_value', 'currency', 'common_currency_value_inr', 'po_entity',
+            'pr_number', 'pr_date', 'pr_amount', 'po_date', 'common_currency', 'po_currency'
+        ];
         const fyFields = ['fy_budget'];
 
         const serviceUpdate = {};
         const procurementUpdate = {};
         const fyUpdate = {};
 
-        Object.keys(data).forEach(key => {
-            if (serviceFields.includes(key) || key === 'renewal_month') {
-                const dbKey = key === 'description' ? 'service_description' :
-                    key === 'renewal_month' ? 'renewal_date' : key;
-                serviceUpdate[dbKey] = data[key];
+        Object.keys(validatedData).forEach(key => {
+            if (serviceFields.includes(key)) {
+                let dbKey = key;
+                if (key === 'description') dbKey = 'service_description';
+                if (key === 'renewal_month') dbKey = 'renewal_date';
+
+                // Handle dates
+                if (['service_start_date', 'service_end_date', 'renewal_date'].includes(dbKey)) {
+                    serviceUpdate[dbKey] = validatedData[key] ? new Date(validatedData[key]) : null;
+                } else {
+                    serviceUpdate[dbKey] = validatedData[key];
+                }
             } else if (procurementFields.includes(key)) {
-                const dbKey = key === 'po_entity' ? 'entity' : key;
-                procurementUpdate[dbKey] = data[key];
+                let dbKey = key === 'po_entity' ? 'entity' : key;
+                if (key === 'po_currency') dbKey = 'common_currency';
+
+                if (['pr_date', 'po_date'].includes(dbKey)) {
+                    procurementUpdate[dbKey] = validatedData[key] ? new Date(validatedData[key]) : null;
+                } else {
+                    procurementUpdate[dbKey] = validatedData[key];
+                }
             } else if (fyFields.includes(key)) {
-                fyUpdate[key] = parseFloat(data[key]);
+                fyUpdate[key] = parseFloat(validatedData[key]);
             }
         });
 
@@ -314,26 +441,36 @@ const updateTrackerRow = async (req, res) => {
             procurementUpdate.value_in_lac = parseFloat(procurementUpdate.common_currency_value_inr) / 100000;
         }
 
-        const result = await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx) => {
             if (Object.keys(serviceUpdate).length > 0) {
                 await tx.serviceMaster.update({ where: { id: parseInt(id) }, data: serviceUpdate });
             }
-            if (data.allocation_basis !== undefined) {
+            if (validatedData.allocation_basis !== undefined) {
                 const existing = await tx.allocationBasis.findFirst({ where: { service_id: parseInt(id) } });
-                if (existing) await tx.allocationBasis.update({ where: { id: existing.id }, data: { basis_of_allocation: data.allocation_basis } });
-                else await tx.allocationBasis.create({ data: { service_id: parseInt(id), basis_of_allocation: data.allocation_basis } });
+                if (existing) {
+                    await tx.allocationBasis.update({ where: { id: existing.id }, data: { basis_of_allocation: validatedData.allocation_basis } });
+                } else {
+                    await tx.allocationBasis.create({ data: { service_id: parseInt(id), basis_of_allocation: validatedData.allocation_basis } });
+                }
             }
             if (Object.keys(procurementUpdate).length > 0) {
                 const existing = await tx.procurementDetail.findFirst({ where: { service_id: parseInt(id) } });
-                if (existing) await tx.procurementDetail.update({ where: { id: existing.id }, data: procurementUpdate });
-                else await tx.procurementDetail.create({ data: { service_id: parseInt(id), ...procurementUpdate } });
+                if (existing) {
+                    await tx.procurementDetail.update({ where: { id: existing.id }, data: procurementUpdate });
+                } else {
+                    await tx.procurementDetail.create({ data: { service_id: parseInt(id), ...procurementUpdate } });
+                }
             }
             if (Object.keys(fyUpdate).length > 0) {
-                const existing = await tx.fYActual.findUnique({ where: { service_id_financial_year: { service_id: parseInt(id), financial_year: fy } } });
-                if (existing) await tx.fYActual.update({ where: { id: existing.id }, data: fyUpdate });
-                else await tx.fYActual.create({ data: { service_id: parseInt(id), financial_year: fy, ...fyUpdate } });
+                const existing = await tx.fYActual.findUnique({
+                    where: { service_id_financial_year: { service_id: parseInt(id), financial_year: fy } }
+                });
+                if (existing) {
+                    await tx.fYActual.update({ where: { id: existing.id }, data: fyUpdate });
+                } else {
+                    await tx.fYActual.create({ data: { service_id: parseInt(id), financial_year: fy, ...fyUpdate } });
+                }
             }
-            return true;
         });
 
         // Audit Logging
@@ -343,11 +480,25 @@ const updateTrackerRow = async (req, res) => {
                 'UPDATE_TRACKER_ROW',
                 'ServiceMaster',
                 parseInt(id),
-                oldState,    // Detailed old state
-                data,        // The changes requested
-                comment      // Mandatory reason
+                oldState,
+                validatedData,
+                comment
             );
         }
+
+        // Handle Remark Logging if remarks changed
+        if (Object.keys(serviceUpdate).includes('remarks') && serviceUpdate.remarks) {
+            await prisma.serviceRemarkLog.create({
+                data: {
+                    service_id: parseInt(id),
+                    remark: serviceUpdate.remarks,
+                    user_name: req.user?.name || 'System'
+                }
+            });
+        }
+
+        // Invalidate tracker cache after update
+        await cache.invalidatePattern('tracker:*');
 
         res.json({ message: 'Row updated successfully' });
     } catch (error) {
@@ -356,11 +507,130 @@ const updateTrackerRow = async (req, res) => {
     }
 };
 
+const getBOAAllocationData = async (req, res) => {
+    try {
+        const { fy = config.server.defaultFY } = req.query;
+
+        const [services, entities] = await Promise.all([
+            prisma.serviceMaster.findMany({
+                include: {
+                    allocation_bases: true,
+                    entity_allocations: {
+                        include: { entity: true }
+                    }
+                },
+                orderBy: { uid: 'asc' }
+            }),
+            prisma.entityMaster.findMany({ orderBy: { entity_name: 'asc' } })
+        ]);
+
+        const rows = services.map(s => {
+            const alloc = s.allocation_bases[0] || { basis_of_allocation: '-', total_count: 0 };
+
+            // Get entity counts from entity_allocations
+            const entityCounts = {};
+            s.entity_allocations.forEach(ea => {
+                entityCounts[ea.entity.entity_name] = ea.count;
+            });
+
+            const row = {
+                id: s.id,
+                service_uid: s.uid,
+                service_name: s.service || s.service_description,
+                basis: alloc.basis_of_allocation,
+                total_count: alloc.total_count || 0
+            };
+
+            const totalCount = row.total_count;
+
+            entities.forEach(e => {
+                const entityCount = entityCounts[e.entity_name] || 0;
+                // Percentage = (entity_count / total_count) * 100
+                const percentage = totalCount > 0 ? (entityCount / totalCount) * 100 : 0;
+
+                row[e.entity_name] = entityCount; // Absolute Value (Table 1)
+                row[`pct_${e.entity_name}`] = percentage; // Percentage Value (Table 2)
+            });
+
+            return row;
+        });
+
+        res.json({
+            rows,
+            entities: entities.map(e => e.entity_name)
+        });
+    } catch (error) {
+        logger.error('Get BOA Allocation Data Error: %s', error.stack);
+        res.status(500).json({ message: 'Error fetching BOA allocation data' });
+    }
+};
+
+const getRemarkLogs = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const logs = await prisma.serviceRemarkLog.findMany({
+            where: { service_id: parseInt(id) },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(logs);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching remarks', error: error.message });
+    }
+};
+
+const deleteRemarkLog = async (req, res) => {
+    try {
+        const { logId } = req.params;
+        await prisma.serviceRemarkLog.delete({ where: { id: parseInt(logId) } });
+        res.json({ message: 'Remark log deleted' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting remark log', error: error.message });
+    }
+};
+
+const importBOAAllocation = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        logger.info(`Starting BOA Allocation import for file: ${req.file.originalname} (User: ${req.user.email})`);
+
+        // Use dedicated BOA allocation service for simplified Excel format
+        const result = await boaAllocationService.importBOAAllocation(req.file.buffer, req.user.id, req.file.originalname);
+
+        // Audit log
+        await auditService.logAction(
+            req.user.id,
+            'IMPORT_BOA_ALLOCATION',
+            'AllocationBasis',
+            0,
+            { filename: req.file.originalname },
+            { stats: result }
+        );
+
+        res.json({
+            message: 'BOA Allocation updated successfully',
+            details: result
+        });
+    } catch (error) {
+        logger.error('Import BOA Allocation Error: %s', error.stack);
+        res.status(500).json({
+            message: 'Error during import process',
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     getTrackerData,
     getNetBudgetTracker,
     getEntitySplits,
     updateMonthlyActual,
-    updateTrackerRow
+    updateTrackerRow,
+    getBOAAllocationData,
+    getRemarkLogs,
+    deleteRemarkLog,
+    importBOAAllocation
 };
 

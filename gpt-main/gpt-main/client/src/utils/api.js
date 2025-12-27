@@ -5,6 +5,9 @@
 
 import axios from 'axios';
 
+// Request deduplication map
+const pendingRequests = new Map();
+
 // Create Axios instance
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || '/api',
@@ -16,7 +19,7 @@ const api = axios.create({
 
 /**
  * Request Interceptor
- * Injects Authorization header with JWT token
+ * Injects Authorization header with JWT token and handles request deduplication
  */
 api.interceptors.request.use(
     (config) => {
@@ -24,6 +27,25 @@ api.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+
+        // Request deduplication for GET requests
+        if (config.method === 'get') {
+            const requestKey = `${config.method}:${config.url}:${JSON.stringify(config.params || {})}`;
+
+            // If same request is already pending, return the existing promise
+            if (pendingRequests.has(requestKey)) {
+                const existingRequest = pendingRequests.get(requestKey);
+                // Cancel this request and use the existing one
+                config.cancelToken = new axios.CancelToken((cancel) => {
+                    cancel('Duplicate request cancelled');
+                });
+                return existingRequest;
+            }
+
+            // Store this request
+            config.metadata = { requestKey };
+        }
+
         return config;
     },
     (error) => {
@@ -37,10 +59,25 @@ api.interceptors.request.use(
  */
 api.interceptors.response.use(
     (response) => {
+        // Clean up pending request if it exists
+        if (response.config.metadata?.requestKey) {
+            pendingRequests.delete(response.config.metadata.requestKey);
+        }
+
         // Return standard response data
         return response.data;
     },
     (error) => {
+        // Clean up pending request on error
+        if (error.config?.metadata?.requestKey) {
+            pendingRequests.delete(error.config.metadata.requestKey);
+        }
+
+        // Ignore cancelled duplicate requests
+        if (axios.isCancel(error)) {
+            return Promise.reject({ message: 'Request cancelled', cancelled: true });
+        }
+
         const errorResponse = {
             message: 'An unexpected error occurred',
             statusCode: 500,

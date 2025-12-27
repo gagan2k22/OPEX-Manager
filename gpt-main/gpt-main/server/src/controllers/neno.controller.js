@@ -2,6 +2,7 @@ const prisma = require('../prisma');
 const fs = require('fs');
 const path = require('path');
 const logger = require('../utils/logger');
+const config = require('../config');
 
 const processChat = async (req, res) => {
     const { message } = req.body;
@@ -17,7 +18,7 @@ const processChat = async (req, res) => {
         // 1. Budget Summary Query (New Schema)
         if (lowerMsg.includes('budget') || lowerMsg.includes('total')) {
             const result = await prisma.fYActual.aggregate({
-                where: { financial_year: 'FY25' },
+                where: { financial_year: config.server.defaultFY },
                 _sum: {
                     fy_budget: true,
                     fy_actuals: true
@@ -26,8 +27,9 @@ const processChat = async (req, res) => {
             const budget = result._sum.fy_budget || 0;
             const actuals = result._sum.fy_actuals || 0;
             const variance = budget - actuals;
+            const fy = config.server.defaultFY;
 
-            response.text = `For FY25, the total budget is ${formatINR(budget)}. \n\nDirect Status:\n- Actuals: ${formatINR(actuals)}\n- Variance (Savings): ${formatINR(variance)}`;
+            response.text = `For ${fy}, the total budget is ${formatINR(budget)}. \n\nDirect Status:\n- Actuals: ${formatINR(actuals)}\n- Variance (Savings): ${formatINR(variance)}`;
         }
 
         // 2. Service/UID Master Stats
@@ -74,7 +76,7 @@ const processChat = async (req, res) => {
 
         // Help
         else if (lowerMsg.includes('help')) {
-            response.text = "I am Neno. I can provide FY25 budget summaries, service counts, vendor distribution, and check migration logs.";
+            response.text = `I am Neno. I can provide ${config.server.defaultFY} budget summaries, service counts, vendor distribution, and check migration logs.`;
         }
 
         res.json(response);

@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const config = require('../config');
+const logger = require('../utils/logger');
 
 // 1. Helmet Configuration (Security Headers)
 const helmetConfig = helmet({
@@ -23,28 +24,40 @@ const helmetConfig = helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
 });
 
-// 2. CORS Configuration
+// 2. CORS Configuration - FIXED
 const corsOptions = {
     origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
+        // Log CORS request for debugging
+        logger.info(`CORS check - Origin: ${origin || 'no-origin'}, Env: ${config.env}`);
 
-        // In development, allow all origins
-        if (config.server.env === 'development') {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) {
+            logger.info('CORS: Allowing request with no origin');
+            return callback(null, true);
+        }
+
+        // In development, allow ALL origins
+        if (config.env === 'development') {
+            logger.info(`CORS: Allowing ${origin} (development mode)`);
             return callback(null, true);
         }
 
         // In production, check against allowed origins
         const allowedOrigins = config.cors.origin.split(',').map(o => o.trim());
         if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+            logger.info(`CORS: Allowing ${origin} (matches allowed list)`);
             callback(null, true);
         } else {
+            logger.error(`CORS: Rejecting ${origin} (not in allowed list: ${allowedOrigins.join(', ')})`);
             callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: config.cors.credentials,
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 };
 
 const corsConfig = cors(corsOptions);

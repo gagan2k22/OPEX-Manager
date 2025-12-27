@@ -1,17 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Grid, Card, CardContent, Typography, Paper, CircularProgress } from '@mui/material';
-import { TrendingUp, TrendingDown, AccountBalance, ShoppingCart, Business } from '@mui/icons-material';
-import { FormControl, Select, MenuItem, InputLabel } from '@mui/material';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+    Box,
+    Grid,
+    Typography,
+    Paper,
+    FormControl,
+    Select,
+    MenuItem,
+    InputLabel,
+    Skeleton,
+    Card,
+    CardContent,
+    useTheme
+} from '@mui/material';
+import {
+    AccountBalance,
+    BarChart as BarChartIcon,
+    TrendingUp,
+    TrendingDown,
+    Business
+} from '@mui/icons-material';
+import {
+    LineChart,
+    Line,
+    BarChart,
+    Bar,
+    PieChart,
+    Pie,
+    Cell,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    ResponsiveContainer
+} from 'recharts';
 import api from '../utils/api';
 import {
     pageContainerStyles,
     pageHeaderStyles,
     pageTitleStyles,
-    pageTransitionStyles
+    pageTransitionStyles,
+    metricCardStyles,
+    numericTextStyles
 } from '../styles/commonStyles';
+import { getCurrentFiscalYear } from '../utils/fiscalYearUtils';
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+
+const formatCurrency = (amount) => {
+    if (amount === undefined || amount === null) return '-';
+    return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0
+    }).format(amount);
+};
+
+const formatCurrencyV2 = (amount) => {
+    if (amount === undefined || amount === null) return '-';
+    if (amount >= 10000000) return `₹${(amount / 10000000).toFixed(2)} Cr`;
+    if (amount >= 100000) return `₹${(amount / 100000).toFixed(2)} L`;
+    return formatCurrency(amount);
+};
 
 const Dashboard = () => {
+    const theme = useTheme();
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
         totalBudget: 0,
@@ -27,256 +81,245 @@ const Dashboard = () => {
     const [selectedEntity, setSelectedEntity] = useState('all');
 
     useEffect(() => {
-        fetchEntities();
+        const fetchInitialData = async () => {
+            try {
+                const data = await api.get('/master/po-entities');
+                setEntities(data);
+            } catch (error) {
+                console.error('Error fetching entities:', error);
+            }
+        };
+        fetchInitialData();
     }, []);
 
     useEffect(() => {
+        const fetchDashboardData = async () => {
+            setLoading(true);
+            try {
+                const query = selectedEntity !== 'all' ? `?entityId=${selectedEntity}` : '';
+                const data = await api.get(`/reports/dashboard${query}`);
+                const { summary, towerWise, vendorWise, monthlyTrend } = data;
+
+                setStats({
+                    totalBudget: summary.budget || 0,
+                    totalActual: summary.actuals || 0,
+                    variance: summary.variance || 0,
+                    utilizationPercent: summary.utilization || 0
+                });
+
+                setTowerData(towerWise?.map(it => ({ name: it.tower, budget: parseFloat(it.budget) })) || []);
+                setVendorData(vendorWise?.slice(0, 10).map(it => ({ name: it.vendor, spend: parseFloat(it.actuals) })) || []);
+                setMonthlyTrend(monthlyTrend || []);
+            } catch (error) {
+                console.error('Error fetching dashboard stats:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
         fetchDashboardData();
     }, [selectedEntity]);
 
-    const fetchEntities = async () => {
-        try {
-            const data = await api.get('/master/po-entities');
-            setEntities(data);
-        } catch (error) {
-            console.error('Error fetching entities:', error);
+    const metricItems = [
+        {
+            title: 'Total OPEX Budget',
+            value: formatCurrencyV2(stats.totalBudget),
+            icon: <AccountBalance sx={{ color: 'var(--color-blue-500)' }} />,
+            subtext: `FY ${getCurrentFiscalYear()}`,
+            trend: stats.totalBudget > 0 ? 'Projected' : 'N/A'
+        },
+        {
+            title: 'Actual Consumption',
+            value: formatCurrencyV2(stats.totalActual),
+            icon: <TrendingUp sx={{ color: stats.totalActual > stats.totalBudget ? 'var(--color-red-500)' : 'var(--color-green-500)' }} />,
+            subtext: 'Year to Date',
+            trend: `${stats.utilizationPercent}% Utilized`
+        },
+        {
+            title: 'Budget Variance',
+            value: formatCurrencyV2(stats.variance),
+            icon: <BarChartIcon sx={{ color: stats.variance < 0 ? 'var(--color-red-500)' : 'var(--color-green-500)' }} />,
+            subtext: stats.variance < 0 ? 'Over Budget' : 'Remaining',
+            trend: stats.variance < 0 ? 'Attention Needed' : 'Healthy'
         }
-    };
+    ];
 
-    const fetchDashboardData = async () => {
-        setLoading(true);
-        try {
-            const query = selectedEntity !== 'all' ? `?entityId=${selectedEntity}` : '';
-            const data = await api.get(`/reports/dashboard${query}`);
-            const { summary, towerWise, vendorWise, monthlyTrend } = data;
-
-            setStats({
-                totalBudget: summary.budget,
-                totalActual: summary.actuals,
-                variance: summary.variance,
-                utilizationPercent: summary.utilization
-            });
-
-            setTowerData(towerWise);
-            setVendorData(vendorWise);
-            setMonthlyTrend(monthlyTrend);
-
-            setLoading(false);
-        } catch (error) {
-            console.error('Error fetching dashboard data:', error);
-            setLoading(false);
-        }
-    };
-
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658', '#ff7c7c'];
-
-    const formatCurrency = (value) => {
-        if (value >= 10000000) return `₹${(value / 10000000).toFixed(2)}Cr`;
-        if (value >= 100000) return `₹${(value / 100000).toFixed(2)}L`;
-        return `₹${(value / 1000).toFixed(0)}K`;
-    };
-
-    const StatCard = ({ title, value, icon, trend, color = 'primary' }) => (
-        <Card elevation={2} sx={{ height: '100%', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
-            <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <Box>
-                        <Typography color="text.secondary" gutterBottom variant="body2">
-                            {title}
-                        </Typography>
-                        <Typography variant="h5" component="div" sx={{ fontWeight: 600 }}>
-                            {formatCurrency(value)}
-                        </Typography>
-                        {trend !== undefined && (
-                            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                {trend > 0 ? <TrendingUp color="success" fontSize="small" /> : <TrendingDown color="error" fontSize="small" />}
-                                <Typography variant="caption" color={trend > 0 ? 'success.main' : 'error.main'} sx={{ ml: 0.5 }}>
-                                    {Math.abs(trend).toFixed(1)}%
-                                </Typography>
-                            </Box>
-                        )}
-                    </Box>
-                    <Box sx={{
-                        backgroundColor: `${color}.main`,
-                        borderRadius: 2,
-                        p: 1.5,
-                        color: 'white',
-                        opacity: 0.9
-                    }}>
-                        {icon}
-                    </Box>
-                </Box>
-            </CardContent>
-        </Card>
-    );
-
-    if (loading) {
+    if (loading && towerData.length === 0) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-                <CircularProgress />
+            <Box sx={pageContainerStyles}>
+                <Grid container spacing={3}>
+                    {[1, 2, 3].map((i) => (
+                        <Grid item xs={12} md={4} key={i}>
+                            <Skeleton variant="rectangular" height={140} sx={{ borderRadius: 2 }} />
+                        </Grid>
+                    ))}
+                    <Grid item xs={12} md={8}>
+                        <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
+                    </Grid>
+                </Grid>
             </Box>
         );
     }
 
     return (
-        <Box sx={{ ...pageContainerStyles, ...pageTransitionStyles }}>
-            <Box sx={{ ...pageHeaderStyles, mb: 1 }}>
-                <Typography sx={pageTitleStyles}>
-                    Dashboard Overview
+        <Box sx={pageContainerStyles}>
+            <Box sx={pageHeaderStyles}>
+                <Typography variant="h1" sx={pageTitleStyles}>
+                    Dashboard
                 </Typography>
-                <Box sx={{ minWidth: 200, display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Business sx={{ color: 'text.secondary', fontSize: 20 }} />
-                    <FormControl size="small" sx={{ width: 180 }}>
-                        <Select
-                            value={selectedEntity}
-                            onChange={(e) => setSelectedEntity(e.target.value)}
-                            sx={{
-                                fontSize: '11px',
-                                height: 32,
-                                bgcolor: 'white',
-                                '& .MuiSelect-select': { py: 0.5 }
-                            }}
-                        >
-                            <MenuItem value="all" sx={{ fontSize: '11px' }}>All Entities</MenuItem>
-                            {entities.map(e => (
-                                <MenuItem key={e.id} value={e.entity_name} sx={{ fontSize: '11px' }}>
-                                    {e.entity_name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Box>
+                <FormControl size="small" sx={{ minWidth: 200 }}>
+                    <InputLabel id="entity-select-label">Entity Filter</InputLabel>
+                    <Select
+                        labelId="entity-select-label"
+                        id="entity-select"
+                        value={selectedEntity}
+                        label="Entity Filter"
+                        onChange={(e) => setSelectedEntity(e.target.value)}
+                        sx={{ bgcolor: 'white' }}
+                    >
+                        <MenuItem value="all">All Entities</MenuItem>
+                        {entities.map((entity) => (
+                            <MenuItem key={entity.id} value={entity.id}>
+                                {entity.entity_name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
             </Box>
 
-            {/* Stats Cards */}
-            <Grid container spacing={3} sx={{ mb: 4 }}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <StatCard
-                        title="Total Budget"
-                        value={stats.totalBudget}
-                        icon={<AccountBalance />}
-                        color="primary"
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <StatCard
-                        title="Total Actuals"
-                        value={stats.totalActual}
-                        icon={<TrendingUp />}
-                        trend={stats.utilizationPercent - 100}
-                        color="success"
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <StatCard
-                        title="Variance"
-                        value={stats.variance}
-                        icon={<TrendingDown />}
-                        color="warning"
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card elevation={2}>
-                        <CardContent>
-                            <Typography color="text.secondary" gutterBottom variant="body2">
-                                Budget Utilization
-                            </Typography>
-                            <Typography variant="h5" component="div" sx={{ fontWeight: 600 }}>
-                                {stats.utilizationPercent.toFixed(1)}%
-                            </Typography>
-                            <Box sx={{ mt: 1 }}>
-                                <ShoppingCart color="primary" />
+            <Grid container spacing={3} sx={pageTransitionStyles}>
+                {/* Metric Cards */}
+                {metricItems.map((item, index) => (
+                    <Grid item xs={12} md={4} key={index}>
+                        <Paper sx={metricCardStyles}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 600 }}>
+                                    {item.title}
+                                </Typography>
+                                {item.icon}
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
-
-            {/* Charts */}
-            <Grid container spacing={3}>
-                {/* Tower-wise Budget vs Actual */}
-                <Grid item xs={12} lg={6}>
-                    <Paper elevation={2} sx={{ p: 3, height: '400px' }}>
-                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-                            Tower-wise Budget vs Actual
-                        </Typography>
-                        <ResponsiveContainer width="100%" height="90%">
-                            <BarChart data={towerData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-                                <YAxis tickFormatter={formatCurrency} />
-                                <Tooltip formatter={(value) => formatCurrency(value)} />
-                                <Legend />
-                                <Bar dataKey="budget" fill="#8884d8" name="Budget" />
-                                <Bar dataKey="actuals" fill="#82ca9d" name="Actuals" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </Paper>
-                </Grid>
-
-                {/* Vendor-wise Spend (Top 10) */}
-                <Grid item xs={12} lg={6}>
-                    <Paper elevation={2} sx={{ p: 3, height: '400px' }}>
-                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-                            Top 10 Vendors by Spend
-                        </Typography>
-                        <ResponsiveContainer width="100%" height="90%">
-                            <BarChart data={vendorData} layout="vertical">
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis type="number" tickFormatter={formatCurrency} />
-                                <YAxis dataKey="name" type="category" width={150} />
-                                <Tooltip formatter={(value) => formatCurrency(value)} />
-                                <Legend />
-                                <Bar dataKey="spend" fill="#0088FE" name="Spend" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </Paper>
-                </Grid>
-
-                {/* Tower Distribution Pie Chart */}
-                <Grid item xs={12} lg={4}>
-                    <Paper elevation={2} sx={{ p: 3, height: '400px' }}>
-                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-                            Tower Budget Distribution
-                        </Typography>
-                        <ResponsiveContainer width="100%" height="90%">
-                            <PieChart>
-                                <Pie
-                                    data={towerData}
-                                    cx="50%"
-                                    cy="50%"
-                                    labelLine={false}
-                                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    dataKey="budget"
-                                >
-                                    {towerData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip formatter={(value) => formatCurrency(value)} />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </Paper>
-                </Grid>
+                            <Typography sx={numericTextStyles}>
+                                {item.value}
+                            </Typography>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, alignItems: 'center' }}>
+                                <Typography variant="caption" color="text.secondary">
+                                    {item.subtext}
+                                </Typography>
+                                <Typography variant="caption" sx={{
+                                    fontWeight: 700,
+                                    color: item.trend === 'Attention Needed' ? 'error.main' : 'success.main'
+                                }}>
+                                    {item.trend}
+                                </Typography>
+                            </Box>
+                        </Paper>
+                    </Grid>
+                ))}
 
                 {/* Monthly Trend */}
                 <Grid item xs={12} lg={8}>
-                    <Paper elevation={2} sx={{ p: 3, height: '400px' }}>
-                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+                    <Paper sx={{ ...metricCardStyles, p: 3, height: 450 }}>
+                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, color: 'var(--color-slate-800)' }}>
                             Monthly Spend Trend
                         </Typography>
-                        <ResponsiveContainer width="100%" height="90%">
-                            <LineChart data={monthlyTrend}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="month" />
-                                <YAxis tickFormatter={formatCurrency} />
-                                <Tooltip formatter={(value) => formatCurrency(value)} />
-                                <Legend />
-                                <Line type="monotone" dataKey="amount" stroke="#82ca9d" strokeWidth={2} name="Actuals" />
-                            </LineChart>
-                        </ResponsiveContainer>
+                        <Box sx={{ height: 350, mt: 2 }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={monthlyTrend}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                                    <XAxis
+                                        dataKey="month"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fontSize: 12, fill: '#64748B' }}
+                                    />
+                                    <YAxis
+                                        tickFormatter={(v) => `₹${(v / 100000).toFixed(0)}L`}
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fontSize: 12, fill: '#64748B' }}
+                                    />
+                                    <Tooltip
+                                        formatter={(value) => [formatCurrency(value), 'Spend']}
+                                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                    />
+                                    <Legend />
+                                    <Line
+                                        type="monotone"
+                                        dataKey="amount"
+                                        stroke="var(--color-blue-600)"
+                                        strokeWidth={3}
+                                        dot={{ r: 4, fill: 'var(--color-blue-600)' }}
+                                        activeDot={{ r: 6, strokeWidth: 0 }}
+                                        name="Actual Spend"
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </Box>
+                    </Paper>
+                </Grid>
+
+                {/* Tower Distribution */}
+                <Grid item xs={12} lg={4}>
+                    <Paper sx={{ ...metricCardStyles, p: 3, height: 450 }}>
+                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, color: 'var(--color-slate-800)' }}>
+                            Budget by Tower
+                        </Typography>
+                        <Box sx={{ height: 350, mt: 2 }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={towerData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={60}
+                                        outerRadius={100}
+                                        paddingAngle={5}
+                                        dataKey="budget"
+                                    >
+                                        {towerData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip formatter={(value) => formatCurrency(value)} />
+                                    <Legend verticalAlign="bottom" height={36} />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </Box>
+                    </Paper>
+                </Grid>
+
+                {/* Vendor Spend */}
+                <Grid item xs={12}>
+                    <Paper sx={{ ...metricCardStyles, p: 3, height: 450 }}>
+                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, color: 'var(--color-slate-800)' }}>
+                            Top Vendors (By Actual Spend)
+                        </Typography>
+                        <Box sx={{ height: 350, mt: 2 }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={vendorData}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                                    <XAxis
+                                        dataKey="name"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fontSize: 11, fill: '#64748B' }}
+                                    />
+                                    <YAxis
+                                        tickFormatter={(v) => `₹${(v / 100000).toFixed(0)}L`}
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fontSize: 12, fill: '#64748B' }}
+                                    />
+                                    <Tooltip
+                                        formatter={(value) => [formatCurrency(value), 'Spend']}
+                                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                    />
+                                    <Bar dataKey="spend" fill="var(--color-blue-500)" radius={[4, 4, 0, 0]} barSize={40} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </Box>
                     </Paper>
                 </Grid>
             </Grid>

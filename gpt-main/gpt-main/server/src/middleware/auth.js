@@ -6,10 +6,11 @@
 const jwt = require('jsonwebtoken');
 const prisma = require('../prisma');
 const config = require('../config');
+const cache = require('../utils/cache');
 const { AuthenticationError, AuthorizationError } = require('./errorHandler');
 
 /**
- * Verify JWT Token Middleware
+ * Verify JWT Token Middleware (Optimized with Caching)
  */
 const authenticate = async (req, res, next) => {
     try {
@@ -24,39 +25,72 @@ const authenticate = async (req, res, next) => {
         }
 
         if (!token) {
+            console.log('[AUTH DEBUG] No token found in request');
+            console.log('[AUTH DEBUG] Headers:', req.headers.authorization);
+            console.log('[AUTH DEBUG] Cookies:', req.cookies);
             throw new AuthenticationError('Please log in to access this resource');
         }
+
+        console.log('[AUTH DEBUG] Token found:', token.substring(0, 20) + '...');
 
         // 2. Verify token
         const decoded = jwt.verify(token, config.jwt.secret);
 
-        // 3. Check if user still exists
-        const currentUser = await prisma.user.findUnique({
-            where: { id: decoded.id },
-            include: {
-                roles: {
-                    include: {
-                        role: true // Include nested Role model to get the name
+        // 3. Check cache first to avoid DB query
+        const cacheKey = `user:${decoded.id}:${decoded.sessionId || 'default'}`;
+        let currentUser = await cache.get(cacheKey);
+
+        if (!currentUser) {
+            // Cache miss - fetch from database
+            currentUser = await prisma.user.findUnique({
+                where: { id: decoded.id },
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    is_active: true,
+                    currentSessionId: true,
+                    passwordChangedAt: true,
+                    roles: {
+                        select: {
+                            role: {
+                                select: {
+                                    name: true
+                                }
+                            }
+                        }
                     }
-                }
-            },
-        });
+                },
+            });
+
+            if (currentUser) {
+                // Cache user data for 5 minutes (300 seconds)
+                await cache.set(cacheKey, currentUser, 300);
+            }
+        }
 
         if (!currentUser) {
             throw new AuthenticationError('The user belonging to this token no longer exists');
         }
 
-        // 4. Single session enforcement
-        // If the token has a sessionId, it must match the one stored in the DB
+        // 4. Check if user is active
+        if (!currentUser.is_active) {
+            throw new AuthenticationError('Account is disabled');
+        }
+
+        // 5. Single session enforcement
         if (decoded.sessionId && currentUser.currentSessionId !== decoded.sessionId) {
+            // Invalidate cache on session mismatch
+            await cache.del(cacheKey);
             throw new AuthenticationError('Your session has ended because you logged in from another device or browser.');
         }
 
-        // 4. Check if user changed password after the token was issued
-        // Note: Add passwordChangedAt field to User model if not present
+        // 6. Check if user changed password after the token was issued
         if (currentUser.passwordChangedAt) {
             const changedTimestamp = parseInt(currentUser.passwordChangedAt.getTime() / 1000, 10);
             if (changedTimestamp > decoded.iat) {
+                // Invalidate cache on password change
+                await cache.del(cacheKey);
                 throw new AuthenticationError('User recently changed password! Please log in again.');
             }
         }
@@ -71,7 +105,7 @@ const authenticate = async (req, res, next) => {
         currentUser.roles = roleNames;
         currentUser.roleNames = roleNames;
 
-        // 5. Grant access to protected route
+        // 7. Grant access to protected route
         req.user = currentUser;
         next();
     } catch (err) {

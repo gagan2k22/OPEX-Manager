@@ -1,11 +1,13 @@
 const reportsService = require('../services/reports.service');
+const config = require('../config');
 
 const getDashboardStats = async (req, res) => {
     try {
         const { entityId } = req.query;
-        const summary = await reportsService.getDashboardSummary('FY25', entityId);
-        const towerWise = await reportsService.getTowerWiseReport('FY25', entityId);
-        const vendorWise = await reportsService.getVendorWiseReport('FY25', entityId);
+        const fy = config.server.defaultFY;
+        const summary = await reportsService.getDashboardSummary(fy, entityId);
+        const towerWise = await reportsService.getTowerWiseReport(fy, entityId);
+        const vendorWise = await reportsService.getVendorWiseReport(fy, entityId);
         const monthlyTrend = await reportsService.getMonthlyTrend(entityId);
 
         res.json({
