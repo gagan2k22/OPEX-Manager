@@ -1405,3 +1405,146 @@
 {"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 22:04:37"}
 {"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 22:04:37"}
 {"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 22:04:37"}
+{"level":"info","message":"Cache is disabled or using in-memory cache only","service":"opex-api","timestamp":"2025-12-27 22:05:24"}
+{"level":"info","message":"Server running in development mode on port 5000","service":"opex-api","timestamp":"2025-12-27 22:05:25"}
+{"level":"info","message":"Database connection verified successfully.","service":"opex-api","timestamp":"2025-12-27 22:05:26"}
+{"level":"info","message":"Cron jobs initialized","service":"opex-api","timestamp":"2025-12-27 22:05:26"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:36"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:36"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:36"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:36"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Route /api/expenses not found',\n  statusCode: 404,\n  method: 'GET',\n  url: '/api/expenses',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/fiscal-years',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/cost-centers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/expense-categories',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/vendors',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:48"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:51"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:51"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:51"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:22:51"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:22:51"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:22:51"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:23:13"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:23:13"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:23:13"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:23:13"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:23:13"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:23:13"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:23:13"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:23:13"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:23:13"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:23:13"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:23:13"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:23:13"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:23:15"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:23:15"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:23:15"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:23:15"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:23:15"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/tracker?page=0&pageSize=50',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:23:15"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:23:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:23:35"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:23:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:23:35"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:23:35"}
+{"level":"warn","message":"API Warning (Client): {\n  message: 'Your session has ended because you logged in from another device or browser.',\n  statusCode: 401,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:23:35"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:23:51"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:23:51"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:23:51"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:23:53"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:23:53"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/budgets/boa-allocation',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:23:53"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:24:16"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:24:16"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:24:16"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:24:41"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:24:41"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:24:41"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:25:16"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:25:16"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:25:16"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:25:16"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:25:16"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:25:16"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:32:58"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:32:58"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:33:00"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:33:00"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/towers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:33:00"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:33:03"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:33:03"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:33:03"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:33:04"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:33:04"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/allocation-types',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:33:04"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:33:04"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:33:04"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/allocation-bases',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:33:04"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:33:06"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:33:06"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:33:06"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:33:09"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:33:09"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/services',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:33:09"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:33:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:33:10"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/budget-heads',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:33:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:33:12"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:33:12"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/towers',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:33:12"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:33:13"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:33:13"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:33:13"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:33:14"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:33:14"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/allocation-types',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:33:14"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:35:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:35:10"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:35:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:35:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:35:10"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:35:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:35:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:35:10"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:35:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:35:10"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:35:10"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:35:10"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:36:59"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:36:59"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:36:59"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:36:59"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:36:59"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:36:59"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:36:59"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:36:59"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/master/po-entities',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:36:59"}
+{"level":"info","message":"CORS check - Origin: no-origin, Env: development","service":"opex-api","timestamp":"2025-12-27 22:36:59"}
+{"level":"info","message":"CORS: Allowing request with no origin","service":"opex-api","timestamp":"2025-12-27 22:36:59"}
+{"level":"error","message":"API Error (Internal): {\n  message: \"Cannot read properties of undefined (reading 'name')\",\n  statusCode: 500,\n  method: 'GET',\n  url: '/api/reports/dashboard',\n  ip: '::1',\n  userId: undefined,\n  stack: undefined\n}","service":"opex-api","timestamp":"2025-12-27 22:36:59"}
