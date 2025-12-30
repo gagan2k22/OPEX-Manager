@@ -3,14 +3,11 @@ import { useOutletContext } from 'react-router-dom';
 import {
     Box, Typography, Button, Snackbar, Alert, IconButton, CircularProgress,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField,
-    Autocomplete
+    Autocomplete, Select, MenuItem, FormControl, InputLabel
 } from '@mui/material';
 import { DataGrid, GridToolbar, GridActionsCellItem } from '@mui/x-data-grid';
-import {
-    CloudUpload as CloudUploadIcon,
-    Delete as DeleteIcon,
-    Add as AddIcon,
-} from '@mui/icons-material';
+import { UploadFile, Download, Edit, Delete, Timeline, CompareArrows } from '@mui/icons-material';
+import { pageContainerStyles, pageHeaderStyles, pageTitleStyles } from '../styles/commonStyles';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -37,17 +34,21 @@ const BudgetList = () => {
     const { user } = useAuth();
     const isAdmin = user?.roles?.includes('Admin');
 
-    const [data, setData] = useState([]);
-    const [totalCount, setTotalCount] = useState(0);
+    const [rows, setRows] = useState([]);
+    const [totalRows, setTotalRows] = useState(0);
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
+
     // Pagination removed for full table view
     // const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 15 });
+
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [rowToDelete, setRowToDelete] = useState(null);
     const [addDialogOpen, setAddDialogOpen] = useState(false);
     const [newEntry, setNewEntry] = useState({});
+
+    // Master Data Options
     const [budgetHeads, setBudgetHeads] = useState([]);
     const [towers, setTowers] = useState([]);
     const [poEntities, setPoEntities] = useState([]);
@@ -55,12 +56,116 @@ const BudgetList = () => {
     const [allocBases, setAllocBases] = useState([]);
     const [currencyRates, setCurrencyRates] = useState({});
 
+    // Multi-Year Management
+    const [selectedFY, setSelectedFY] = useState('FY2024');
+    const fiscalYears = ['FY2024', 'FY2025', 'FY2026'];
+
+    // UID Check Status
+    const [uidStatus, setUidStatus] = useState('idle'); // idle, checking, available, taken
+
+    // Comparison Feature
+    const [compareOpen, setCompareOpen] = useState(false);
+    // Default for Users: Last (FY23) vs Current (FY24)
+    const [compareYear1, setCompareYear1] = useState('FY2023');
+    const [compareYear2, setCompareYear2] = useState('FY2024');
+    const [compareRows, setCompareRows] = useState([]);
+    const [compareLoading, setCompareLoading] = useState(false);
+
+    // Debounced UID check
+    useEffect(() => {
+        const checkUID = async () => {
+            const uid = newEntry.uid;
+            if (!uid || uid.length < 5 || !addDialogOpen) {
+                setUidStatus('idle');
+                return;
+            }
+            setUidStatus('checking');
+            try {
+                const res = await api.get(`/budgets/tracker/check-uid/${encodeURIComponent(uid)}`);
+                setUidStatus(res.data.exists ? 'taken' : 'available');
+            } catch (e) {
+                console.error(e);
+                setUidStatus('idle');
+            }
+        };
+        const timer = setTimeout(checkUID, 500);
+        return () => clearTimeout(timer);
+    }, [newEntry.uid, addDialogOpen]);
+
+    const handleCompareClick = async () => {
+        setCompareOpen(true);
+        // Fetch handled by effect
+    };
+
+    const fetchComparison = async () => {
+        setCompareLoading(true);
+        try {
+            const [res1, res2] = await Promise.all([
+                api.get(`/budgets/tracker?page=0&pageSize=10000&fy=${compareYear1}`),
+                api.get(`/budgets/tracker?page=0&pageSize=10000&fy=${compareYear2}`)
+            ]);
+
+            const rows1 = res1.data.rows || [];
+            const rows2 = res2.data.rows || [];
+
+            // Map by UID (Unique Identifier)
+            const map = new Map();
+
+            rows1.forEach(r => {
+                map.set(r.uid, {
+                    id: r.uid, // Use UID as ID for comparison grid
+                    uid: r.uid,
+                    vendor: r.vendor,
+                    description: r.description,
+                    budget1: r.fy_budget || 0,
+                    actual1: r.fy_actuals || 0,
+                    budget2: 0,
+                    actual2: 0,
+                    currency: r.currency // Assuming currency stable, or take from r
+                });
+            });
+
+            rows2.forEach(r => {
+                const existing = map.get(r.uid) || {
+                    id: r.uid,
+                    uid: r.uid,
+                    vendor: r.vendor,
+                    description: r.description,
+                    budget1: 0,
+                    actual1: 0,
+                    currency: r.currency
+                };
+                existing.budget2 = r.fy_budget || 0;
+                existing.actual2 = r.fy_actuals || 0;
+                map.set(r.uid, existing);
+            });
+
+            setCompareRows(Array.from(map.values()));
+        } catch (e) {
+            console.error("Comparison fetch failed", e);
+            showSnackbar("Failed to fetch comparison data", "error");
+        } finally {
+            setCompareLoading(false);
+        }
+    };
+
+    // Effect to re-fetch comparison if years change while dialog is open or admin status changes
+    useEffect(() => {
+        if (compareOpen) {
+            // If not admin, force comparison years to FY2023 and FY2024
+            if (!isAdmin) {
+                setCompareYear1('FY2023');
+                setCompareYear2('FY2024');
+            }
+            fetchComparison();
+        }
+    }, [compareOpen, compareYear1, compareYear2, isAdmin]);
+
     // Fetch currency rates globally
     useEffect(() => {
         api.get('/master/currencies')
             .then(response => {
                 const map = {};
-                // Handle response format variations
                 const rates = Array.isArray(response) ? response : response.data || [];
                 rates.forEach(c => map[c.code] = c.rate);
                 setCurrencyRates(map);
@@ -71,7 +176,6 @@ const BudgetList = () => {
     // Helper to Convert to INR
     const toINR = (amount, currencyCode) => {
         if (!amount) return 0;
-        // Default to 1 (INR) if currency is missing or invalid
         const rate = currencyRates[currencyCode] || 1;
         return amount * rate;
     };
@@ -98,23 +202,27 @@ const BudgetList = () => {
     useEffect(() => {
         if (triggerAddEntry) {
             setAddDialogOpen(true);
+            setNewEntry({}); // Clear form on new add
+            setUidStatus('idle'); // Reset UID status
             setTriggerAddEntry(false); // Reset trigger
         }
     }, [triggerAddEntry, setTriggerAddEntry]);
 
     useEffect(() => {
         fetchTrackerData();
-    }, [searchQuery]);
+    }, [searchQuery, selectedFY]);
 
     const fetchTrackerData = async () => {
         setLoading(true);
         try {
-            // Fetch all data (up to 10000 limit) to simulate "no limit"
-            const result = await api.get(`/budgets/tracker?page=0&pageSize=10000&search=${searchQuery}`);
-            setData(result.rows || []);
-            setTotalCount(result.totalCount || 0);
+            // Admin can see selected FY. Users see Default (handled by backend or forced here)
+            const fyParam = isAdmin ? selectedFY : 'FY2024';
+            const result = await api.get(`/budgets/tracker?page=0&pageSize=10000&search=${searchQuery}&fy=${fyParam}`);
+            setRows(result.rows || []);
+            setTotalRows(result.totalCount || 0);
         } catch (error) {
             console.error('Fetch error:', error);
+            showSnackbar('Failed to fetch data', 'error');
         } finally {
             setLoading(false);
         }
@@ -130,6 +238,11 @@ const BudgetList = () => {
 
         const formData = new FormData();
         formData.append('file', file);
+        if (isAdmin) {
+            formData.append('fy', selectedFY);
+        } else {
+            formData.append('fy', 'FY2024'); // Default for non-admins
+        }
 
         setUploading(true);
         try {
@@ -155,10 +268,11 @@ const BudgetList = () => {
         if (!rowToDelete) return;
         try {
             console.log('Deleting row:', rowToDelete);
-            await api.delete(`/budgets/tracker/${rowToDelete}`);
-            // Use loose comparison to match number vs string ID
-            setData(prev => prev.filter(r => r.id != rowToDelete));
+            const params = isAdmin ? { params: { fy: selectedFY } } : { params: { fy: 'FY2024' } };
+            await api.delete(`/budgets/tracker/${rowToDelete}`, params);
+            setRows(prev => prev.filter(r => r.id != rowToDelete));
             showSnackbar('Deleted successfully');
+            fetchTrackerData();
         } catch (error) {
             console.error('Delete failed:', error);
             const msg = error.response?.data?.detail || error.response?.data?.message || error.message || 'Unknown error';
@@ -170,18 +284,25 @@ const BudgetList = () => {
     };
 
     const handleAddSubmit = async () => {
-        // Validate required fields
         if (!newEntry.uid || !newEntry.vendor || !newEntry.description) {
             window.alert('Please update the information to add the budget');
             return;
         }
+        if (uidStatus === 'taken' || uidStatus === 'checking') {
+            window.alert('Please resolve UID issue before adding.');
+            return;
+        }
 
         try {
-            await api.post('/budgets/tracker', newEntry);
-            showSnackbar('Entry created successfully');
+            const payload = { ...newEntry };
+            const params = isAdmin ? { params: { fy: selectedFY } } : { params: { fy: 'FY2024' } };
+
+            const response = await api.post('/budgets/tracker', payload, params);
+            setRows([...rows, { ...newEntry, id: response.data.id, fy_budget: newEntry.budget || 0, fy_actuals: newEntry.actuals || 0 }]);
+            fetchTrackerData();
             setAddDialogOpen(false);
             setNewEntry({});
-            fetchTrackerData();
+            showSnackbar('Entry created successfully');
         } catch (error) {
             console.error('Create failed:', error);
             const msg = error.response?.data?.detail || error.message;
@@ -193,25 +314,15 @@ const BudgetList = () => {
         setNewEntry(prev => ({ ...prev, [field]: value }));
     };
 
-    const columns = [
+    const columns = useMemo(() => [
         {
             field: 'sr_no',
             headerName: 'Sr. No',
             width: 70,
             filterable: false,
             sortable: false,
-            // Calculate sequential index (1-based)
-            valueGetter: (params) => {
-                // Fallback if APIs are tricky, but mostly this works.
-                // Actually valueGetter params are different in v6. It receives (value, row).
-                // It does NOT receive 'api' or 'index' directly in v6 signature (value, row).
-                // So we must use renderCell or modify data source.
-                return null;
-            },
             renderCell: (params) => params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
-            align: 'center',
-            headerAlign: 'center',
-            pinned: 'left'
+            align: 'center', headerAlign: 'center', pinned: 'left'
         },
         { field: 'uid', headerName: 'UID', width: 100, pinned: 'left', editable: isAdmin, align: 'left', headerAlign: 'left' },
         { field: 'parent_uid', headerName: 'Parent UID', width: 90, editable: isAdmin, align: 'left', headerAlign: 'left' },
@@ -258,7 +369,6 @@ const BudgetList = () => {
         { field: 'remarks', headerName: 'Remarks', width: 120, editable: isAdmin, align: 'left', headerAlign: 'left' },
         {
             field: 'variance', headerName: 'Variance (INR)', width: 110, type: 'number',
-            // Auto-calculate variance from Budget - Actuals (Converted)
             valueGetter: (value, row) => {
                 const b = toINR(row.fy_budget, row.currency);
                 const a = toINR(row.fy_actuals, row.currency);
@@ -278,23 +388,28 @@ const BudgetList = () => {
             align: 'right', headerAlign: 'right'
         },
         {
-            field: 'actions', type: 'actions', headerName: 'Actions', width: 80,
-            getActions: (params) => {
-                if (!isAdmin) return [];
-                return [
+            field: 'actions',
+            type: 'actions',
+            headerName: 'Actions',
+            width: 120,
+            getActions: (params) => [
+                // Edit/Delete (Admin Only)
+                ...(isAdmin ? [
                     <GridActionsCellItem
-                        key="delete"
-                        icon={<DeleteIcon color="error" />}
+                        icon={<Edit />}
+                        label="Edit"
+                        onClick={() => { }}
+                        showInMenu
+                    />,
+                    <GridActionsCellItem
+                        icon={<Delete />}
                         label="Delete"
                         onClick={() => handleDeleteRow(params.id)}
-                        showInMenu={false}
                     />
-                ];
-            }
+                ] : [])
+            ]
         }
-    ];
-
-
+    ], [budgetHeads, towers, poEntities, allocTypes, allocBases, currencyRates, isAdmin]);
 
     return (
         <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#fff', overflow: 'hidden' }}>
@@ -302,12 +417,35 @@ const BudgetList = () => {
                 <Typography sx={{ fontWeight: 800, color: '#1a237e', fontSize: '1rem' }}>
                     BUDGET TRACKER
                 </Typography>
-                <Box>
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        startIcon={<CompareArrows />}
+                        onClick={handleCompareClick}
+                        sx={{ textTransform: 'none' }}
+                    >
+                        Compare Years
+                    </Button>
+                    {isAdmin && (
+                        <FormControl size="small" sx={{ minWidth: 110 }}>
+                            <InputLabel>View FY</InputLabel>
+                            <Select
+                                value={selectedFY}
+                                label="View FY"
+                                onChange={(e) => setSelectedFY(e.target.value)}
+                            >
+                                {fiscalYears.map((fy) => (
+                                    <MenuItem key={fy} value={fy}>{fy}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    )}
                     <Button
                         variant="contained"
                         size="small"
                         component="label"
-                        startIcon={uploading ? <CircularProgress size={16} color="inherit" /> : <CloudUploadIcon />}
+                        startIcon={uploading ? <CircularProgress size={16} color="inherit" /> : <UploadFile />}
                         disabled={uploading}
                         sx={{ textTransform: 'none', borderRadius: 1.5, fontSize: '0.75rem', py: 0.5 }}
                     >
@@ -319,22 +457,17 @@ const BudgetList = () => {
 
             <Box sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
                 <DataGrid
-                    rows={data}
+                    rows={rows}
                     columns={columns}
-                    rowCount={totalCount}
+                    rowCount={totalRows}
                     loading={loading}
                     hideFooter
-                    // Pagination props removed to avoid MIT limit error for pages > 100
-                    // pageSizeOptions={[100, 500, 1000, 5000]}
-                    // paginationModel={paginationModel}
-                    // paginationMode="server"
-                    // onPaginationModelChange={setPaginationModel}
                     processRowUpdate={async (newRow, oldRow) => {
                         if (!isAdmin) return oldRow;
                         try {
-                            const updatedRow = await api.put(`/budgets/tracker/${newRow.id}`, newRow);
+                            const params = { params: { fy: selectedFY } };
+                            const updatedRow = await api.put(`/budgets/tracker/${newRow.id}`, newRow, params);
                             showSnackbar('Entry updated successfully');
-                            // Refresh data from server to ensure we have the latest state
                             await fetchTrackerData();
                             return { ...newRow, ...updatedRow };
                         } catch (error) {
@@ -404,12 +537,11 @@ const BudgetList = () => {
                     </DialogContentText>
                     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, mt: 1 }}>
                         {['uid', 'parent_uid', 'vendor', 'description', 'budget_head', 'tower', 'contract', 'po_entity', 'allocation_basis', 'initiative_type', 'service_type', 'currency', 'remarks'].map(field => {
-                            // Define options map
                             const dropdownOptions = {
                                 budget_head: budgetHeads,
                                 tower: towers,
                                 po_entity: poEntities,
-                                service_type: allocTypes,     // Mapped to Allocation Type
+                                service_type: allocTypes,
                                 allocation_basis: allocBases
                             };
 
@@ -418,7 +550,6 @@ const BudgetList = () => {
                                     <Autocomplete
                                         key={field}
                                         options={dropdownOptions[field]}
-                                        // Strict selection: freeSolo not set (default false)
                                         value={newEntry[field] || ''}
                                         onChange={(event, newValue) => handleInputChange(field, newValue)}
                                         renderInput={(params) => (
@@ -440,6 +571,15 @@ const BudgetList = () => {
                                     onChange={(e) => handleInputChange(field, e.target.value)}
                                     size="small"
                                     fullWidth
+                                    error={field === 'uid' && uidStatus === 'taken'}
+                                    helperText={
+                                        field === 'uid' ? (
+                                            uidStatus === 'checking' ? 'Checking...' :
+                                                uidStatus === 'taken' ? 'UID already exists!' :
+                                                    uidStatus === 'available' ? 'UID Available' : ''
+                                        ) : ''
+                                    }
+                                    color={field === 'uid' && uidStatus === 'available' ? 'success' : undefined}
                                 />
                             );
                         })}
@@ -452,7 +592,70 @@ const BudgetList = () => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setAddDialogOpen(false)}>Cancel</Button>
-                    <Button onClick={handleAddSubmit} variant="contained">Create</Button>
+                    <Button onClick={handleAddSubmit} variant="contained" disabled={uidStatus === 'taken' || uidStatus === 'checking'}>Add Entry</Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={compareOpen} onClose={() => setCompareOpen(false)} maxWidth="xl" fullWidth>
+                <DialogTitle>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        Comparison Analysis
+                        {isAdmin ? (
+                            <>
+                                <FormControl size="small" sx={{ width: 120 }}>
+                                    <Select value={compareYear1} onChange={(e) => setCompareYear1(e.target.value)}>
+                                        {fiscalYears.map(fy => <MenuItem key={fy} value={fy}>{fy}</MenuItem>)}
+                                    </Select>
+                                </FormControl>
+                                <CompareArrows />
+                                <FormControl size="small" sx={{ width: 120 }}>
+                                    <Select value={compareYear2} onChange={(e) => setCompareYear2(e.target.value)}>
+                                        {fiscalYears.map(fy => <MenuItem key={fy} value={fy}>{fy}</MenuItem>)}
+                                    </Select>
+                                </FormControl>
+                            </>
+                        ) : (
+                            <Typography variant="subtitle1" sx={{ ml: 2, fontWeight: 'bold' }}>
+                                {compareYear1} vs {compareYear2}
+                            </Typography>
+                        )}
+                    </Box>
+                </DialogTitle>
+                <DialogContent sx={{ height: '80vh' }}>
+                    <DataGrid
+                        rows={compareRows}
+                        loading={compareLoading}
+                        density="compact"
+                        columns={[
+                            { field: 'uid', headerName: 'UID', width: 120 },
+                            { field: 'vendor', headerName: 'Vendor', width: 150 },
+                            {
+                                field: 'budget1', headerName: `${compareYear1} Budget`, width: 120, type: 'number',
+                                valueGetter: (v, r) => toINR(v, r.currency), valueFormatter: (v) => formatCurrency(v)
+                            },
+                            {
+                                field: 'actual1', headerName: `${compareYear1} Actual`, width: 120, type: 'number',
+                                valueGetter: (v, r) => toINR(v, r.currency), valueFormatter: (v) => formatCurrency(v)
+                            },
+                            {
+                                field: 'budget2', headerName: `${compareYear2} Budget`, width: 120, type: 'number',
+                                valueGetter: (v, r) => toINR(v, r.currency), valueFormatter: (v) => formatCurrency(v)
+                            },
+                            {
+                                field: 'actual2', headerName: `${compareYear2} Actual`, width: 120, type: 'number',
+                                valueGetter: (v, r) => toINR(v, r.currency), valueFormatter: (v) => formatCurrency(v)
+                            },
+                            {
+                                field: 'diff_budget', headerName: 'Budget Diff', width: 120, type: 'number',
+                                valueGetter: (v, r) => toINR(r.budget2 - r.budget1, r.currency),
+                                valueFormatter: (v) => formatCurrency(v),
+                                cellClassName: (params) => params.value > 0 ? 'negative-variance' : 'positive-variance'
+                            }
+                        ]}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setCompareOpen(false)}>Close</Button>
                 </DialogActions>
             </Dialog>
         </Box>

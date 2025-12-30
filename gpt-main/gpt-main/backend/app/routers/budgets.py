@@ -59,6 +59,10 @@ async def get_tracker(
             )
         )
     
+    # Filter by FY: Only show services that have an entry for this FY
+    # This satisfies "UID will manage only creating year data onwords"
+    query = query.filter(ServiceMaster.financials.any(FYFinancials.fy == fy))
+    
     total = query.count()
     services = query.offset(page * pageSize).limit(pageSize).all()
     
@@ -182,7 +186,8 @@ async def update_budget(
     service_id: int, 
     data: BudgetUpdate, 
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    fy: str = settings.DEFAULT_FY
 ):
     service = db.query(ServiceMaster).filter(ServiceMaster.id == service_id).first()
     if not service:
@@ -220,10 +225,11 @@ async def update_budget(
                 setattr(service, key, value)
     
     # Update financial
+    # Update financial
     if data.budget is not None or data.actuals is not None:
-        financial = db.query(FYFinancials).filter_by(service_id=service_id, fy=settings.DEFAULT_FY).first()
+        financial = db.query(FYFinancials).filter_by(service_id=service_id, fy=fy).first()
         if not financial:
-            financial = FYFinancials(service_id=service_id, fy=settings.DEFAULT_FY)
+            financial = FYFinancials(service_id=service_id, fy=fy)
             db.add(financial)
             
         if data.budget is not None and financial.budget != data.budget:
@@ -268,7 +274,8 @@ async def update_budget(
 async def create_budget_entry(
     data: BudgetCreate, 
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    fy: str = settings.DEFAULT_FY
 ):
     # Check duplicate UID
     existing = db.query(ServiceMaster).filter(ServiceMaster.uid == data.uid).first()
@@ -306,7 +313,7 @@ async def create_budget_entry(
 
     financial = FYFinancials(
         service_id=service.id,
-        fy=settings.DEFAULT_FY,
+        fy=fy,
         budget=data.budget or 0.0,
         actuals=data.actuals or 0.0
     )
@@ -464,3 +471,28 @@ async def export_boa(
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
+
+@router.get("/tracker/check-uid/{uid}")
+async def check_uid_availability(uid: str, db: Session = Depends(get_db)):
+    """Check if UID exists"""
+    exists = db.query(ServiceMaster).filter(ServiceMaster.uid == uid).first() is not None
+    return {"exists": exists}
+
+@router.get("/tracker/history/{service_id}")
+async def get_uid_history(service_id: int, db: Session = Depends(get_db)):
+    """Get financial history for a service across all years"""
+    service = db.query(ServiceMaster).filter(ServiceMaster.id == service_id).first()
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+        
+    financials = db.query(FYFinancials).filter(FYFinancials.service_id == service.id).order_by(FYFinancials.fy).all()
+    
+    return [
+        {
+            "fy": f.fy,
+            "budget": f.budget,
+            "actuals": f.actuals,
+            "variance": f.budget - f.actuals
+        }
+        for f in financials
+    ]
