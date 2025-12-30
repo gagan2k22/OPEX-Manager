@@ -1,0 +1,79 @@
+======================================================================
+DATABASE CLEANUP (DRY RUN)
+======================================================================
+
+[SKIP] EntityMaster - has 5 rows (manual review needed)
+
+[SKIP] BudgetHeadMaster - has 5 rows (manual review needed)
+
+[SKIP] TowerMaster - has 5 rows (manual review needed)
+
+[SKIP] AllocationBasisMaster - has 4 rows (manual review needed)
+[DRY-RUN] Would drop: ServiceMaster
+[DRY-RUN] Would drop: AllocationTypeMaster
+
+[SKIP] Role - has 3 rows (manual review needed)
+
+[SKIP] User - has 1 rows (manual review needed)
+
+[SKIP] UserRole - has 1 rows (manual review needed)
+[DRY-RUN] Would drop: AllocationBasis
+[DRY-RUN] Would drop: AuditLog
+[DRY-RUN] Would drop: CurrencyRate
+[DRY-RUN] Would drop: FYActual
+[DRY-RUN] Would drop: ImportHistory
+[DRY-RUN] Would drop: MonthlyEntityActual
+[DRY-RUN] Would drop: POEntityMaster
+[DRY-RUN] Would drop: ProcurementDetail
+[DRY-RUN] Would drop: ServiceEntityAllocation
+[DRY-RUN] Would drop: ServiceRemarkLog
+[DRY-RUN] Would drop: UserActivityLog
+[DRY-RUN] Would drop: master_budget_heads
+[DRY-RUN] Would drop: master_entities
+[DRY-RUN] Would drop: master_towers
+
+======================================================================
+SUMMARY
+======================================================================
+Tables to drop: 16
+Skipped (has data): 7
+Errors: 0
+
+[INFO] This was a DRY RUN - no changes were made
+[INFO] Run with --execute flag to actually drop tables
+
+Remaining tables: 34
+  - AllocationBasis (0 rows)
+  - AllocationBasisMaster (4 rows)
+  - AllocationTypeMaster (0 rows)
+  - AuditLog (0 rows)
+  - BudgetHeadMaster (5 rows)
+  - CurrencyRate (0 rows)
+  - EntityMaster (5 rows)
+  - FYActual (0 rows)
+  - ImportHistory (0 rows)
+  - MonthlyEntityActual (0 rows)
+  - POEntityMaster (0 rows)
+  - ProcurementDetail (0 rows)
+  - Role (3 rows)
+  - ServiceEntityAllocation (0 rows)
+  - ServiceMaster (0 rows)
+  - ServiceRemarkLog (0 rows)
+  - TowerMaster (5 rows)
+  - User (1 rows)
+  - UserActivityLog (0 rows)
+  - UserRole (1 rows)
+  - allocation_basis_master (4 rows)
+  - allocation_type_master (0 rows)
+  - budget_head_master (5 rows)
+  - entity_master (5 rows)
+  - fy_financials (0 rows)
+  - master_budget_heads (0 rows)
+  - master_entities (0 rows)
+  - master_towers (0 rows)
+  - po_entity_master (0 rows)
+  - roles (3 rows)
+  - service_master (0 rows)
+  - tower_master (5 rows)
+  - user_roles (1 rows)
+  - users (1 rows)

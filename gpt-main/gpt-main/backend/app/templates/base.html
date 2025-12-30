@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OPEX Manager{% endblock %}</title>
+    
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    <!-- Alpine.js (for simple interactive elements like dropdowns) -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; /* slate-950 */
+            color: #f8fafc; /* slate-50 */
+        }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        /* HTMX indicator styling */
+        .htmx-indicator {
+            opacity: 0;
+            transition: opacity 200ms ease-in;
+        }
+        .htmx-request .htmx-indicator {
+            opacity: 1;
+        }
+        .htmx-request.htmx-indicator {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="h-full">
+    <div id="content" class="h-full">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Notification system -->
+    <div id="notifications" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <script>
+        // Handle HTMX errors
+        document.body.addEventListener('htmx:responseError', function(evt) {
+            const xhr = evt.detail.xhr;
+            let message = "An error occurred";
+            try {
+                const response = JSON.parse(xhr.responseText);
+                message = response.detail || message;
+            } catch (e) {}
+            
+            showNotification(message, 'error');
+        });
+
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notifications');
+            const id = 'notif-' + Date.now();
+            const bgClass = type === 'error' ? 'bg-red-600' : 'bg-emerald-600';
+            
+            const html = `
+                <div id="${id}" class="${bgClass} text-white px-4 py-3 rounded-lg shadow-lg flex items-center justify-between min-w-[300px] transition-all duration-300 transform translate-y-full opacity-0">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', html);
+            const el = document.getElementById(id);
+            setTimeout(() => {
+                el.classList.remove('translate-y-full', 'opacity-0');
+            }, 10);
+            
+            setTimeout(() => {
+                el.classList.add('translate-y-full', 'opacity-0');
+                setTimeout(() => el.remove(), 300);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

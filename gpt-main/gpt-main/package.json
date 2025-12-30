@@ -1,27 +1,21 @@
 {
-  "name": "opex-manager-root",
-  "version": "1.0.0",
+  "name": "opex-manager-v2",
+  "version": "2.5.0",
   "private": true,
+  "description": "OPEX Manager - Python/FastAPI + React/Vite Unified Stack",
   "scripts": {
-    "install:all": "npm install && concurrently \"cd server && npm install\" \"cd client && npm install --legacy-peer-deps\"",
-    "setup": "npm install && concurrently \"npm run setup:server\" \"npm run setup:client\"",
-    "setup:server": "cd server && npm install && npx prisma generate && npx prisma db push",
-    "setup:client": "cd client && npm install --legacy-peer-deps && npm run build",
-    "start": "cd server && npm run prod",
-    "start:prod": "cd server && npm run prod",
-    "dev": "concurrently --kill-others \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "cd server && npm run dev",
-    "dev:client": "cd client && npm run dev",
-    "build": "cd client && npm run build",
-    "fast-run": "npm run dev"
+    "setup": "concurrently \"npm run setup:backend\" \"npm run setup:frontend\"",
+    "setup:backend": "cd backend && python -m pip install -r requirements.txt && python seed.py",
+    "setup:frontend": "cd frontend && npm install --legacy-peer-deps && npm run build",
+    "dev": "concurrently --kill-others \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 3000",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start": "cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 3000",
+    "clean": "npm run clean:backend && npm run clean:frontend",
+    "clean:backend": "cd backend && python -c \"import shutil, os; [shutil.rmtree(d) for d in ['__pycache__', 'app/__pycache__', 'logs'] if os.path.exists(d)]\"",
+    "clean:frontend": "cd frontend && python -c \"import shutil, os; [shutil.rmtree(d) for d in ['dist', 'node_modules'] if os.path.exists(d)]\""
   },
   "devDependencies": {
-    "concurrently": "^9.1.2",
-    "i": "^0.3.7",
-    "npm": "^11.6.4",
-    "prisma": "^6.4.1"
-  },
-  "dependencies": {
-    "@prisma/client": "^6.4.1"
+    "concurrently": "^8.2.2"
   }
 }

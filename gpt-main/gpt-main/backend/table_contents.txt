@@ -1,0 +1,319 @@
+================================================================================
+DATABASE TABLE CONTENTS
+================================================================================
+
+
+Table: EntityMaster
+--------------------------------------------------------------------------------
+Columns: id, entity_name
+Row count: 5
+
+Data:
+  Row 1: {
+    "id": 1,
+    "entity_name": "Entity India"
+}
+  Row 2: {
+    "id": 2,
+    "entity_name": "Entity USA"
+}
+  Row 3: {
+    "id": 3,
+    "entity_name": "Entity Europe"
+}
+  Row 4: {
+    "id": 4,
+    "entity_name": "Entity SE Asia"
+}
+  Row 5: {
+    "id": 5,
+    "entity_name": "Shared Services"
+}
+
+
+Table: entity_master
+--------------------------------------------------------------------------------
+Columns: id, name
+Row count: 5
+
+Data:
+  Row 1: {
+    "id": 1,
+    "name": null
+}
+  Row 2: {
+    "id": 2,
+    "name": null
+}
+  Row 3: {
+    "id": 3,
+    "name": null
+}
+  Row 4: {
+    "id": 4,
+    "name": null
+}
+  Row 5: {
+    "id": 5,
+    "name": null
+}
+
+
+Table: BudgetHeadMaster
+--------------------------------------------------------------------------------
+Columns: id, head_name
+Row count: 5
+
+Data:
+  Row 1: {
+    "id": 1,
+    "head_name": "OpEx - Hosting"
+}
+  Row 2: {
+    "id": 2,
+    "head_name": "OpEx - Licenses"
+}
+  Row 3: {
+    "id": 3,
+    "head_name": "OpEx - Manpower"
+}
+  Row 4: {
+    "id": 4,
+    "head_name": "OpEx - Support"
+}
+  Row 5: {
+    "id": 5,
+    "head_name": "CapEx - Hardware"
+}
+
+
+Table: budget_head_master
+--------------------------------------------------------------------------------
+Columns: id, name
+Row count: 5
+
+Data:
+  Row 1: {
+    "id": 1,
+    "name": null
+}
+  Row 2: {
+    "id": 2,
+    "name": null
+}
+  Row 3: {
+    "id": 3,
+    "name": null
+}
+  Row 4: {
+    "id": 4,
+    "name": null
+}
+  Row 5: {
+    "id": 5,
+    "name": null
+}
+
+
+Table: TowerMaster
+--------------------------------------------------------------------------------
+Columns: id, tower_name
+Row count: 5
+
+Data:
+  Row 1: {
+    "id": 1,
+    "tower_name": "IT Infrastructure"
+}
+  Row 2: {
+    "id": 2,
+    "tower_name": "Application Support"
+}
+  Row 3: {
+    "id": 3,
+    "tower_name": "Data & AI"
+}
+  Row 4: {
+    "id": 4,
+    "tower_name": "Cyber Security"
+}
+  Row 5: {
+    "id": 5,
+    "tower_name": "Network Services"
+}
+
+
+Table: tower_master
+--------------------------------------------------------------------------------
+Columns: id, name
+Row count: 5
+
+Data:
+  Row 1: {
+    "id": 1,
+    "name": null
+}
+  Row 2: {
+    "id": 2,
+    "name": null
+}
+  Row 3: {
+    "id": 3,
+    "name": null
+}
+  Row 4: {
+    "id": 4,
+    "name": null
+}
+  Row 5: {
+    "id": 5,
+    "name": null
+}
+
+
+Table: AllocationBasisMaster
+--------------------------------------------------------------------------------
+Columns: id, basis_name
+Row count: 4
+
+Data:
+  Row 1: {
+    "id": 1,
+    "basis_name": "Headcount"
+}
+  Row 2: {
+    "id": 2,
+    "basis_name": "Revenue Split"
+}
+  Row 3: {
+    "id": 3,
+    "basis_name": "Usage Hours"
+}
+  Row 4: {
+    "id": 4,
+    "basis_name": "Direct Assignment"
+}
+
+
+Table: allocation_basis_master
+--------------------------------------------------------------------------------
+Columns: id, name
+Row count: 4
+
+Data:
+  Row 1: {
+    "id": 1,
+    "name": null
+}
+  Row 2: {
+    "id": 2,
+    "name": null
+}
+  Row 3: {
+    "id": 3,
+    "name": null
+}
+  Row 4: {
+    "id": 4,
+    "name": null
+}
+
+
+Table: Role
+--------------------------------------------------------------------------------
+Columns: id, name
+Row count: 3
+
+Data:
+  Row 1: {
+    "id": 1,
+    "name": "Admin"
+}
+  Row 2: {
+    "id": 2,
+    "name": "User"
+}
+  Row 3: {
+    "id": 3,
+    "name": "Viewer"
+}
+
+
+Table: roles
+--------------------------------------------------------------------------------
+Columns: id, name
+Row count: 3
+
+Data:
+  Row 1: {
+    "id": 1,
+    "name": "Admin"
+}
+  Row 2: {
+    "id": 2,
+    "name": "User"
+}
+  Row 3: {
+    "id": 3,
+    "name": "Viewer"
+}
+
+
+Table: User
+--------------------------------------------------------------------------------
+Columns: id, name, email, password_hash, passwordChangedAt, is_active, created_at, updated_at, currentSessionId
+Row count: 1
+
+Data:
+  Row 1: {
+    "id": 1,
+    "name": "Admin",
+    "email": "admin@example.com",
+    "password_hash": "$2b$12$Y21toNCUYAyT3yKNfKSoseXER.ehxs2Rf9gQ0Lp4chfRgWewRHKnu",
+    "passwordChangedAt": null,
+    "is_active": 1,
+    "created_at": "2025-12-28 21:18:50",
+    "updated_at": "2025-12-28 21:18:50",
+    "currentSessionId": null
+}
+
+
+Table: users
+--------------------------------------------------------------------------------
+Columns: id, name, email, password_hash, is_active, created_at
+Row count: 1
+
+Data:
+  Row 1: {
+    "id": 1,
+    "name": "Global Admin",
+    "email": "admin@example.com",
+    "password_hash": "$2b$12$VaRp0PRelwGeh7dpQw66Xe2K40sJ6b6KuaF8NnowN6RjfO.jETmXy",
+    "is_active": 1,
+    "created_at": "2025-12-29 14:55:04"
+}
+
+
+Table: UserRole
+--------------------------------------------------------------------------------
+Columns: id, user_id, role_id
+Row count: 1
+
+Data:
+  Row 1: {
+    "id": 1,
+    "user_id": 1,
+    "role_id": 1
+}
+
+
+Table: user_roles
+--------------------------------------------------------------------------------
+Columns: user_id, role_id
+Row count: 1
+
+Data:
+  Row 1: {
+    "user_id": 1,
+    "role_id": 1
+}

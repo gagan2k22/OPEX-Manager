@@ -1,0 +1,68 @@
+======================================================================
+DATABASE MIGRATION & CLEANUP
+======================================================================
+
+Step 1: Migrating data from PascalCase to snake_case tables...
+----------------------------------------------------------------------
+
+  Skipping EntityMaster -> entity_master
+    Both tables have data (old: 5, new: 5)
+    Manual review needed!
+
+  Skipping BudgetHeadMaster -> budget_head_master
+    Both tables have data (old: 5, new: 5)
+    Manual review needed!
+
+  Skipping TowerMaster -> tower_master
+    Both tables have data (old: 5, new: 5)
+    Manual review needed!
+
+  Skipping AllocationBasisMaster -> allocation_basis_master
+    Both tables have data (old: 4, new: 4)
+    Manual review needed!
+
+
+Step 2: Tables safe to drop after migration...
+----------------------------------------------------------------------
+  [OK] ServiceMaster (0 rows)
+  [OK] AllocationTypeMaster (0 rows)
+  [OK] AllocationBasis (0 rows)
+  [OK] AuditLog (0 rows)
+  [OK] CurrencyRate (0 rows)
+  [OK] FYActual (0 rows)
+  [OK] ImportHistory (0 rows)
+  [OK] MonthlyEntityActual (0 rows)
+  [OK] POEntityMaster (0 rows)
+  [OK] ProcurementDetail (0 rows)
+  [OK] ServiceEntityAllocation (0 rows)
+  [OK] ServiceRemarkLog (0 rows)
+  [OK] UserActivityLog (0 rows)
+  [OK] master_budget_heads (0 rows)
+  [OK] master_entities (0 rows)
+  [OK] master_towers (0 rows)
+
+
+Migrated PascalCase tables (verify before dropping):
+----------------------------------------------------------------------
+  EntityMaster: 5 rows -> entity_master: 5 rows [OK] SAFE
+  BudgetHeadMaster: 5 rows -> budget_head_master: 5 rows [OK] SAFE
+  TowerMaster: 5 rows -> tower_master: 5 rows [OK] SAFE
+  AllocationBasisMaster: 4 rows -> allocation_basis_master: 4 rows [OK] SAFE
+
+
+Tables with data (not in current schema - review needed):
+----------------------------------------------------------------------
+  Role: 3 rows
+    -> roles: 3 rows
+  User: 1 rows
+    -> users: 1 rows
+  UserRole: 1 rows
+    -> user_roles: 1 rows
+
+======================================================================
+MIGRATION COMPLETE - Review the output above
+======================================================================
+
+Next steps:
+1. Verify migrated data is correct
+2. Run cleanup_db.py to drop unused tables

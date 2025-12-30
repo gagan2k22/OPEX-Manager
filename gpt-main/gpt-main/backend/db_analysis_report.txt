@@ -1,0 +1,72 @@
+======================================================================
+DATABASE ANALYSIS REPORT
+======================================================================
+
+[ACTIVE] TABLES (Used in schemas.py):
+----------------------------------------------------------------------
+  allocation_basis_master             |          0 rows
+  allocation_type_master              |          0 rows
+  budget_head_master                  |          0 rows
+  entity_master                       |          0 rows
+  fy_financials                       |          0 rows
+  po_entity_master                    |          0 rows
+  roles                               |          3 rows
+  service_master                      |          0 rows
+  tower_master                        |          0 rows
+  user_roles                          |          1 rows
+  users                               |          1 rows
+
+[WARNING] POTENTIALLY UNUSED TABLES (Duplicates/Old Schema):
+----------------------------------------------------------------------
+  AllocationBasisMaster               |          4 rows | PascalCase duplicate
+  AllocationTypeMaster                |          0 rows | PascalCase duplicate
+  BudgetHeadMaster                    |          5 rows | PascalCase duplicate
+  EntityMaster                        |          5 rows | PascalCase duplicate
+  ServiceMaster                       |          0 rows | PascalCase duplicate
+  TowerMaster                         |          5 rows | PascalCase duplicate
+
+[UNKNOWN] TABLES (Not in current schema):
+----------------------------------------------------------------------
+  AllocationBasis                     |          0 rows
+  AuditLog                            |          0 rows
+  CurrencyRate                        |          0 rows
+  FYActual                            |          0 rows
+  ImportHistory                       |          0 rows
+  MonthlyEntityActual                 |          0 rows
+  POEntityMaster                      |          0 rows
+  ProcurementDetail                   |          0 rows
+  Role                                |          3 rows
+  ServiceEntityAllocation             |          0 rows
+  ServiceRemarkLog                    |          0 rows
+  User                                |          1 rows
+  UserActivityLog                     |          0 rows
+  UserRole                            |          1 rows
+  master_budget_heads                 |          0 rows
+  master_entities                     |          0 rows
+  master_towers                       |          0 rows
+
+======================================================================
+RECOMMENDATIONS:
+======================================================================
+
+[WARNING] These unused tables contain data:
+  - EntityMaster: 5 rows (PascalCase duplicate)
+  - BudgetHeadMaster: 5 rows (PascalCase duplicate)
+  - TowerMaster: 5 rows (PascalCase duplicate)
+  - AllocationBasisMaster: 4 rows (PascalCase duplicate)
+
+  ACTION: Verify data has been migrated before dropping!
+
+[CLEANUP] Safe to drop (2 empty tables):
+  - ServiceMaster
+  - AllocationTypeMaster
+
+
+======================================================================
+SUMMARY:
+======================================================================
+  Total tables: 34
+  Active tables: 11
+  Potentially unused: 6
+  Unknown tables: 17
+  Safe to drop: 2
